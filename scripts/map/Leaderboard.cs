@@ -47,7 +47,7 @@ public struct Leaderboard
             Logger.Error($"Leaderboard file corrupted; {exception.Message}");
             Reset();
         }
-        
+
         if (FileBuffer.Get(32).Stringify() != SHA256.HashData(bytes).Stringify())
         {
             Logger.Log("Leaderboard file corrupted; invalid leaderboard hash");
@@ -71,7 +71,7 @@ public struct Leaderboard
     {
         Scores.Add(score);
         Scores.Sort(new ScoreComparer());
-        
+
         if (Scores.Count > 8)
         {
             Scores.RemoveRange(8, Scores.Count - 8);

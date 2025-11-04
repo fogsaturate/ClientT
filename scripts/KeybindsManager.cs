@@ -78,7 +78,7 @@ public partial class KeybindsManager : Node
                         MainMenu.UpdateVolume();
                         break;
                     case "SceneGame":
-                        Runner.UpdateVolume();
+                        LegacyRunner.UpdateVolume();
                         break;
                     case "SceneResults":
                         Results.UpdateVolume();

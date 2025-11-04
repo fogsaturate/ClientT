@@ -29,7 +29,7 @@ public class FileParser
     public byte[] Get(int length)
     {
         Pointer += length;
-        return Buffer[(Pointer - length) .. Pointer];
+        return Buffer[(Pointer - length)..Pointer];
     }
 
     public void Skip(int length)

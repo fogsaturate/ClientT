@@ -5,464 +5,482 @@ using Godot;
 
 public partial class SettingsManager : Control
 {
-	public static Control Control;
+    public static Control Control;
 
-	public static ColorRect Settings;
-	public static Panel Holder;
-	public static bool Shown = false;
-	public static LineEdit FocusedLineEdit = null;
+    public static ColorRect Settings;
+    public static Panel Holder;
+    public static bool Shown = false;
+    public static LineEdit FocusedLineEdit = null;
 
-	public override void _Ready()
-	{
-		Control = this;
+    public override void _Ready()
+    {
+        Control = this;
 
-		Settings = GD.Load<PackedScene>("res://prefabs//settings.tscn").Instantiate<ColorRect>();
-		Holder = Settings.GetNode<Panel>("Holder");
-		Settings.GetNode<Button>("Deselect").Pressed += HideSettings;
+        Settings = GD.Load<PackedScene>("res://prefabs//settings.tscn").Instantiate<ColorRect>();
+        Holder = Settings.GetNode<Panel>("Holder");
+        Settings.GetNode<Button>("Deselect").Pressed += HideSettings;
 
-		AddChild(Settings);
-		HideSettings();
-		GetViewport().SizeChanged += () => {
-			Settings.SetSize(DisplayServer.WindowGetSize());
-		};
+        AddChild(Settings);
+        HideSettings();
+        GetViewport().SizeChanged += () =>
+        {
+            Settings.SetSize(DisplayServer.WindowGetSize());
+        };
 
-		Settings.SetSize(DisplayServer.WindowGetSize());
+        Settings.SetSize(DisplayServer.WindowGetSize());
 
-		foreach (Node holder in Holder.GetNode("Sidebar").GetNode("Container").GetChildren())
-		{
-			holder.GetNode<Button>("Button").Pressed += () => {
-				foreach (ColorRect otherHolder in Holder.GetNode("Sidebar").GetNode("Container").GetChildren())
-				{
-					otherHolder.Color = Color.FromHtml($"#ffffff{(holder.Name == otherHolder.Name ? "08" : "00")}");
-				}
+        foreach (Node holder in Holder.GetNode("Sidebar").GetNode("Container").GetChildren())
+        {
+            holder.GetNode<Button>("Button").Pressed += () =>
+            {
+                foreach (ColorRect otherHolder in Holder.GetNode("Sidebar").GetNode("Container").GetChildren())
+                {
+                    otherHolder.Color = Color.FromHtml($"#ffffff{(holder.Name == otherHolder.Name ? "08" : "00")}");
+                }
 
-				foreach (ScrollContainer category in Holder.GetNode("Categories").GetChildren())
-				{
-					category.Visible = category.Name == holder.Name;
-				}
-			};
-		}
+                foreach (ScrollContainer category in Holder.GetNode("Categories").GetChildren())
+                {
+                    category.Visible = category.Name == holder.Name;
+                }
+            };
+        }
 
-		OptionButton profiles = Holder.GetNode("Header").GetNode<OptionButton>("Profiles");
-		LineEdit profileEdit = Holder.GetNode("Header").GetNode<LineEdit>("ProfileEdit");
-		OptionButton skins = Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Skin").GetNode<OptionButton>("OptionsButton");
-		OptionButton spaces = Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Space").GetNode<OptionButton>("OptionsButton");
+        OptionButton profiles = Holder.GetNode("Header").GetNode<OptionButton>("Profiles");
+        LineEdit profileEdit = Holder.GetNode("Header").GetNode<LineEdit>("ProfileEdit");
+        OptionButton skins = Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Skin").GetNode<OptionButton>("OptionsButton");
+        OptionButton spaces = Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Space").GetNode<OptionButton>("OptionsButton");
 
-		Holder.GetNode("Header").GetNode<Button>("CreateProfile").Pressed += () => {
-			profileEdit.Visible = !profileEdit.Visible;
-		};
-		profileEdit.FocusEntered += () => FocusedLineEdit = profileEdit;
-		profileEdit.FocusExited += () => FocusedLineEdit = null;
-		profileEdit.TextSubmitted += (string text) => {
-			text = new Regex("[^a-zA-Z0-9_ -]").Replace(text.Replace(" ", "_"), "");
+        Holder.GetNode("Header").GetNode<Button>("CreateProfile").Pressed += () =>
+        {
+            profileEdit.Visible = !profileEdit.Visible;
+        };
+        profileEdit.FocusEntered += () => FocusedLineEdit = profileEdit;
+        profileEdit.FocusExited += () => FocusedLineEdit = null;
+        profileEdit.TextSubmitted += (string text) =>
+        {
+            text = new Regex("[^a-zA-Z0-9_ -]").Replace(text.Replace(" ", "_"), "");
 
-			profileEdit.ReleaseFocus();
-			profileEdit.Visible = false;
+            profileEdit.ReleaseFocus();
+            profileEdit.Visible = false;
 
-			if (File.Exists($"{Constants.USER_FOLDER}/profiles/{text}.json"))
-			{
-				ToastNotification.Notify($"Profile {text} already exists!");
-				return;
-			}
+            if (File.Exists($"{Constants.USER_FOLDER}/profiles/{text}.json"))
+            {
+                ToastNotification.Notify($"Profile {text} already exists!");
+                return;
+            }
 
-			File.WriteAllText($"{Constants.USER_FOLDER}/profiles/{text}.json", File.ReadAllText($"{Constants.USER_FOLDER}/profiles/default.json"));
-			UpdateSettings();
-		};
-		profiles.Pressed += ShowMouse;
-		profiles.ItemSelected += (long item) => {
-			string profile = profiles.GetItemText((int)item);
+            File.WriteAllText($"{Constants.USER_FOLDER}/profiles/{text}.json", File.ReadAllText($"{Constants.USER_FOLDER}/profiles/default.json"));
+            UpdateSettings();
+        };
+        profiles.Pressed += ShowMouse;
+        profiles.ItemSelected += (long item) =>
+        {
+            string profile = profiles.GetItemText((int)item);
 
-			HideMouse();
-			SettingsProfile.Save();
-			File.WriteAllText($"{Constants.USER_FOLDER}/current_profile.txt", profile);
-			SettingsProfile.Load(profile);
-			UpdateSettings();
-		};
+            HideMouse();
+            SettingsProfile.Save();
+            File.WriteAllText($"{Constants.USER_FOLDER}/current_profile.txt", profile);
+            SettingsProfile.Load(profile);
+            UpdateSettings();
+        };
 
-		skins.Pressed += ShowMouse;
-		skins.ItemSelected += (long item) => {
-			HideMouse();
-			SettingsProfile.Skin = skins.GetItemText((int)item);
-			Phoenyx.Skin.Load();
+        skins.Pressed += ShowMouse;
+        skins.ItemSelected += (long item) =>
+        {
+            HideMouse();
+            SettingsProfile.Skin = skins.GetItemText((int)item);
+            Phoenyx.Skin.Load();
 
-			if (SceneManager.Scene.Name == "SceneMenu")
-			{
-				Menu.MainMenu.Cursor.Texture = Phoenyx.Skin.CursorImage;
-			}
+            if (SceneManager.Scene.Name == "SceneMenu")
+            {
+                Menu.MainMenu.Cursor.Texture = Phoenyx.Skin.CursorImage;
+            }
 
-			Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Colors").GetNode<LineEdit>("LineEdit").Text = Phoenyx.Skin.RawColors;
-		};
+            Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Colors").GetNode<LineEdit>("LineEdit").Text = Phoenyx.Skin.RawColors;
+        };
 
-		spaces.Pressed += ShowMouse;
-		spaces.ItemSelected += (long item) => {
-			HideMouse();
-			SettingsProfile.Space = spaces.GetItemText((int)item);
-		};
+        spaces.Pressed += ShowMouse;
+        spaces.ItemSelected += (long item) =>
+        {
+            HideMouse();
+            SettingsProfile.Space = spaces.GetItemText((int)item);
+        };
 
-		Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Skin").GetNode<Button>("SkinFolder").Pressed += () => {
-			OS.ShellOpen($"{Constants.USER_FOLDER}/skins/{SettingsProfile.Skin}");
-		};
-		Holder.GetNode("Categories").GetNode("Other").GetNode("Container").GetNode("RhythiaImport").GetNode<Button>("Button").Pressed += () => {
-			if (!Directory.Exists($"{OS.GetDataDir()}/SoundSpacePlus") || !File.Exists($"{OS.GetDataDir()}/SoundSpacePlus/settings.json"))
-			{
-				ToastNotification.Notify("Could not locate Rhythia settings", 1);
-				return;
-			}
+        Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Skin").GetNode<Button>("SkinFolder").Pressed += () =>
+        {
+            OS.ShellOpen($"{Constants.USER_FOLDER}/skins/{SettingsProfile.Skin}");
+        };
+        Holder.GetNode("Categories").GetNode("Other").GetNode("Container").GetNode("RhythiaImport").GetNode<Button>("Button").Pressed += () =>
+        {
+            if (!Directory.Exists($"{OS.GetDataDir()}/SoundSpacePlus") || !File.Exists($"{OS.GetDataDir()}/SoundSpacePlus/settings.json"))
+            {
+                ToastNotification.Notify("Could not locate Rhythia settings", 1);
+                return;
+            }
 
-			Godot.FileAccess file = Godot.FileAccess.Open($"{OS.GetDataDir()}/SoundSpacePlus/settings.json", Godot.FileAccess.ModeFlags.Read);
-			Godot.Collections.Dictionary data = (Godot.Collections.Dictionary)Json.ParseString(file.GetAsText());
+            Godot.FileAccess file = Godot.FileAccess.Open($"{OS.GetDataDir()}/SoundSpacePlus/settings.json", Godot.FileAccess.ModeFlags.Read);
+            Godot.Collections.Dictionary data = (Godot.Collections.Dictionary)Json.ParseString(file.GetAsText());
 
-			SettingsProfile.ApproachRate = (float)data["approach_rate"];
-			SettingsProfile.ApproachDistance = (float)data["spawn_distance"];
-			SettingsProfile.ApproachTime = SettingsProfile.ApproachDistance / SettingsProfile.ApproachRate;
-			SettingsProfile.FoV = (float)data["fov"];
-			SettingsProfile.Sensitivity = (float)data["sensitivity"] * 2;
-			SettingsProfile.Parallax = (float)data["parallax"] / 50;
-			SettingsProfile.FadeIn = (float)data["fade_length"] * 100;
-			SettingsProfile.FadeOut = (bool)data["half_ghost"];
-			SettingsProfile.Pushback = (bool)data["do_note_pushback"];
-			SettingsProfile.NoteSize = (float)data["note_size"] * 0.875f;
-			SettingsProfile.CursorScale = (float)data["cursor_scale"];
-			SettingsProfile.CursorTrail = (bool)data["cursor_trail"];
-			SettingsProfile.TrailTime = (float)data["trail_time"];
-			SettingsProfile.SimpleHUD = (bool)data["simple_hud"];
-			SettingsProfile.AbsoluteInput = (bool)data["absolute_mode"];
-			SettingsProfile.FPS = (double)data["fps"];
-			SettingsProfile.UnlockFPS = (bool)data["unlock_fps"];
+            SettingsProfile.ApproachRate = (float)data["approach_rate"];
+            SettingsProfile.ApproachDistance = (float)data["spawn_distance"];
+            SettingsProfile.ApproachTime = SettingsProfile.ApproachDistance / SettingsProfile.ApproachRate;
+            SettingsProfile.FoV = (float)data["fov"];
+            SettingsProfile.Sensitivity = (float)data["sensitivity"] * 2;
+            SettingsProfile.Parallax = (float)data["parallax"] / 50;
+            SettingsProfile.FadeIn = (float)data["fade_length"] * 100;
+            SettingsProfile.FadeOut = (bool)data["half_ghost"];
+            SettingsProfile.Pushback = (bool)data["do_note_pushback"];
+            SettingsProfile.NoteSize = (float)data["note_size"] * 0.875f;
+            SettingsProfile.CursorScale = (float)data["cursor_scale"];
+            SettingsProfile.CursorTrail = (bool)data["cursor_trail"];
+            SettingsProfile.TrailTime = (float)data["trail_time"];
+            SettingsProfile.SimpleHUD = (bool)data["simple_hud"];
+            SettingsProfile.AbsoluteInput = (bool)data["absolute_mode"];
+            SettingsProfile.FPS = (double)data["fps"];
+            SettingsProfile.UnlockFPS = (bool)data["unlock_fps"];
 
-			UpdateSettings();
+            UpdateSettings();
 
-			ToastNotification.Notify("Successfully imported Rhythia settings");
-		};
+            ToastNotification.Notify("Successfully imported Rhythia settings");
+        };
 
-		UpdateSettings(true);
-	}
+        UpdateSettings(true);
+    }
 
-	public static void ShowSettings(bool show = true)
-	{
-		Shown = show;
-		Settings.GetNode<Button>("Deselect").MouseFilter = Shown ? MouseFilterEnum.Stop : MouseFilterEnum.Ignore;
-		Control.CallDeferred("move_to_front");
+    public static void ShowSettings(bool show = true)
+    {
+        Shown = show;
+        Settings.GetNode<Button>("Deselect").MouseFilter = Shown ? MouseFilterEnum.Stop : MouseFilterEnum.Ignore;
+        Control.CallDeferred("move_to_front");
 
-		if (Shown)
-		{
-			Settings.Visible = true;
-		}
+        if (Shown)
+        {
+            Settings.Visible = true;
+        }
 
-		Tween tween = Settings.CreateTween();
-		tween.TweenProperty(Settings, "modulate", Color.Color8(255, 255, 255, (byte)(Shown ? 255 : 0)), 0.25).SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-		tween.Parallel().TweenProperty(Holder, "offset_top", Shown ? 0 : 25, 0.25).SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-		tween.Parallel().TweenProperty(Holder, "offset_bottom", Shown ? 0 : 25, 0.25).SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
-		tween.TweenCallback(Callable.From(() => {
-			Settings.Visible = Shown;
-		}));
-		tween.Play();
-	}
+        Tween tween = Settings.CreateTween();
+        tween.TweenProperty(Settings, "modulate", Color.Color8(255, 255, 255, (byte)(Shown ? 255 : 0)), 0.25).SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+        tween.Parallel().TweenProperty(Holder, "offset_top", Shown ? 0 : 25, 0.25).SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+        tween.Parallel().TweenProperty(Holder, "offset_bottom", Shown ? 0 : 25, 0.25).SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+        tween.TweenCallback(Callable.From(() =>
+        {
+            Settings.Visible = Shown;
+        }));
+        tween.Play();
+    }
 
-	public static void HideSettings()
-	{
-		ShowSettings(false);
-	}
+    public static void HideSettings()
+    {
+        ShowSettings(false);
+    }
 
-	public static void ApplySetting(string setting, object value)
-	{
-		switch (setting)
-		{
-			case "Sensitivity":
-				SettingsProfile.Sensitivity = (double)value;
-				break;
-			case "ApproachRate":
-				SettingsProfile.ApproachRate = (double)value;
-				SettingsProfile.ApproachTime = SettingsProfile.ApproachDistance / SettingsProfile.ApproachRate;
-				break;
-			case "ApproachDistance":
-				SettingsProfile.ApproachDistance = (double)value;
-				SettingsProfile.ApproachTime = SettingsProfile.ApproachDistance / SettingsProfile.ApproachRate;
-				break;
-			case "FadeIn":
-				SettingsProfile.FadeIn = (double)value;
-				break;
-			case "Parallax":
-				SettingsProfile.Parallax = (double)value;
-				break;
-			case "FoV":
-				SettingsProfile.FoV = (double)value;
-				break;
-			case "VolumeMaster":
-				SettingsProfile.VolumeMaster = (double)value;
-				break;
-			case "VolumeMusic":
-				SettingsProfile.VolumeMusic = (double)value;
-				break;
-			case "VolumeSFX":
-				SettingsProfile.VolumeSFX = (double)value;
-				break;
-			case "AlwaysPlayHitSound":
-				SettingsProfile.AlwaysPlayHitSound = (bool)value;
-				break;
-			case "NoteSize":
-				SettingsProfile.NoteSize = (double)value;
-				break;
-			case "CursorScale":
-				SettingsProfile.CursorScale = (double)value;
-				
-				if (SceneManager.Scene.Name == "SceneMenu")
-				{
-					Menu.MainMenu.Cursor.Size = new Vector2(32 * (float)SettingsProfile.CursorScale, 32 * (float)SettingsProfile.CursorScale);
-				}
+    public static void ApplySetting(string setting, object value)
+    {
+        switch (setting)
+        {
+            case "Sensitivity":
+                SettingsProfile.Sensitivity = (double)value;
+                break;
+            case "ApproachRate":
+                SettingsProfile.ApproachRate = (double)value;
+                SettingsProfile.ApproachTime = SettingsProfile.ApproachDistance / SettingsProfile.ApproachRate;
+                break;
+            case "ApproachDistance":
+                SettingsProfile.ApproachDistance = (double)value;
+                SettingsProfile.ApproachTime = SettingsProfile.ApproachDistance / SettingsProfile.ApproachRate;
+                break;
+            case "FadeIn":
+                SettingsProfile.FadeIn = (double)value;
+                break;
+            case "Parallax":
+                SettingsProfile.Parallax = (double)value;
+                break;
+            case "FoV":
+                SettingsProfile.FoV = (double)value;
+                break;
+            case "VolumeMaster":
+                SettingsProfile.VolumeMaster = (double)value;
+                break;
+            case "VolumeMusic":
+                SettingsProfile.VolumeMusic = (double)value;
+                break;
+            case "VolumeSFX":
+                SettingsProfile.VolumeSFX = (double)value;
+                break;
+            case "AlwaysPlayHitSound":
+                SettingsProfile.AlwaysPlayHitSound = (bool)value;
+                break;
+            case "NoteSize":
+                SettingsProfile.NoteSize = (double)value;
+                break;
+            case "CursorScale":
+                SettingsProfile.CursorScale = (double)value;
 
-				break;
-			case "FadeOut":
-				SettingsProfile.FadeOut = (bool)value;
-				break;
-			case "Pushback":
-				SettingsProfile.Pushback = (bool)value;
-				break;
-			case "Fullscreen":
-				SettingsProfile.Fullscreen = (bool)value;
-				DisplayServer.WindowSetMode((bool)value ? DisplayServer.WindowMode.ExclusiveFullscreen : DisplayServer.WindowMode.Windowed);
-				break;
-			case "CursorTrail":
-				SettingsProfile.CursorTrail = (bool)value;
-				break;
-			case "TrailTime":
-				SettingsProfile.TrailTime = (double)value;
-				break;
-			case "TrailDetail":
-				SettingsProfile.TrailDetail = (double)value;
-				break;
-			case "CursorDrift":
-				SettingsProfile.CursorDrift = (bool)value;
-				break;
-			case "VideoDim":
-				SettingsProfile.VideoDim = (double)value;
-				break;
-			case "VideoRenderScale":
-				SettingsProfile.VideoRenderScale = (double)value;
-				break;
-			case "SimpleHUD":
-				SettingsProfile.SimpleHUD = (bool)value;
-				break;
-			case "AutoplayJukebox":
-				SettingsProfile.AutoplayJukebox = (bool)value;
-				break;
-			case "AbsoluteInput":
-				SettingsProfile.AbsoluteInput = (bool)value;
-				break;
-			case "RecordReplays":
-				SettingsProfile.RecordReplays = (bool)value;
-				break;
-			case "HitPopups":
-				SettingsProfile.HitPopups = (bool)value;
-				break;
-			case "MissPopups":
-				SettingsProfile.MissPopups = (bool)value;
-				break;
-			case "FPS":
-				SettingsProfile.FPS = (double)value;
-				Engine.MaxFps = SettingsProfile.UnlockFPS ? 0 : Convert.ToInt32(value);
-				break;
-			case "UnlockFPS":
-				SettingsProfile.UnlockFPS = (bool)value;
-				Engine.MaxFps = SettingsProfile.UnlockFPS ? 0 : Convert.ToInt32(SettingsProfile.FPS);
-				break;
-		}
+                if (SceneManager.Scene.Name == "SceneMenu")
+                {
+                    Menu.MainMenu.Cursor.Size = new Vector2(32 * (float)SettingsProfile.CursorScale, 32 * (float)SettingsProfile.CursorScale);
+                }
 
-		UpdateSettings();
-	}
+                break;
+            case "FadeOut":
+                SettingsProfile.FadeOut = (bool)value;
+                break;
+            case "Pushback":
+                SettingsProfile.Pushback = (bool)value;
+                break;
+            case "Fullscreen":
+                SettingsProfile.Fullscreen = (bool)value;
+                DisplayServer.WindowSetMode((bool)value ? DisplayServer.WindowMode.ExclusiveFullscreen : DisplayServer.WindowMode.Windowed);
+                break;
+            case "CursorTrail":
+                SettingsProfile.CursorTrail = (bool)value;
+                break;
+            case "TrailTime":
+                SettingsProfile.TrailTime = (double)value;
+                break;
+            case "TrailDetail":
+                SettingsProfile.TrailDetail = (double)value;
+                break;
+            case "CursorDrift":
+                SettingsProfile.CursorDrift = (bool)value;
+                break;
+            case "VideoDim":
+                SettingsProfile.VideoDim = (double)value;
+                break;
+            case "VideoRenderScale":
+                SettingsProfile.VideoRenderScale = (double)value;
+                break;
+            case "SimpleHUD":
+                SettingsProfile.SimpleHUD = (bool)value;
+                break;
+            case "AutoplayJukebox":
+                SettingsProfile.AutoplayJukebox = (bool)value;
+                break;
+            case "AbsoluteInput":
+                SettingsProfile.AbsoluteInput = (bool)value;
+                break;
+            case "RecordReplays":
+                SettingsProfile.RecordReplays = (bool)value;
+                break;
+            case "HitPopups":
+                SettingsProfile.HitPopups = (bool)value;
+                break;
+            case "MissPopups":
+                SettingsProfile.MissPopups = (bool)value;
+                break;
+            case "FPS":
+                SettingsProfile.FPS = (double)value;
+                Engine.MaxFps = SettingsProfile.UnlockFPS ? 0 : Convert.ToInt32(value);
+                break;
+            case "UnlockFPS":
+                SettingsProfile.UnlockFPS = (bool)value;
+                Engine.MaxFps = SettingsProfile.UnlockFPS ? 0 : Convert.ToInt32(SettingsProfile.FPS);
+                break;
+        }
 
-	public static void UpdateSettings(bool connections = false)
-	{
-		OptionButton spaces = Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Space").GetNode<OptionButton>("OptionsButton");
-		OptionButton skins = Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Skin").GetNode<OptionButton>("OptionsButton");
-		OptionButton profiles = Holder.GetNode("Header").GetNode<OptionButton>("Profiles");
-		string currentProfile = File.ReadAllText($"{Constants.USER_FOLDER}/current_profile.txt");
+        UpdateSettings();
+    }
 
-		skins.Clear();
-		profiles.Clear();
+    public static void UpdateSettings(bool connections = false)
+    {
+        OptionButton spaces = Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Space").GetNode<OptionButton>("OptionsButton");
+        OptionButton skins = Holder.GetNode("Categories").GetNode("Visuals").GetNode("Container").GetNode("Skin").GetNode<OptionButton>("OptionsButton");
+        OptionButton profiles = Holder.GetNode("Header").GetNode<OptionButton>("Profiles");
+        string currentProfile = File.ReadAllText($"{Constants.USER_FOLDER}/current_profile.txt");
 
-		for (int i = 0; i < spaces.ItemCount; i++)
-		{
-			if (spaces.GetItemText(i) == SettingsProfile.Space)
-			{
-				spaces.Selected = i;
-				break;
-			}
-		}
+        skins.Clear();
+        profiles.Clear();
 
-		int j = 0;
+        for (int i = 0; i < spaces.ItemCount; i++)
+        {
+            if (spaces.GetItemText(i) == SettingsProfile.Space)
+            {
+                spaces.Selected = i;
+                break;
+            }
+        }
 
-		foreach (string path in Directory.GetDirectories($"{Constants.USER_FOLDER}/skins"))
-		{
-			string name = path.Split("\\")[^1];
-			
-			skins.AddItem(name, j);
+        int j = 0;
 
-			if (SettingsProfile.Skin == name)
-			{
-				skins.Selected = j;
-			}
+        foreach (string path in Directory.GetDirectories($"{Constants.USER_FOLDER}/skins"))
+        {
+            string name = path.Split("\\")[^1];
 
-			j++;
-		}
+            skins.AddItem(name, j);
 
-		j = 0;
+            if (SettingsProfile.Skin == name)
+            {
+                skins.Selected = j;
+            }
 
-		foreach (string path in Directory.GetFiles($"{Constants.USER_FOLDER}/profiles"))
-		{
-			string name = path.Split("\\")[^1].TrimSuffix(".json");
-			
-			profiles.AddItem(name, j);
+            j++;
+        }
 
-			if (currentProfile == name)
-			{
-				profiles.Selected = j;
-			}
+        j = 0;
 
-			j++;
-		}
+        foreach (string path in Directory.GetFiles($"{Constants.USER_FOLDER}/profiles"))
+        {
+            string name = path.Split("\\")[^1].TrimSuffix(".json");
 
-		foreach (ScrollContainer category in Holder.GetNode("Categories").GetChildren())
-		{
-			foreach (Panel option in category.GetNode("Container").GetChildren())
-			{
-				var property = new SettingsProfile().GetType().GetProperty(option.Name);
-				
-				if (option.FindChild("HSlider") != null)
-				{
-					HSlider slider = option.GetNode<HSlider>("HSlider");
-					LineEdit lineEdit = option.GetNode<LineEdit>("LineEdit");
-					
-					slider.Value = (double)property.GetValue(new());
-					lineEdit.Text = (Math.Floor(slider.Value * 1000) / 1000).ToString();
+            profiles.AddItem(name, j);
 
-					if (connections)
-					{
-						void set(string text)
-						{
-							try
-							{
-								if (text == "")
-								{
-									text = lineEdit.PlaceholderText;
-								}
+            if (currentProfile == name)
+            {
+                profiles.Selected = j;
+            }
 
-								slider.Value = text.ToFloat();
-								lineEdit.Text = slider.Value.ToString();
-								
-								ApplySetting(option.Name, slider.Value);
-							}
-							catch (Exception exception)
-							{
-								ToastNotification.Notify($"Incorrect format; {exception.Message}", 2);
-							}
+            j++;
+        }
 
-							lineEdit.ReleaseFocus();
-						}
+        foreach (ScrollContainer category in Holder.GetNode("Categories").GetChildren())
+        {
+            foreach (Panel option in category.GetNode("Container").GetChildren())
+            {
+                var property = new SettingsProfile().GetType().GetProperty(option.Name);
 
-						slider.ValueChanged += (double value) => {
-							lineEdit.Text = value.ToString();
+                if (option.FindChild("HSlider") != null)
+                {
+                    HSlider slider = option.GetNode<HSlider>("HSlider");
+                    LineEdit lineEdit = option.GetNode<LineEdit>("LineEdit");
 
-							ApplySetting(option.Name, value);
-						};
-						lineEdit.FocusEntered += () => {
-							FocusedLineEdit = lineEdit;
-						};
-						lineEdit.FocusExited += () => {
-							set(lineEdit.Text);
-							FocusedLineEdit = null;
-						};
-						lineEdit.TextSubmitted += (string text) => {
-							set(text);
-						};
-					}
-				}
-				else if (option.FindChild("CheckButton") != null)
-				{
-					CheckButton checkButton = option.GetNode<CheckButton>("CheckButton");
-					
-					checkButton.ButtonPressed = (bool)property.GetValue(new());
-					
-					if (connections)
-					{
-						checkButton.Toggled += (bool value) => {
-							ApplySetting(option.Name, value);
-						};
-					}
-				}
-				else if (option.FindChild("LineEdit") != null)
-				{
-					LineEdit lineEdit = option.GetNode<LineEdit>("LineEdit");
+                    slider.Value = (double)property.GetValue(new());
+                    lineEdit.Text = (Math.Floor(slider.Value * 1000) / 1000).ToString();
 
-					void set(string text)
-					{
-						if (text == "")
-						{
-							text = lineEdit.PlaceholderText;
-							lineEdit.Text = text;
-						}
+                    if (connections)
+                    {
+                        void set(string text)
+                        {
+                            try
+                            {
+                                if (text == "")
+                                {
+                                    text = lineEdit.PlaceholderText;
+                                }
 
-						switch (option.Name)
-						{
-							case "Colors":
-								string[] split = text.Replace(" ", "").Replace("\n", ",").Split(",");
-								string raw = "";
-								Color[] colors = new Color[split.Length];
+                                slider.Value = text.ToFloat();
+                                lineEdit.Text = slider.Value.ToString();
 
-								if (split.Length == 0)
-								{
-									split = lineEdit.PlaceholderText.Split(",");
-								}
+                                ApplySetting(option.Name, slider.Value);
+                            }
+                            catch (Exception exception)
+                            {
+                                ToastNotification.Notify($"Incorrect format; {exception.Message}", 2);
+                            }
 
-								for (int i = 0; i < split.Length; i++)
-								{
-									split[i] = split[i].TrimPrefix("#").Substr(0, 6).PadRight(6, Convert.ToChar("f"));
-									split[i] = new Regex("[^a-fA-F0-9$]").Replace(split[i], "f");
-									colors[i] = Color.FromHtml(split[i]);
+                            lineEdit.ReleaseFocus();
+                        }
 
-									raw += $"{split[i]},";
-								}
+                        slider.ValueChanged += (double value) =>
+                        {
+                            lineEdit.Text = value.ToString();
 
-								raw = raw.TrimSuffix(",");
-								lineEdit.Text = raw;
+                            ApplySetting(option.Name, value);
+                        };
+                        lineEdit.FocusEntered += () =>
+                        {
+                            FocusedLineEdit = lineEdit;
+                        };
+                        lineEdit.FocusExited += () =>
+                        {
+                            set(lineEdit.Text);
+                            FocusedLineEdit = null;
+                        };
+                        lineEdit.TextSubmitted += (string text) =>
+                        {
+                            set(text);
+                        };
+                    }
+                }
+                else if (option.FindChild("CheckButton") != null)
+                {
+                    CheckButton checkButton = option.GetNode<CheckButton>("CheckButton");
 
-								Phoenyx.Skin.Colors = colors;
-								Phoenyx.Skin.RawColors = raw;
+                    checkButton.ButtonPressed = (bool)property.GetValue(new());
 
-								break;
-						}
+                    if (connections)
+                    {
+                        checkButton.Toggled += (bool value) =>
+                        {
+                            ApplySetting(option.Name, value);
+                        };
+                    }
+                }
+                else if (option.FindChild("LineEdit") != null)
+                {
+                    LineEdit lineEdit = option.GetNode<LineEdit>("LineEdit");
 
-						lineEdit.ReleaseFocus();
-					}
+                    void set(string text)
+                    {
+                        if (text == "")
+                        {
+                            text = lineEdit.PlaceholderText;
+                            lineEdit.Text = text;
+                        }
 
-					if (connections)
-					{
-						lineEdit.FocusEntered += () => {
-							FocusedLineEdit = lineEdit;
-						};
-						lineEdit.FocusExited += () => {
-							set(lineEdit.Text);
-							FocusedLineEdit = null;
-						};
-						lineEdit.TextSubmitted += (string text) => {
-							set(text);
-						};
-					}
-				}
-			}
-		}
-	}
+                        switch (option.Name)
+                        {
+                            case "Colors":
+                                string[] split = text.Replace(" ", "").Replace("\n", ",").Split(",");
+                                string raw = "";
+                                Color[] colors = new Color[split.Length];
 
-	public static void ShowMouse()
-	{
-		Input.MouseMode = Input.MouseModeEnum.Visible;
-	}
+                                if (split.Length == 0)
+                                {
+                                    split = lineEdit.PlaceholderText.Split(",");
+                                }
 
-	public static void HideMouse()
-	{
-		if (SceneManager.Scene.Name == "SceneMenu")
-		{
-			Input.MouseMode = Input.MouseModeEnum.Hidden;
-		}
-	}
+                                for (int i = 0; i < split.Length; i++)
+                                {
+                                    split[i] = split[i].TrimPrefix("#").Substr(0, 6).PadRight(6, Convert.ToChar("f"));
+                                    split[i] = new Regex("[^a-fA-F0-9$]").Replace(split[i], "f");
+                                    colors[i] = Color.FromHtml(split[i]);
+
+                                    raw += $"{split[i]},";
+                                }
+
+                                raw = raw.TrimSuffix(",");
+                                lineEdit.Text = raw;
+
+                                Phoenyx.Skin.Colors = colors;
+                                Phoenyx.Skin.RawColors = raw;
+
+                                break;
+                        }
+
+                        lineEdit.ReleaseFocus();
+                    }
+
+                    if (connections)
+                    {
+                        lineEdit.FocusEntered += () =>
+                        {
+                            FocusedLineEdit = lineEdit;
+                        };
+                        lineEdit.FocusExited += () =>
+                        {
+                            set(lineEdit.Text);
+                            FocusedLineEdit = null;
+                        };
+                        lineEdit.TextSubmitted += (string text) =>
+                        {
+                            set(text);
+                        };
+                    }
+                }
+            }
+        }
+    }
+
+    public static void ShowMouse()
+    {
+        Input.MouseMode = Input.MouseModeEnum.Visible;
+    }
+
+    public static void HideMouse()
+    {
+        if (SceneManager.Scene.Name == "SceneMenu")
+        {
+            Input.MouseMode = Input.MouseModeEnum.Hidden;
+        }
+    }
 }

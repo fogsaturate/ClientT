@@ -5,7 +5,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Godot;
 
-public partial class Runner : Node3D
+public partial class LegacyRunner : Node3D
 {
 	private static Node3D Node3D;
 	private static readonly PackedScene PlayerScore = GD.Load<PackedScene>("res://prefabs/player_score.tscn");

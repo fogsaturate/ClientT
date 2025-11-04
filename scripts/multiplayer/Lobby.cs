@@ -8,7 +8,8 @@ public class Lobby
     public static Map Map;
     public static double Speed = 1;
     public static double StartFrom = 0;
-    public static Dictionary<string, bool> Mods = new(){
+    public static Dictionary<string, bool> Mods = new()
+    {
         ["NoFail"] = false,
         ["Ghost"] = false,
         ["Spin"] = false,

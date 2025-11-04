@@ -1,8 +1,15 @@
-public struct Note : IMapObject
+public struct Note : ITimelineObject
 {
-    public int ObjectID {get;} = 0;     // map object type id
+    public int Id => (int)ObjectType.Note;
+
+    public int ObjectID { get; } = 0;     // map object type id
+
     public int Index;                  // note index within the map
-    public int Millisecond {get;}
+
+    public int Millisecond { get; }
+
+
+
     public float X;
     public float Y;
     public bool Hit = false;
@@ -17,4 +24,9 @@ public struct Note : IMapObject
     }
 
     public readonly override string ToString() => $"({X}, {Y}) @{Millisecond}ms";
+
+    public int CompareTo(ITimelineObject other)
+    {
+        throw new System.NotImplementedException();
+    }
 }

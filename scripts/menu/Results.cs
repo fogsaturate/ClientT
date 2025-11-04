@@ -5,159 +5,160 @@ using System.IO;
 
 public partial class Results : Control
 {
-	private static TextureRect Cursor;
-	private static Panel Footer;
-	private static Panel Holder;
-	private static TextureRect Cover;
+    private static TextureRect Cursor;
+    private static Panel Footer;
+    private static Panel Holder;
+    private static TextureRect Cover;
 
-	public static double LastFrame = 0;
-	public static Vector2 MousePosition = Vector2.Zero;
+    public static double LastFrame = 0;
+    public static Vector2 MousePosition = Vector2.Zero;
 
-	public override void _Ready()
-	{
-		Cursor = GetNode<TextureRect>("Cursor");
-		Footer = GetNode<Panel>("Footer");
-		Holder = GetNode<Panel>("Holder");
-		Cover = GetNode<TextureRect>("Cover");
+    public override void _Ready()
+    {
+        Cursor = GetNode<TextureRect>("Cursor");
+        Footer = GetNode<Panel>("Footer");
+        Holder = GetNode<Panel>("Holder");
+        Cover = GetNode<TextureRect>("Cover");
 
-		Input.MouseMode = Input.MouseModeEnum.Hidden;
-		DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Mailbox);
+        Input.MouseMode = Input.MouseModeEnum.Hidden;
+        DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Mailbox);
 
-		Cursor.Texture = Phoenyx.Skin.CursorImage;
-		Cursor.Size = new Vector2(32 * (float)SettingsProfile.CursorScale, 32 * (float)SettingsProfile.CursorScale);
+        Cursor.Texture = Phoenyx.Skin.CursorImage;
+        Cursor.Size = new Vector2(32 * (float)SettingsProfile.CursorScale, 32 * (float)SettingsProfile.CursorScale);
 
-		Holder.GetNode<Label>("Title").Text = (Runner.CurrentAttempt.IsReplay ? "[REPLAY] " : "") + Runner.CurrentAttempt.Map.PrettyTitle;
-		Holder.GetNode<Label>("Difficulty").Text = Runner.CurrentAttempt.Map.DifficultyName;
-		Holder.GetNode<Label>("Mappers").Text = $"by {Runner.CurrentAttempt.Map.PrettyMappers}";
-		Holder.GetNode<Label>("Accuracy").Text = $"{Runner.CurrentAttempt.Accuracy.ToString().PadDecimals(2)}%";
-		Holder.GetNode<Label>("Score").Text = $"{Lib.String.PadMagnitude(Runner.CurrentAttempt.Score.ToString())}";
-		Holder.GetNode<Label>("Hits").Text = $"{Lib.String.PadMagnitude(Runner.CurrentAttempt.Hits.ToString())} / {Lib.String.PadMagnitude(Runner.CurrentAttempt.Sum.ToString())}";
-		Holder.GetNode<Label>("Status").Text = Runner.CurrentAttempt.IsReplay ? Runner.CurrentAttempt.Replays[0].Status : Runner.CurrentAttempt.Alive ? (Runner.CurrentAttempt.Qualifies ? "PASSED" : "DISQUALIFIED") : "FAILED";
-		Holder.GetNode<Label>("Speed").Text = $"{Runner.CurrentAttempt.Speed.ToString().PadDecimals(2)}x";
+        Holder.GetNode<Label>("Title").Text = (LegacyRunner.CurrentAttempt.IsReplay ? "[REPLAY] " : "") + LegacyRunner.CurrentAttempt.Map.PrettyTitle;
+        Holder.GetNode<Label>("Difficulty").Text = LegacyRunner.CurrentAttempt.Map.DifficultyName;
+        Holder.GetNode<Label>("Mappers").Text = $"by {LegacyRunner.CurrentAttempt.Map.PrettyMappers}";
+        Holder.GetNode<Label>("Accuracy").Text = $"{LegacyRunner.CurrentAttempt.Accuracy.ToString().PadDecimals(2)}%";
+        Holder.GetNode<Label>("Score").Text = $"{Lib.String.PadMagnitude(LegacyRunner.CurrentAttempt.Score.ToString())}";
+        Holder.GetNode<Label>("Hits").Text = $"{Lib.String.PadMagnitude(LegacyRunner.CurrentAttempt.Hits.ToString())} / {Lib.String.PadMagnitude(LegacyRunner.CurrentAttempt.Sum.ToString())}";
+        Holder.GetNode<Label>("Status").Text = LegacyRunner.CurrentAttempt.IsReplay ? LegacyRunner.CurrentAttempt.Replays[0].Status : LegacyRunner.CurrentAttempt.Alive ? (LegacyRunner.CurrentAttempt.Qualifies ? "PASSED" : "DISQUALIFIED") : "FAILED";
+        Holder.GetNode<Label>("Speed").Text = $"{LegacyRunner.CurrentAttempt.Speed.ToString().PadDecimals(2)}x";
 
-		HBoxContainer modifiersContainer = Holder.GetNode("Modifiers").GetNode<HBoxContainer>("HBoxContainer");
-		TextureRect modTemplate = modifiersContainer.GetNode<TextureRect>("ModifierTemplate");
+        HBoxContainer modifiersContainer = Holder.GetNode("Modifiers").GetNode<HBoxContainer>("HBoxContainer");
+        TextureRect modTemplate = modifiersContainer.GetNode<TextureRect>("ModifierTemplate");
 
-		foreach (KeyValuePair<string, bool> mod in Runner.CurrentAttempt.Mods)
-		{
-			if (mod.Value)
-			{
-				TextureRect icon = modTemplate.Duplicate() as TextureRect;
+        foreach (KeyValuePair<string, bool> mod in LegacyRunner.CurrentAttempt.Mods)
+        {
+            if (mod.Value)
+            {
+                TextureRect icon = modTemplate.Duplicate() as TextureRect;
 
-				icon.Visible = true;
-				icon.Texture = Phoenyx.Util.GetModIcon(mod.Key);
+                icon.Visible = true;
+                icon.Texture = Phoenyx.Util.GetModIcon(mod.Key);
 
-				modifiersContainer.AddChild(icon);
-			}
-		}
+                modifiersContainer.AddChild(icon);
+            }
+        }
 
-		if (Runner.CurrentAttempt.Map.CoverBuffer != null)
-		{
-			Godot.FileAccess file = Godot.FileAccess.Open($"{Constants.USER_FOLDER}/cache/cover.png", Godot.FileAccess.ModeFlags.Write);
-			file.StoreBuffer(Runner.CurrentAttempt.Map.CoverBuffer);
-			file.Close();
+        if (LegacyRunner.CurrentAttempt.Map.CoverBuffer != null)
+        {
+            Godot.FileAccess file = Godot.FileAccess.Open($"{Constants.USER_FOLDER}/cache/cover.png", Godot.FileAccess.ModeFlags.Write);
+            file.StoreBuffer(LegacyRunner.CurrentAttempt.Map.CoverBuffer);
+            file.Close();
 
-			Cover.Texture = ImageTexture.CreateFromImage(Image.LoadFromFile($"{Constants.USER_FOLDER}/cache/cover.png"));
-			GetNode<TextureRect>("CoverBackground").Texture = Cover.Texture;
-		}
+            Cover.Texture = ImageTexture.CreateFromImage(Image.LoadFromFile($"{Constants.USER_FOLDER}/cache/cover.png"));
+            GetNode<TextureRect>("CoverBackground").Texture = Cover.Texture;
+        }
 
-		if (Runner.CurrentAttempt.Map.AudioBuffer != null)
-		{
-			if (!SoundManager.Song.Playing)
-			{
-				SoundManager.Song.Play();
-			}
-		}
+        if (LegacyRunner.CurrentAttempt.Map.AudioBuffer != null)
+        {
+            if (!SoundManager.Song.Playing)
+            {
+                SoundManager.Song.Play();
+            }
+        }
 
-		SoundManager.Song.PitchScale = (float)Runner.CurrentAttempt.Speed;
-		
-		if (!Runner.CurrentAttempt.Map.Ephemeral)
-		{
-			SoundManager.JukeboxIndex = SoundManager.JukeboxQueueInverse[Runner.CurrentAttempt.Map.ID];
-		}
+        SoundManager.Song.PitchScale = (float)LegacyRunner.CurrentAttempt.Speed;
 
-		Button replayButton = Footer.GetNode<Button>("Replay");
+        if (!LegacyRunner.CurrentAttempt.Map.Ephemeral)
+        {
+            SoundManager.JukeboxIndex = SoundManager.JukeboxQueueInverse[LegacyRunner.CurrentAttempt.Map.ID];
+        }
 
-		Footer.GetNode<Button>("Back").Pressed += Stop;
-		Footer.GetNode<Button>("Play").Pressed += Replay;
-		replayButton.Visible = !Runner.CurrentAttempt.Map.Ephemeral;
-		replayButton.Pressed += () => {
-			string path;
+        Button replayButton = Footer.GetNode<Button>("Replay");
 
-			if (Runner.CurrentAttempt.IsReplay)
-			{
-				path = $"{Constants.USER_FOLDER}/replays/{Runner.CurrentAttempt.Replays[0].ID}.phxr";
-			}
-			else
-			{
-				path = Runner.CurrentAttempt.ReplayFile.GetPath();
-			}
-			
-			if (File.Exists(path))
-			{
-				Replay replay = new(path);
-				SoundManager.Song.Stop();
-				SceneManager.Load("res://scenes/game.tscn");
-				Runner.Play(MapParser.Decode(replay.MapFilePath), replay.Speed, replay.StartFrom, replay.Modifiers, null, [replay]);
-			}
-		};
-	}
+        Footer.GetNode<Button>("Back").Pressed += Stop;
+        Footer.GetNode<Button>("Play").Pressed += Replay;
+        replayButton.Visible = !LegacyRunner.CurrentAttempt.Map.Ephemeral;
+        replayButton.Pressed += () =>
+        {
+            string path;
 
-	public override void _Process(double delta)
-	{
-		ulong now = Time.GetTicksUsec();
-		delta = (now - LastFrame) / 1000000;
-		LastFrame = now;
+            if (LegacyRunner.CurrentAttempt.IsReplay)
+            {
+                path = $"{Constants.USER_FOLDER}/replays/{LegacyRunner.CurrentAttempt.Replays[0].ID}.phxr";
+            }
+            else
+            {
+                path = LegacyRunner.CurrentAttempt.ReplayFile.GetPath();
+            }
 
-		Cursor.Position = MousePosition - new Vector2(Cursor.Size.X / 2, Cursor.Size.Y / 2);
-		Holder.Position = Holder.Position.Lerp((Size / 2 - MousePosition) * (8 / Size.Y), Math.Min(1, (float)delta * 16));
-	}
+            if (File.Exists(path))
+            {
+                Replay replay = new(path);
+                SoundManager.Song.Stop();
+                SceneManager.Load("res://scenes/game.tscn");
+                LegacyRunner.Play(MapParser.Decode(replay.MapFilePath), replay.Speed, replay.StartFrom, replay.Modifiers, null, [replay]);
+            }
+        };
+    }
 
-	public override void _Input(InputEvent @event)
-	{
-		if (@event is InputEventKey eventKey && eventKey.Pressed)
-		{
-			switch (eventKey.PhysicalKeycode)
-			{
-				case Key.Escape:
-					Stop();
-					break;
-				case Key.Quoteleft:
-					Replay();
-					break;
-			}
-		}
-		else if (@event is InputEventMouseMotion eventMouseMotion)
-		{
-			MousePosition = eventMouseMotion.Position;
-		}
-		else if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
-		{
-			switch (eventMouseButton.ButtonIndex)
-			{
-				case MouseButton.Xbutton1:
-					Stop();
-					break;
-			}
-		}
-	}
+    public override void _Process(double delta)
+    {
+        ulong now = Time.GetTicksUsec();
+        delta = (now - LastFrame) / 1000000;
+        LastFrame = now;
 
-	public static void UpdateVolume()
-	{
-		SoundManager.Song.VolumeDb = -80 + 70 * (float)Math.Pow(SettingsProfile.VolumeMusic / 100, 0.1) * (float)Math.Pow(SettingsProfile.VolumeMaster / 100, 0.1);
-	}
+        Cursor.Position = MousePosition - new Vector2(Cursor.Size.X / 2, Cursor.Size.Y / 2);
+        Holder.Position = Holder.Position.Lerp((Size / 2 - MousePosition) * (8 / Size.Y), Math.Min(1, (float)delta * 16));
+    }
 
-	public static void Replay()
-	{
-		Map map = MapParser.Decode(Runner.CurrentAttempt.Map.FilePath);
-		map.Ephemeral = Runner.CurrentAttempt.Map.Ephemeral;
-		SoundManager.Song.Stop();
-		SceneManager.Load("res://scenes/game.tscn");
-		Runner.Play(map, Runner.CurrentAttempt.Speed, Runner.CurrentAttempt.StartFrom, Runner.CurrentAttempt.Mods);
-	}
+    public override void _Input(InputEvent @event)
+    {
+        if (@event is InputEventKey eventKey && eventKey.Pressed)
+        {
+            switch (eventKey.PhysicalKeycode)
+            {
+                case Key.Escape:
+                    Stop();
+                    break;
+                case Key.Quoteleft:
+                    Replay();
+                    break;
+            }
+        }
+        else if (@event is InputEventMouseMotion eventMouseMotion)
+        {
+            MousePosition = eventMouseMotion.Position;
+        }
+        else if (@event is InputEventMouseButton eventMouseButton && eventMouseButton.Pressed)
+        {
+            switch (eventMouseButton.ButtonIndex)
+            {
+                case MouseButton.Xbutton1:
+                    Stop();
+                    break;
+            }
+        }
+    }
 
-	public static void Stop()
-	{
-		SceneManager.Load("res://scenes/main_menu.tscn");
-	}
+    public static void UpdateVolume()
+    {
+        SoundManager.Song.VolumeDb = -80 + 70 * (float)Math.Pow(SettingsProfile.VolumeMusic / 100, 0.1) * (float)Math.Pow(SettingsProfile.VolumeMaster / 100, 0.1);
+    }
+
+    public static void Replay()
+    {
+        Map map = MapParser.Decode(LegacyRunner.CurrentAttempt.Map.FilePath);
+        map.Ephemeral = LegacyRunner.CurrentAttempt.Map.Ephemeral;
+        SoundManager.Song.Stop();
+        SceneManager.Load("res://scenes/game.tscn");
+        LegacyRunner.Play(map, LegacyRunner.CurrentAttempt.Speed, LegacyRunner.CurrentAttempt.StartFrom, LegacyRunner.CurrentAttempt.Mods);
+    }
+
+    public static void Stop()
+    {
+        SceneManager.Load("res://scenes/main_menu.tscn");
+    }
 }

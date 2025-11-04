@@ -34,7 +34,7 @@ public struct Replay
 
     public bool Complete;
     public ulong LastNote;
-	public ulong LastFrame;
+    public ulong LastFrame;
     public Vector2 CurrentPosition;
     public Frame[] Frames;
     public int FrameIndex;
@@ -59,26 +59,26 @@ public struct Replay
         LastFrame = 0;
 
         byte[] bytes = FileBuffer.Get((int)FileBuffer.Length - 32);
-        
+
         if (SHA256.HashData(bytes).Stringify() != FileBuffer.Get(32).Stringify())
         {
             Valid = false;
             ToastNotification.Notify("Replay file corrupted", 2);
-			Logger.Error($"Replay file corrupted; invalid hash");
-			return;
+            Logger.Error($"Replay file corrupted; invalid hash");
+            return;
         }
 
         FileBuffer.Seek(0);
 
         string sig = FileBuffer.GetString(4);
 
-		if (sig != "phxr")
-		{
+        if (sig != "phxr")
+        {
             Valid = false;
-			ToastNotification.Notify("Replay file corrupted", 2);
-			Logger.Error($"Replay file corrupted; invalid file sig {sig}");
-			return;
-		}
+            ToastNotification.Notify("Replay file corrupted", 2);
+            Logger.Error($"Replay file corrupted; invalid file sig {sig}");
+            return;
+        }
 
         if (FileBuffer.GetUInt8() == 1)
         {
@@ -101,14 +101,15 @@ public struct Replay
 
             List<string> rawMods = [.. FileBuffer.GetString((int)FileBuffer.GetUInt32()).Split("_")];
 
-            Modifiers = new(){
-				["NoFail"] = rawMods.Contains("NoFail"),
-				["Ghost"] = rawMods.Contains("Ghost"),
-				["Spin"] = rawMods.Contains("Spin"),
-				["Flashlight"] = rawMods.Contains("Flashlight"),
-				["Chaos"] = rawMods.Contains("Chaos"),
-				["HardRock"] = rawMods.Contains("HardRock")
-			};
+            Modifiers = new()
+            {
+                ["NoFail"] = rawMods.Contains("NoFail"),
+                ["Ghost"] = rawMods.Contains("Ghost"),
+                ["Spin"] = rawMods.Contains("Spin"),
+                ["Flashlight"] = rawMods.Contains("Flashlight"),
+                ["Chaos"] = rawMods.Contains("Chaos"),
+                ["HardRock"] = rawMods.Contains("HardRock")
+            };
 
             MapID = FileBuffer.GetString((int)FileBuffer.GetUInt32());
             MapNoteCount = FileBuffer.GetUInt64();
@@ -121,13 +122,13 @@ public struct Replay
                 Logger.Log($"Replay map not found; map ID {MapID}");
                 return;
             }
-            
+
             Player = FileBuffer.GetString((int)FileBuffer.GetUInt32());
             Frames = new Frame[FileBuffer.GetUInt64()];
             CurrentPosition = new();
             FrameIndex = 0;
             SkipIndex = 0;
-            
+
             if (Frames.Length <= 1)
             {
                 Valid = false;
@@ -186,7 +187,7 @@ public struct Replay
         {
             hashCode += BitConverter.ToInt32(hash, i);  // this is so ass
         }
-        
+
         return hashCode;
     }
 

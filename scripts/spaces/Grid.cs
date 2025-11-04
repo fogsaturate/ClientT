@@ -19,9 +19,9 @@ public partial class Grid : Node3D
     public override void _Process(double delta)
     {
         ulong now = Time.GetTicksUsec();
-		delta = (now - LastFrame) / 1000000;
-		LastFrame = now;
-        Colour = Colour.Lerp(Runner.CurrentAttempt.LastHitColour, (float)delta * 8);
+        delta = (now - LastFrame) / 1000000;
+        LastFrame = now;
+        Colour = Colour.Lerp(LegacyRunner.CurrentAttempt.LastHitColour, (float)delta * 8);
 
         TileMaterial.AlbedoColor = Colour;
         TileMaterial.Uv1Offset += Vector3.Up * (float)delta * 3;
