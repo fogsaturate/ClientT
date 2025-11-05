@@ -304,7 +304,7 @@ public partial class SettingsManager : Control
 
         foreach (string path in Directory.GetDirectories($"{Constants.USER_FOLDER}/skins"))
         {
-            string name = path.Split("\\")[^1];
+            string name = Path.GetFileName(path);
 
             skins.AddItem(name, j);
 
