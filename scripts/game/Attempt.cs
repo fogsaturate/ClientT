@@ -8,6 +8,8 @@ public class Attempt
 
     public bool Paused { get; set; }
 
+    public CameraMode CameraMode { get; set; } = new CameraSpin();
+
     public Map Map { get; set; }
 
     public double Progress { get; set; } 
@@ -22,11 +24,13 @@ public class Attempt
 
     public int Speed { get; set; }
 
-    public HashSet<string> Mods { get; set; } = new();
+    public List<Mod> Mods { get; set; }
 
     public Dictionary<Type, IList<object>> Objects { get; set; } = new();
 
     public SettingsProfile Settings { get; set; } = new();
 
     public double DistanceMM { get; set; }
+
+    public Replay? Replay { get; set; }
 }

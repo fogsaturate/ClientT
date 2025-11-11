@@ -65,28 +65,33 @@ public partial class NoteRenderer : Renderer
                 continue;
             }
 
-            float depth = (note.Millisecond - (float)attempt.Progress) / (1000 * at) / ad / attempt.Speed;
-            float alpha = Math.Clamp((1 - depth / ad) / (fadeIn / 2), 0, 1);
+            // TODO: Change this to user note color
+            var color = white;
 
-            if (attempt.Mods.Contains("Ghost"))
-            {
-                alpha -= Math.Min(1, (ad - depth) / (ad / 2));
-            }
-            else if (attempt.Settings.FadeOut)
-            {
-                alpha -= (ad - depth) / (ad + (float)Constants.HIT_WINDOW * ar / 1000);
-            }
+            float depth = (note.Millisecond - (float)attempt.Progress) / (1000 * at) / ad / attempt.Speed;
+            color.A = Math.Clamp((1 - depth / ad) / (fadeIn / 2), 0, 1);
 
             if (!pushback && note.Millisecond - attempt.Progress <= 0)
             {
-                alpha = 0;
+                color.A = 0;
+            }
+            else
+            {
+                if (attempt.Settings.FadeOut)
+                {
+                    color.A -= (ad - depth) / (ad + (float)Constants.HIT_WINDOW * ar / 1000);
+                }
+
+                foreach (Mod mod in attempt.Mods)
+                {
+                    if (mod is IHitObjectModifier<Note> modifier)
+                    {
+                        modifier.ModifyHitObject(note, color, depth, attempt);
+                    }
+                }
             }
 
-            // TODO: Change this to user note colors
-            var color = white;
-
             transform.Origin = new Vector3(note.X, note.Y, -depth);
-            color.A = alpha;
 
             noteMesh.Multimesh.SetInstanceTransform(i, transform);
             noteMesh.Multimesh.SetInstanceColor(i, color);

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 
-public struct Note : ITimelineObject, ITweenableObject<NoteTween>, IComparable<Note>
+public struct Note : IHitObject, ITweenableObject<NoteTween>, IComparable<Note>
 {
     public int Id => (int)ObjectType.Note;
 
