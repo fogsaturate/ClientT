@@ -22,7 +22,7 @@ public partial class LegacyRunner : Node3D
 	private static Label3D speedLabel;
 	private static Label3D skipLabel;
 	private static Label3D progressLabel;
-	private static TextureRect jesus;
+	//private static TextureRect jesus;
 	private static MeshInstance3D cursor;
 	private static MeshInstance3D grid;
 	private static MeshInstance3D videoQuad;
@@ -32,7 +32,7 @@ public partial class LegacyRunner : Node3D
 	private static TextureRect progressBarTexture;
 	private static SubViewport panelLeft;
 	private static SubViewport panelRight;
-	private static AudioStreamPlayer bell;
+	//private static AudioStreamPlayer bell;
 	private static Panel replayViewer;
 	private static TextureButton replayViewerPause;
 	private static Label replayViewerLabel;
@@ -73,7 +73,7 @@ public partial class LegacyRunner : Node3D
 	public static List<Note> ProcessNotes = [];
 	public static Attempt CurrentAttempt = new();
 	public static double MapLength;
-	public static Tween JesusTween;
+	//public static Tween JesusTween;
 	public static MeshInstance3D[] Cursors;
 
 	public struct Attempt
@@ -235,7 +235,7 @@ public partial class LegacyRunner : Node3D
 
 			LastHitColour = SkinProfile.Colors[index % SkinProfile.Colors.Length];
 
-			float lateness = IsReplay ? HitsInfo[index] : (float)(((int)Progress - Map.Notes[index].Millisecond) / Speed);
+            float lateness = IsReplay ? HitsInfo[index] : (float)(((int)Progress - Map.Notes[index].Millisecond) / Speed);
 			float factor = 1 - Math.Max(0, lateness - 25) / 150f;
 			
 			if (!IsReplay)
@@ -465,7 +465,7 @@ public partial class LegacyRunner : Node3D
 		speedLabel = GetNode<Label3D>("Speed");
 		skipLabel = GetNode<Label3D>("Skip");
 		progressLabel = GetNode<Label3D>("Progress");
-		jesus = GetNode<TextureRect>("Jesus");
+		//jesus = GetNode<TextureRect>("Jesus");
 		cursor = GetNode<MeshInstance3D>("Cursor");
 		grid = GetNode<MeshInstance3D>("Grid");
 		videoQuad = GetNode<MeshInstance3D>("Video");
@@ -475,7 +475,7 @@ public partial class LegacyRunner : Node3D
 		progressBarTexture = GetNode("ProgressBarViewport").GetNode<TextureRect>("Main");
 		panelLeft = GetNode<SubViewport>("PanelLeftViewport");
 		panelRight = GetNode<SubViewport>("PanelRightViewport");
-		bell = GetNode<AudioStreamPlayer>("Bell");
+		//bell = GetNode<AudioStreamPlayer>("Bell");
 		replayViewer = GetNode<Panel>("ReplayViewer");
 		replayViewerPause = replayViewer.GetNode<TextureButton>("Pause");
 		replayViewerLabel = replayViewer.GetNode<Label>("Time");
@@ -672,12 +672,12 @@ public partial class LegacyRunner : Node3D
 			throw Logger.Error($"Could not load skin; {exception.Message}");
 		}
 
-		string space = settings.Space == "skin" ? SkinProfile.GameSpace : settings.Space;
-
-		if (space != "void")
-		{
-			node3D.AddChild(GD.Load<PackedScene>($"res://prefabs/spaces/{space}.tscn").Instantiate<Node3D>());
-		}
+		//string space = settings.Space == "skin" ? SkinProfile.GameSpace : settings.Space;
+		//
+		//if (space != "void")
+		//{
+		//	node3D.AddChild(GD.Load<PackedScene>($"res://prefabs/spaces/{space}.tscn").Instantiate<Node3D>());
+		//}
 
 		SoundManager.UpdateSounds();
 

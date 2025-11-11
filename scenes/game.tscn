@@ -1,4 +1,4 @@
-[gd_scene load_steps=68 format=3 uid="uid://vp1nmsiqt5yv"]
+[gd_scene load_steps=66 format=3 uid="uid://vp1nmsiqt5yv"]
 
 [ext_resource type="Script" uid="uid://8s0npsnw42ce" path="res://scripts/game/LegacyRunner.cs" id="1_1hgss"]
 [ext_resource type="ArrayMesh" uid="uid://rniojt7yiv8q" path="res://meshes/squircle.obj" id="2_chdyw"]
@@ -20,8 +20,6 @@
 [ext_resource type="Shader" uid="uid://bp2sv5ynsubi2" path="res://scripts/shaders/alpha_gradient.gdshader" id="14_3xchs"]
 [ext_resource type="Texture2D" uid="uid://c3x2cp3tx4vqt" path="res://skin/misses.png" id="14_bqf11"]
 [ext_resource type="Shader" uid="uid://bx4888tau78tk" path="res://scripts/shaders/combo_progress.gdshader" id="14_y51pe"]
-[ext_resource type="AudioStream" uid="uid://deh3syobn5363" path="res://sounds/bell.mp3" id="20_2qbs1"]
-[ext_resource type="Texture2D" uid="uid://b1ihebmvna0bq" path="res://textures/jesus.png" id="21_6sy1o"]
 [ext_resource type="Texture2D" uid="uid://lfj8i1bi6kfs" path="res://textures/pause.png" id="23_7silw"]
 [ext_resource type="FontFile" uid="uid://dotb3skhwouha" path="res://fonts/Roboto-Bold.ttf" id="23_wf21h"]
 [ext_resource type="FontFile" uid="uid://rs2mb33nd3b1" path="res://fonts/Roboto-Italic.ttf" id="24_j6p10"]
@@ -551,20 +549,6 @@ offset_bottom = 80.0
 texture = ExtResource("9_nde5v")
 expand_mode = 1
 stretch_mode = 1
-
-[node name="Bell" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("20_2qbs1")
-max_polyphony = 4
-
-[node name="Jesus" type="TextureRect" parent="."]
-modulate = Color(1, 1, 1, 0)
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("21_6sy1o")
 
 [node name="ReplayViewer" type="Panel" parent="."]
 visible = false
