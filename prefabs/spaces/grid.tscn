@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://dtkff13bgd1u4"]
 
-[ext_resource type="Script" uid="uid://d2u74uvsmmkt" path="res://scripts/spaces/grid/Grid.cs" id="1_3f34m"]
+[ext_resource type="Script" uid="uid://cbopgunbjoch1" path="res://scripts/spaces/grid/Grid.gd" id="1_wac2s"]
 [ext_resource type="Texture2D" uid="uid://cnqebcj2iorfr" path="res://textures/grid_tile.png" id="2_mnxl2"]
 
 [sub_resource type="Environment" id="Environment_ge866"]
@@ -36,8 +36,8 @@ material = SubResource("StandardMaterial3D_31ska")
 flip_faces = true
 size = Vector3(120, 21, 120)
 
-[node name="Space" type="Node3D"]
-script = ExtResource("1_3f34m")
+[node name="Grid" type="Node3D"]
+script = ExtResource("1_wac2s")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ge866")
