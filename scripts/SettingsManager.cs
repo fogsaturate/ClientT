@@ -500,7 +500,7 @@ public partial class SettingsManager : Control
         }
 
         File.WriteAllText($"{Constants.USER_FOLDER}/profiles/{profile}.json", Json.Stringify(data, "\t"));
-        SkinProfile.Save();
+        //SkinProfile.Save();
         Logger.Log($"Saved settings {profile}");
     }
 
@@ -552,7 +552,7 @@ public partial class SettingsManager : Control
             ToastNotification.Notify($"Could not find skin {Settings.Skin}", 1);
         }
 
-        SkinProfile.Load();
+        //SkinProfile.Load();
 
         if (err != null)
         {

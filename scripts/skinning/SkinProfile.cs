@@ -3,8 +3,9 @@ using System.Text.RegularExpressions;
 using Godot;
 using System.Reflection;
 
-public class SkinProfile
+public partial class SkinProfile : Node
 {
+	private static Node node;
 	public static Color[] Colors { get; set; } = [Color.FromHtml("#00ffed"), Color.FromHtml("#ff8ff9")];
 	public static string RawColors { get; set; } = "00ffed,ff8ff9";
 	public static ImageTexture CursorImage { get; set; } = new();
@@ -31,10 +32,23 @@ public class SkinProfile
 	public static byte[] HitSoundBuffer { get; set; } = [];
 	public static byte[] FailSoundBuffer { get; set; } = [];
 	public static ArrayMesh NoteMesh { get; set; } = new();
-    public static string MenuSpaceName = "waves";
-    public static string GameSpaceName = "grid";
-    public static Node3D MenuSpace { get; set; }
+	public static string MenuSpaceName = "waves";
+	public static string GameSpaceName = "grid";
+	public static Node3D MenuSpace { get; set; }
 	public static Node3D GameSpace { get; set; }
+
+	[Signal]
+	public delegate void OnSavedEventHandler();
+
+	[Signal]
+	public delegate void OnLoadedEventHandler();
+
+	public override void _Ready()
+	{
+		node = this;
+
+		Load();
+	}
 
 	public static void Save()
 	{
@@ -43,13 +57,15 @@ public class SkinProfile
 		File.WriteAllText($"{Constants.USER_FOLDER}/skins/{settings.Skin}/colors.txt", RawColors);
 		File.WriteAllText($"{Constants.USER_FOLDER}/skins/{settings.Skin}/space.txt", GameSpaceName);
 		Logger.Log($"Saved skin {settings.Skin}");
+
+		node.EmitSignal(SignalName.OnSaved);
 	}
 
 	public static void Load()
 	{
 		var settings = SettingsManager.Settings;
 
-		RawColors = File.ReadAllText($"{Constants.USER_FOLDER}/skins/{settings.Skin}/colors.txt").TrimSuffix(",");
+        RawColors = File.ReadAllText($"{Constants.USER_FOLDER}/skins/{settings.Skin}/colors.txt").TrimSuffix(",");
 
 		string[] split = RawColors.Split(",");
 		Color[] colors = new Color[split.Length];
@@ -74,14 +90,14 @@ public class SkinProfile
 		}
 
 		GameSpaceName = File.ReadAllText($"{Constants.USER_FOLDER}/skins/{settings.Skin}/space.txt");
-        bool exists = Godot.FileAccess.FileExists($"res://prefabs/spaces/{GameSpaceName}.tscn");
-        GameSpace = GD.Load<PackedScene>($"res://prefabs/spaces/{(exists ? GameSpaceName : "void")}.tscn").Instantiate<Node3D>();
+		bool exists = Godot.FileAccess.FileExists($"res://prefabs/spaces/{GameSpaceName}.tscn");
+		GameSpace = GD.Load<PackedScene>($"res://prefabs/spaces/{(exists ? GameSpaceName : "void")}.tscn").Instantiate<Node3D>();
 
-        MenuSpaceName = "waves";
+		MenuSpaceName = "waves";
 		exists = Godot.FileAccess.FileExists($"res://prefabs/spaces/{MenuSpaceName}.tscn");
 		MenuSpace = GD.Load<PackedScene>($"res://prefabs/spaces/{(exists ? MenuSpaceName : "void")}.tscn").Instantiate<Node3D>();
 
-        if (File.Exists($"{Constants.USER_FOLDER}/skins/{settings.Skin}/note.obj"))
+		if (File.Exists($"{Constants.USER_FOLDER}/skins/{settings.Skin}/note.obj"))
 		{
 			NoteMesh = (ArrayMesh)Util.OBJParser.Call("load_obj", $"{Constants.USER_FOLDER}/skins/{settings.Skin}/note.obj");
 		}
@@ -106,5 +122,7 @@ public class SkinProfile
 
 		ToastNotification.Notify($"Loaded skin [{settings.Skin}]");
 		Logger.Log($"Loaded skin {settings.Skin}");
+		
+        node.EmitSignal(SignalName.OnLoaded);
 	}
 }

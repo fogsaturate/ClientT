@@ -15,7 +15,7 @@ public partial class LegacyRunner : Node3D
 	private static readonly PackedScene modifier_icon = GD.Load<PackedScene>("res://prefabs/modifier.tscn");
 
 	private static Panel menu;
-	private static Label fpsCounter;
+	//private static Label fpsCounter;
 	private static Camera3D camera;
 	private static Label3D titleLabel;
 	private static Label3D comboLabel;
@@ -58,9 +58,9 @@ public partial class LegacyRunner : Node3D
 	private static bool leftMouseButtonDown = false;
 
 	private double lastFrame = Time.GetTicksUsec(); 	// delta arg unreliable..
-	private double lastSecond = Time.GetTicksUsec();	// better framerate calculation
+	//private double lastSecond = Time.GetTicksUsec();	// better framerate calculation
 	private List<Dictionary<string, object>> lastCursorPositions = [];	// trail
-	private int frameCount = 0;
+	//private int frameCount = 0;
 	private float skipLabelAlpha = 0;
 	private float targetSkipLabelAlpha = 0;
 
@@ -458,7 +458,7 @@ public partial class LegacyRunner : Node3D
 		node3D = this;
 
 		menu = GetNode<Panel>("Menu");
-		fpsCounter = GetNode<Label>("FPSCounter");
+		//fpsCounter = GetNode<Label>("FPSCounter");
 		camera = GetNode<Camera3D>("Camera3D");
 		titleLabel = GetNode<Label3D>("Title");
 		comboLabel = GetNode<Label3D>("Combo");
@@ -753,15 +753,15 @@ public partial class LegacyRunner : Node3D
 		ulong now = Time.GetTicksUsec();
 		delta = (now - lastFrame) / 1000000;	// more reliable
 		lastFrame = now;
-		frameCount++;
+		//frameCount++;
 		skipLabelAlpha = Mathf.Lerp(skipLabelAlpha, targetSkipLabelAlpha, Math.Min(1, (float)delta * 20));
 
-		if (lastSecond + 1000000 <= now)
-		{
-			fpsCounter.Text = $"{frameCount} FPS";
-			frameCount = 0;
-			lastSecond += 1000000;
-		}
+		//if (lastSecond + 1000000 <= now)
+		//{
+		//	fpsCounter.Text = $"{frameCount} FPS";
+		//	frameCount = 0;
+		//	lastSecond += 1000000;
+		//}
 
 		if (!Playing)
 		{
