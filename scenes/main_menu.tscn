@@ -1,4 +1,4 @@
-[gd_scene load_steps=59 format=3 uid="uid://do18270a428ma"]
+[gd_scene load_steps=63 format=3 uid="uid://do18270a428ma"]
 
 [ext_resource type="Shader" uid="uid://c7ldko1kfg2ho" path="res://scripts/shaders/noise_waves.gdshader" id="1_3wgol"]
 [ext_resource type="Script" uid="uid://ci5tsr20d66sa" path="res://scripts/ui/menu/MainMenu.gd" id="1_vr8o3"]
@@ -8,17 +8,21 @@
 [ext_resource type="FontFile" uid="uid://bopde8iqsld1o" path="res://fonts/Ubuntu-Regular.ttf" id="7_6h3lr"]
 [ext_resource type="Script" uid="uid://djnx65btssw1f" path="res://scripts/ui/menu/SettingsButton.gd" id="7_qywvv"]
 [ext_resource type="StyleBox" uid="uid://bfimbyi3x5h0n" path="res://theme/line_edit_stylebox_normal.tres" id="8_dj67d"]
+[ext_resource type="Script" uid="uid://cin7x4exuo7ce" path="res://scripts/ui/menu/ImportButton.gd" id="9_1a85y"]
 [ext_resource type="Script" uid="uid://b5ectac2a6rv5" path="res://scripts/ui/menu/QuitButton.gd" id="10_engjn"]
+[ext_resource type="Script" uid="uid://y2nprjegqk20" path="res://scripts/ui/menu/UserFolderButton.gd" id="10_hl5e0"]
 [ext_resource type="Texture2D" uid="uid://co5ul5mlsanna" path="res://skin/mod_nofail.png" id="12_tcusk"]
 [ext_resource type="Texture2D" uid="uid://d1c7yqqmohmv1" path="res://skin/mod_ghost.png" id="13_4puye"]
 [ext_resource type="Texture2D" uid="uid://bevth7guc4yc4" path="res://skin/mod_spin.png" id="14_q13xq"]
 [ext_resource type="Texture2D" uid="uid://3bg5xrocd55i" path="res://skin/mod_flashlight.png" id="15_u43bj"]
 [ext_resource type="Texture2D" uid="uid://ba8nnsyx5yiw8" path="res://skin/mod_chaos.png" id="16_jvjdd"]
 [ext_resource type="Texture2D" uid="uid://bugx1qn5t88e3" path="res://skin/mod_hardrock.png" id="17_yxnar"]
+[ext_resource type="Script" uid="uid://clbnlvtlq4ng" path="res://scripts/ui/menu/SoundSpaceButton.gd" id="18_3wgol"]
 [ext_resource type="Texture2D" uid="uid://baivqqkfll133" path="res://textures/RhythiaSquircle.png" id="18_eku7s"]
 [ext_resource type="FontFile" uid="uid://4bnnn01f4dqr" path="res://fonts/Ubuntu-Medium.ttf" id="19_c6nra"]
 [ext_resource type="Texture2D" uid="uid://ct67kupv6bmny" path="res://textures/discord.png" id="20_qw82i"]
 [ext_resource type="Texture2D" uid="uid://c0wbm1qc5npty" path="res://textures/discord_pressed.png" id="21_1468l"]
+[ext_resource type="Script" uid="uid://cwp2kmm6r074h" path="res://scripts/ui/menu/DiscordButton.gd" id="22_1acrt"]
 [ext_resource type="Texture2D" uid="uid://d3buklvnhgqcy" path="res://textures/discord_hovered.png" id="22_01xyg"]
 [ext_resource type="Texture2D" uid="uid://8du82a5dxjdk" path="res://skin/jukebox_play.png" id="23_764ux"]
 [ext_resource type="Texture2D" uid="uid://bpsvcunhigs6c" path="res://skin/jukebox_skip.png" id="24_wadof"]
@@ -170,6 +174,7 @@ theme = SubResource("Theme_nlclj")
 ok_button_text = "Open"
 file_mode = 1
 access = 2
+filters = PackedStringArray("*.sspm", "*.phxm")
 use_native_dialog = true
 
 [node name="VideoDialog" type="FileDialog" parent="."]
@@ -500,6 +505,7 @@ focus_mode = 0
 theme = ExtResource("6_engjn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Import"
+script = ExtResource("9_1a85y")
 
 [node name="UserFolder" type="Button" parent="Menus/Play/SubTopBar"]
 layout_mode = 1
@@ -515,6 +521,7 @@ focus_mode = 0
 theme = ExtResource("6_engjn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "User Folder"
+script = ExtResource("10_hl5e0")
 
 [node name="Settings" type="Button" parent="Menus/Play/SubTopBar"]
 layout_mode = 1
@@ -531,6 +538,7 @@ focus_mode = 0
 theme = ExtResource("6_engjn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Settings"
+script = ExtResource("7_qywvv")
 
 [node name="Search" type="LineEdit" parent="Menus/Play/SubTopBar"]
 layout_mode = 1
@@ -921,6 +929,7 @@ focus_mode = 0
 theme_override_colors/font_color = Color(1, 1, 1, 0.25098)
 theme_override_fonts/font = ExtResource("19_c6nra")
 flat = true
+script = ExtResource("18_3wgol")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Menus/Extras/SoundSpace"]
 layout_mode = 1
@@ -941,10 +950,10 @@ scroll_active = false
 material = SubResource("ShaderMaterial_dr6yk")
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 0.4
+anchor_left = 0.1
+anchor_right = 0.45
 anchor_bottom = 1.0
-offset_left = 196.0
-offset_top = 204.0
+offset_top = 220.0
 offset_bottom = -80.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ruka0")
@@ -1414,6 +1423,47 @@ offset_top = 6.0
 label_settings = SubResource("LabelSettings_5pcip")
 autowrap_mode = 3
 
+[node name="Credits" type="Panel" parent="Menus/Extras"]
+material = SubResource("ShaderMaterial_dr6yk")
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.55
+anchor_right = 0.9
+anchor_bottom = 1.0
+offset_top = 220.0
+offset_bottom = -80.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ruka0")
+
+[node name="Header" type="Label" parent="Menus/Extras/Credits"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_top = 8.0
+grow_horizontal = 2
+text = "CREDITS"
+label_settings = SubResource("LabelSettings_5g0q6")
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Menus/Extras/Credits"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 54.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("6_engjn")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menus/Extras/Credits/ScrollContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
 [node name="TopBar" type="Panel" parent="."]
 layout_mode = 1
 anchors_preset = -1
@@ -1471,6 +1521,7 @@ focus_mode = 0
 texture_normal = ExtResource("20_qw82i")
 texture_pressed = ExtResource("21_1468l")
 texture_hover = ExtResource("22_01xyg")
+script = ExtResource("22_1acrt")
 
 [node name="Jukebox" type="Panel" parent="."]
 layout_mode = 1
@@ -2318,3 +2369,5 @@ color = Color(0, 0, 0, 1)
 
 [connection signal="file_selected" from="ImportDialog" to="." method="_on_file_dialog_file_selected"]
 [connection signal="file_selected" from="VideoDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="mouse_entered" from="Menus/Extras/SoundSpace" to="Menus/Extras/SoundSpace" method="_mouse_entered"]
+[connection signal="mouse_exited" from="Menus/Extras/SoundSpace" to="Menus/Extras/SoundSpace" method="_mouse_exited"]
