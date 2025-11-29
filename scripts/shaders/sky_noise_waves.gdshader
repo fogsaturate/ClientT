@@ -95,7 +95,7 @@ void sky() {
 	bool secondaryWaves = mod(floor(noiseValue * 384.0), 20.0) == 0.0;
 	float t = primaryWaves ? 1.0 : secondaryWaves ? 0.2 : 0.0;
 	
-	vec3 color = mix(background_color, vec3(1.0, 0.25, noiseValue / 1.75), (t + (1.0 - pow(noiseValue, 100.0)) / 50.0) * opacity * coverage);
+	vec3 color = mix(background_color, vec3(1.0, 0.1, noiseValue / 4.0), (t + (1.0 - pow(noiseValue, 100.0)) / 50.0) * opacity * coverage);
 	color = mix(color, color.bgr, sin(TIME / 10.0) / 2.0 + 0.5);
 	color = mix(vec3(0.0), color, min(1.0, 2.0 * coverage - abs(EYEDIR.y)));
 

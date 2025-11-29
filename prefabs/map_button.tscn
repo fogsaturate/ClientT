@@ -6,7 +6,7 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_xjrji"]
 shader = ExtResource("2_q8uhd")
-shader_parameter/brightness = 2.0
+shader_parameter/brightness = 0.5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ud221"]
 bg_color = Color(1, 1, 1, 1)

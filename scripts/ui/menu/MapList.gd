@@ -6,6 +6,7 @@ extends Panel
 @export var scrollFriction := 8.0
 @export var scrollElasticity := 0.02
 
+@onready var mask := $"Mask"
 @onready var scrollBar := $"ScrollBar/Main"
 
 var maps: Array[String] = [] # get this from db in the future
@@ -54,7 +55,7 @@ func _process(delta: float) -> void:
 			if button != null:
 				mapButtons.erase(map)
 				mapButtonCache.append(button)
-				remove_child(button)
+				mask.remove_child(button)
 			
 			continue
 		
@@ -68,13 +69,14 @@ func _process(delta: float) -> void:
 			
 			mapButtons[map] = button
 			
-			add_child(button)
+			mask.add_child(button)
 			SetupMapButton(button, map)
 		
 		# normalized offset from list center
 		var centerOffset: float = abs(lerp(top, bottom, 0.5) - size.y / 2) / (size.y / 2 + buttonSize / 2)
 		centerOffset = cos(PI * centerOffset / 2)
 		
+		button.z_index = 1 if i == 0 or i == mapCount - 1 else 0
 		button.position = Vector2(button.position.x, top)
 		button.anchor_left = 0.05 - centerOffset / 20
 		button.custom_minimum_size = Vector2(0, buttonSize)

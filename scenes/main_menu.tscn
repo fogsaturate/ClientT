@@ -1,4 +1,4 @@
-[gd_scene load_steps=72 format=3 uid="uid://do18270a428ma"]
+[gd_scene load_steps=73 format=3 uid="uid://do18270a428ma"]
 
 [ext_resource type="Shader" uid="uid://c7ldko1kfg2ho" path="res://scripts/shaders/noise_waves.gdshader" id="1_3wgol"]
 [ext_resource type="Script" uid="uid://ci5tsr20d66sa" path="res://scripts/ui/menu/MainMenu.gd" id="1_vr8o3"]
@@ -31,6 +31,7 @@
 [ext_resource type="Texture2D" uid="uid://8jqgxhe6o58v" path="res://skin/scrollbar_bottom.png" id="20_eku7s"]
 [ext_resource type="Texture2D" uid="uid://ct67kupv6bmny" path="res://textures/ui/discord.png" id="20_qw82i"]
 [ext_resource type="Texture2D" uid="uid://c0wbm1qc5npty" path="res://textures/ui/discord_pressed.png" id="21_1468l"]
+[ext_resource type="Texture2D" uid="uid://bku8toppyall7" path="res://skin/maplist_mask.png" id="21_q13xq"]
 [ext_resource type="Script" uid="uid://cwp2kmm6r074h" path="res://scripts/ui/menu/DiscordButton.gd" id="22_1acrt"]
 [ext_resource type="Texture2D" uid="uid://d3buklvnhgqcy" path="res://textures/ui/discord_hovered.png" id="22_01xyg"]
 [ext_resource type="Texture2D" uid="uid://8du82a5dxjdk" path="res://skin/jukebox_play.png" id="23_764ux"]
@@ -59,7 +60,7 @@ shader_parameter/opaqueness = 1.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dr6yk"]
 shader = ExtResource("4_1a85y")
-shader_parameter/brightness = 2.0
+shader_parameter/brightness = 0.5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c87ec"]
 bg_color = Color(1, 1, 1, 1)
@@ -111,7 +112,7 @@ Button/styles/pressed = SubResource("StyleBoxFlat_keb1d")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_l7ueg"]
 shader = ExtResource("4_1a85y")
-shader_parameter/brightness = 2.0
+shader_parameter/brightness = 0.5
 
 [sub_resource type="LabelSettings" id="LabelSettings_73f6f"]
 font = ExtResource("7_6h3lr")
@@ -148,7 +149,7 @@ font = ExtResource("7_6h3lr")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_h3j6r"]
 shader = ExtResource("4_1a85y")
-shader_parameter/brightness = 2.0
+shader_parameter/brightness = 0.5
 
 [sub_resource type="LabelSettings" id="LabelSettings_wksxa"]
 font = ExtResource("7_6h3lr")
@@ -327,6 +328,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_bl404")
 
 [node name="Main" type="Panel" parent="Menus"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -665,6 +667,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 0
 texture = ExtResource("20_eku7s")
+
+[node name="Mask" type="TextureRect" parent="Menus/Play/MapList"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("21_q13xq")
+expand_mode = 1
 
 [node name="Leaderboard" type="Panel" parent="Menus/Play"]
 layout_mode = 1
