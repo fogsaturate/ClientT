@@ -136,7 +136,7 @@ public partial class Stats : Node
         catch (Exception exception)
         {
             ToastNotification.Notify("Stats file corrupt or modified", 2);
-            throw Logger.Error($"Stats file corrupt or modified; {exception.Message}");
+            Logger.Error(exception);
         }
 
         Logger.Log("Loaded stats");

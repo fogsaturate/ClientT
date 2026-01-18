@@ -1,9 +1,9 @@
 [gd_scene load_steps=15 format=3 uid="uid://c00vb4xwdox6e"]
 
 [ext_resource type="Script" uid="uid://b0721m86xe8nx" path="res://scripts/ui/SettingsMenu.cs" id="1_jr8w1"]
-[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://theme/theme.tres" id="2_bpk6h"]
+[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://themes/theme.tres" id="2_bpk6h"]
 [ext_resource type="FontFile" uid="uid://bopde8iqsld1o" path="res://fonts/Ubuntu-Regular.ttf" id="3_26ii8"]
-[ext_resource type="Theme" uid="uid://birpbaoexunde" path="res://theme/settings_categories_theme.tres" id="4_pdos4"]
+[ext_resource type="Theme" path="res://theme/settings_categories_theme.tres" id="4_pdos4"]
 [ext_resource type="Texture2D" uid="uid://men3chmi3esy" path="res://textures/ui/add.png" id="5_0l54w"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8skyv"]

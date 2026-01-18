@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class MapButton : Panel
+public partial class MapButton : Panel, ISkinnable
 {
 	/// <summary>
 	/// Parsed map reference
@@ -43,19 +43,21 @@ public partial class MapButton : Panel
 	/// </summary>
     public float StickoutOffset = 0;
 
-    public float TargetOutlineFill = 0;
-    public float OutlineFill = 0;
     public bool Hovered = false;
     public bool Selected = false;
 
+    private float targetOutlineFill = 0;
+    private float outlineFill = 0;
+
 	[Signal]
-    public delegate void OnPressedEventHandler();
+    public delegate void PressedEventHandler();
 
     public ShaderMaterial OutlineShader;
 
     private Label title;
     private RichTextLabel extra;
     private TextureRect cover;
+    private TextureRect favorited;
     private Button button;
     private ShaderMaterial coverMaterial;
 
@@ -65,6 +67,8 @@ public partial class MapButton : Panel
         title = GetNode<Label>("Title");
         extra = GetNode<RichTextLabel>("Extra");
         cover = GetNode<TextureRect>("Cover");
+        favorited = GetNode<TextureRect>("Favorited");
+        favorited.Texture = (Texture2D)favorited.Texture.Duplicate();
         coverMaterial = cover.Material as ShaderMaterial;
 
         Panel outline = GetNode<Panel>("Outline");
@@ -76,24 +80,32 @@ public partial class MapButton : Panel
 		button.MouseExited += () => { Hover(false); };
 		button.Pressed += () => {
 			Select();
-            EmitSignal(SignalName.OnPressed);
+            EmitSignal(SignalName.Pressed);
+
+            if (SoundManager.Map == null || SoundManager.Map.ID != Map.ID)
+            {
+                SoundManager.JukeboxQueueInverse.TryGetValue(Map.FilePath.GetFile().GetBaseName(), out int index);
+                SoundManager.PlayJukebox(index);
+            }
         };
 
-        SkinManager.Instance.OnLoaded += updateSkin;
+        SkinManager.Instance.Loaded += UpdateSkin;
 
-        updateSkin();
+        UpdateSkin();
     }
 
     public override void _Process(double delta)
     {
         float smoothCenterOffset = (float)Math.Cos(Math.PI * CenterOffset / 2);
-		
+
         StickoutOffset = (float)Mathf.Lerp(StickoutOffset, Selected ? 0.05 : 0, Math.Min(1, 16 * delta));
         AnchorLeft = (float)(0.1 - smoothCenterOffset / 20 - StickoutOffset);
         Size = new(Size.X, (float)Mathf.Lerp(Size.Y, SizeHeight + SizeOffset, Math.Min(1, 16 * delta)));
-        OutlineFill = (float)Mathf.Lerp(OutlineFill, TargetOutlineFill, Math.Min(1, 10 * delta));
+        outlineFill = (float)Mathf.Lerp(outlineFill, targetOutlineFill, Math.Min(1, 10 * delta));
 
-        OutlineShader.SetShaderParameter("fill", OutlineFill);
+        OutlineShader.SetShaderParameter("fill", outlineFill);
+
+        favorited.RotationDegrees = ListIndex * -10 + (float)Time.GetTicksMsec() / 20;
     }
 
 	public void Hover(bool hover)
@@ -106,10 +118,14 @@ public partial class MapButton : Panel
 
 	public void Select(bool select = true)
 	{
-		if (Selected && select)
-		{
-            SceneManager.Load("res://scenes/game.tscn");
-            LegacyRunner.Play(Map, Lobby.Speed, Lobby.StartFrom, Lobby.Mods);
+        if (select)
+        {
+            Lobby.Map = Map;
+
+            if (Selected)
+            {
+                LegacyRunner.Play(Lobby.Map, Lobby.Speed, Lobby.StartFrom, Lobby.Mods);
+            }
         }
 
         Selected = select;
@@ -135,25 +151,29 @@ public partial class MapButton : Panel
             map.DifficultyName,
             map.PrettyMappers
         );
+        favorited.Visible = MapManager.IsFavorited(map);
+        favorited.SelfModulate = Constants.DIFFICULTY_COLORS[map.Difficulty];
     }
 
 	public void UpdateOutline(float targetFill, float fill = -1)
 	{
-        TargetOutlineFill = targetFill;
+        targetOutlineFill = targetFill;
 
 		if (fill != -1)
 		{
-            OutlineFill = fill;
+            outlineFill = fill;
         }
+    }
+
+    public void UpdateSkin(SkinProfile skin = null)
+    {
+        skin ??= SkinManager.Instance.Skin;
+
+        coverMaterial.Shader = skin.MapButtonCoverShader;
     }
 
 	private float computeSizeOffset()
 	{
 		return (Hovered ? HoverSizeOffset : 0) + (Selected ? SelectedSizeOffset : 0);
 	}
-
-    private void updateSkin()
-    {
-        coverMaterial.Shader = SkinManager.Instance.Skin.MapButtonCoverShader;
-    }
 }

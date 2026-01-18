@@ -23,13 +23,12 @@ config/icon="uid://bwygmhmegsm4f"
 [autoload]
 
 Constants="*res://scripts/Constants.cs"
-Keybinds="*res://scripts/KeybindsManager.cs"
-SceneManager="*res://scripts/SceneManager.cs"
+KeybindsManager="*res://scripts/KeybindsManager.cs"
 SettingsManager="*res://scripts/SettingsManager.cs"
 SkinManager="*res://scripts/skinning/SkinManager.cs"
 SoundManager="*res://scripts/SoundManager.cs"
 MapParser="*res://scripts/map/MapParser.cs"
-ToastNotification="*res://scripts/ToastNotification.cs"
+ToastNotification="*res://scripts/util/ToastNotification.cs"
 Rhythia="*res://scripts/Rhythia.cs"
 
 [debug]
@@ -38,6 +37,7 @@ file_logging/enable_file_logging=true
 
 [display]
 
+window/size/resizable=false
 window/subwindows/embed_subwindows=false
 window/per_pixel_transparency/allowed=true
 

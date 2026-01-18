@@ -2,58 +2,76 @@ using Godot;
 using System;
 using System.IO;
 
-public partial class MapInfoContainer : Panel
+public partial class MapInfoContainer : Panel, ISkinnable
 {
 	/// <summary>
     /// Parsed map reference
     /// </summary>
     public Map Map;
+
     public Leaderboard Leaderboard = new();
 
     private readonly PackedScene leaderboardScoreTemplate = ResourceLoader.Load<PackedScene>("res://prefabs/score_panel.tscn");
+
     private Panel info;
-    private Panel actions;
-    private Panel leaderboard;
-    private ColorRect dim;
     private TextureRect coverBackground;
     private TextureRect cover;
+    private Panel infoSubholder;
     private RichTextLabel mainLabel;
     private Label extraLabel;
+
+    private Panel actions;
+    private Panel previewHolder;
+    private Panel modesHolder;
+    private Panel modifiersHolder;
+    private Panel speedHolder;
+    private Panel playHolder;
+    private Button startButton;
+
+    private Panel leaderboard;
     private ScrollContainer lbScrollContainer;
     private VBoxContainer lbContainer;
     private Button lbExpand;
     private Button lbHide;
+    
+    private ColorRect dim;
     private ShaderMaterial outlineMaterial;
 
     public override void _Ready()
 	{
         info = GetNode<Panel>("Info");
-        actions = GetNode<Panel>("Actions");
-        leaderboard = GetNode<Panel>("Leaderboard");
-        dim = GetNode<ColorRect>("Dim");
-        coverBackground = info.GetNode("CoverContainer").GetNode<TextureRect>("Background");
+
+        Panel infoHolder = info.GetNode("ScrollContainer").GetNode<Panel>("Holder");
+
+        coverBackground = infoHolder.GetNode("CoverContainer").GetNode<TextureRect>("Background");
         cover = coverBackground.GetNode<TextureRect>("Cover");
-        mainLabel = info.GetNode<RichTextLabel>("MainLabel");
-        extraLabel = info.GetNode<Label>("Extra");
+        infoSubholder = infoHolder.GetNode<Panel>("Subholder");
+        mainLabel = infoSubholder.GetNode<RichTextLabel>("MainLabel");
+        extraLabel = infoSubholder.GetNode<Label>("Extra");
+
+        void updateOffset() { infoSubholder.OffsetLeft = coverBackground.Size.X + 8; }
+
+        coverBackground.Connect("resized", Callable.From(updateOffset));
+
+        actions = GetNode<Panel>("Actions");
+
+        Panel actionsHolder = actions.GetNode("ScrollContainer").GetNode<Panel>("Holder");
+
+        previewHolder = actionsHolder.GetNode<Panel>("Preview");
+        modesHolder = actionsHolder.GetNode<Panel>("Modes");
+        modifiersHolder = actionsHolder.GetNode<Panel>("Modifiers");
+        speedHolder = actionsHolder.GetNode<Panel>("Speed");
+        playHolder = actionsHolder.GetNode<Panel>("Play");
+        startButton = playHolder.GetNode<Button>("Button");
+
+        leaderboard = GetNode<Panel>("Leaderboard");
         lbScrollContainer = leaderboard.GetNode<ScrollContainer>("ScrollContainer");
         lbContainer = lbScrollContainer.GetNode<VBoxContainer>("VBoxContainer");
         lbExpand = leaderboard.GetNode<Button>("Expand");
         lbHide = GetNode<Button>("LeaderboardHide");
+
+        dim = GetNode<ColorRect>("Dim");
         outlineMaterial = info.GetNode<Panel>("Outline").Material as ShaderMaterial;
-
-        SkinManager.Instance.OnLoaded += updateSkin;
-
-        Panel lbExpandHover = lbExpand.GetNode<Panel>("Hover");
-
-        void tweenExpandHover(bool show)
-		{
-            CreateTween().SetEase(Tween.EaseType.Out).SetTrans(Tween.TransitionType.Quart).TweenProperty(lbExpandHover, "modulate", Color.Color8(255, 255, 255, (byte)(show ? 255 : 0)), 0.25);
-        }
-
-        lbExpand.MouseEntered += () => { tweenExpandHover(true); };
-		lbExpand.MouseExited += () => { tweenExpandHover(false); };
-        lbExpand.Pressed += () => { toggleLeaderboard(true); };
-        lbHide.Pressed += () => { toggleLeaderboard(false); };
 
         info.OffsetLeft -= 64;
 		info.OffsetRight -= 64;
@@ -73,6 +91,101 @@ public partial class MapInfoContainer : Panel
         OffsetRight = 0;
         Position += Vector2.Left * 64;
         Modulate = Color.Color8(255, 255, 255, 0);
+
+        startButton.Pressed += () => {
+            LegacyRunner.Play(Map, Lobby.Speed, Lobby.StartFrom, Lobby.Mods);
+        };
+
+        HSlider speedSlider = speedHolder.GetNode<HSlider>("HSlider");
+        LineEdit speedEdit = speedHolder.GetNode<LineEdit>("LineEdit");
+
+        speedSlider.SetValueNoSignal(Lobby.Speed * 100);
+        speedEdit.Text = speedSlider.Value.ToString();
+
+        void applySpeed()
+        {
+            double value = ((speedEdit.Text == "" || !speedEdit.Text.IsValidFloat()) ? speedEdit.PlaceholderText : speedEdit.Text).ToFloat();
+
+            value = Math.Clamp(value, 25, 1000);
+
+            speedSlider.SetValueNoSignal(value);
+            speedEdit.Text = value.ToString();
+
+            Lobby.Speed = value / 100;
+            SoundManager.Song.PitchScale = (float)Lobby.Speed;
+        }
+
+        speedEdit.FocusExited += applySpeed;
+        speedEdit.TextSubmitted += (_) => { applySpeed(); };
+        speedSlider.ValueChanged += (value) => {
+            speedEdit.Text = value.ToString();
+            applySpeed();
+        };
+
+        HSlider startFromSlider = playHolder.GetNode<HSlider>("HSlider");
+        LineEdit startFromEdit = playHolder.GetNode<LineEdit>("LineEdit");
+
+        Lobby.StartFrom = 0;
+
+        void applyStartFrom(bool seek = true)
+        {
+            double value = 0;
+            string input = startFromEdit.Text == "" ? startFromEdit.PlaceholderText : startFromEdit.Text;
+            string[] split = input.Split(":");
+            split.Reverse();
+
+            if (split.Length > 1 && split[1].IsValidFloat())
+            {
+                value += 60 * split[1].ToFloat();
+            }
+
+            if (split[0].IsValidFloat())
+            {
+                value += split[0].ToFloat();
+            }
+
+            value = Math.Clamp(value * 1000, 0, Map.Length);
+
+            startFromSlider.SetValueNoSignal(value / Map.Length);
+            startFromEdit.Text = Util.String.FormatTime(value / 1000);
+            startButton.Text = $"START{(value > 0 ? $" ({startFromEdit.Text})" : "")}";
+
+            Lobby.StartFrom = value;
+            
+            if (seek)
+            {
+                SoundManager.Song.Seek((float)Lobby.StartFrom / 1000);
+            }
+        }
+
+        startFromEdit.FocusExited += () => { applyStartFrom(); };
+        startFromEdit.TextSubmitted += (_) => { applyStartFrom(); };
+        startFromSlider.ValueChanged += value => {
+            startFromEdit.Text = (Math.Round(startFromSlider.Value * Map.Length) / 1000).ToString();
+            applyStartFrom(false);
+        };
+        startFromSlider.DragEnded += changed => {
+            if (changed)
+            {
+                applyStartFrom();
+            }
+        };
+
+        Panel lbExpandHover = lbExpand.GetNode<Panel>("Hover");
+
+        void tweenExpandHover(bool show)
+		{
+            CreateTween().SetEase(Tween.EaseType.Out).SetTrans(Tween.TransitionType.Quart).TweenProperty(lbExpandHover, "modulate", Color.Color8(255, 255, 255, (byte)(show ? 255 : 0)), 0.25);
+        }
+
+        lbExpand.MouseEntered += () => { tweenExpandHover(true); };
+		lbExpand.MouseExited += () => { tweenExpandHover(false); };
+        lbExpand.Pressed += () => { toggleLeaderboard(true); };
+        lbHide.Pressed += () => { toggleLeaderboard(false); };
+
+        SkinManager.Instance.Loaded += UpdateSkin;
+
+        UpdateSkin();
     }
 
 	public override void _Process(double delta)
@@ -107,22 +220,31 @@ public partial class MapInfoContainer : Panel
         Map = map;
         Name = map.ID;
 
-		// until covers are lazyloaded
+        SceneManager.Space.UpdateMap(map);
+
+        // Info
+        //// until covers are lazyloaded
         if (map.CoverBuffer != null)
 		{
-			Godot.FileAccess file = Godot.FileAccess.Open($"{Constants.USER_FOLDER}/cache/info_cover{map.ID}.png", Godot.FileAccess.ModeFlags.WriteRead);
-			file.StoreBuffer(map.CoverBuffer);
-			file.Close();
-			
-			ImageTexture tex = ImageTexture.CreateFromImage(Image.LoadFromFile($"{Constants.USER_FOLDER}/cache/info_cover{map.ID}.png"));
+            string tempPath = $"{Constants.USER_FOLDER}/cache/cover_{map.ID}.png";
+            Godot.FileAccess file = Godot.FileAccess.Open(tempPath, Godot.FileAccess.ModeFlags.WriteRead);
+            file.StoreBuffer(map.CoverBuffer);
+            file.Close();
+            ImageTexture tex = ImageTexture.CreateFromImage(Image.LoadFromFile(tempPath));
+            File.Delete(tempPath);
 
 			cover.Texture = tex;
         }
-		//
+		////
 
         mainLabel.Text = string.Format(mainLabel.Text, map.PrettyTitle, Constants.DIFFICULTY_COLORS[map.Difficulty].ToHtml(), map.DifficultyName, map.PrettyMappers);
         extraLabel.Text = string.Format(extraLabel.Text, Util.String.FormatTime(map.Length / 1000), map.Notes.Length);
+        coverBackground.SelfModulate = Constants.DIFFICULTY_COLORS[map.Difficulty];
 
+        // Actions
+        
+
+        // Leaderboard
         if (File.Exists($"{Constants.USER_FOLDER}/pbs/{map.ID}"))
 		{
 			Leaderboard = new(map.ID, $"{Constants.USER_FOLDER}/pbs/{map.ID}");
@@ -134,6 +256,11 @@ public partial class MapInfoContainer : Panel
         }
 		else
 		{
+            foreach (Node child in lbContainer.GetChildren())
+            {
+                lbContainer.RemoveChild(child);
+            }
+
             for (int i = 0; i < Math.Min(8, Leaderboard.ScoreCount); i++)
             {
                 ScorePanel panel = leaderboardScoreTemplate.Instantiate<ScorePanel>();
@@ -145,6 +272,11 @@ public partial class MapInfoContainer : Panel
                 panel.Button.Pressed += () => { toggleLeaderboard(false); };
             }
         }
+    }
+
+    public void Refresh()
+    {
+        Setup(Map);
     }
 
 	public Tween Transition(bool show)
@@ -160,6 +292,13 @@ public partial class MapInfoContainer : Panel
         tween.Chain();
 		
         return tween;
+    }
+    
+	public void UpdateSkin(SkinProfile skin = null)
+    {
+        skin ??= SkinManager.Instance.Skin;
+
+        coverBackground.Texture = skin.MapInfoCoverBackgroundImage;
     }
 
 	private void toggleLeaderboard(bool show)
@@ -177,10 +316,10 @@ public partial class MapInfoContainer : Panel
 
         tween.TweenProperty(leaderboard, "offset_top", -100 * (show ? Math.Min(4, Leaderboard.ScoreCount) : 1), 0.25);
         tween.TweenProperty(dim, "color", Color.Color8(0, 0, 0, (byte)(show ? 128 : 0)), 0.25);
-    }
 
-	private void updateSkin()
-	{
-        coverBackground.Texture = SkinManager.Instance.Skin.MapInfoCoverBackgroundImage;
+        if (!show)
+        {
+            tween.TweenProperty(lbScrollContainer, "scroll_vertical", 0, 0.15);
+        }
     }
 }

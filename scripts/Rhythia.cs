@@ -13,6 +13,9 @@ public partial class Rhythia : Node
 
     private DatabaseService databaseService = DatabaseService.Instance;
 
+    [Signal]
+    public delegate void FilesDroppedEventHandler(string[] files);
+
     public static Rhythia Instance;
     public static bool Quitting { get; private set; } = false;
 
@@ -106,8 +109,9 @@ public partial class Rhythia : Node
         {
             SettingsManager.Load();
         }
-        catch
+        catch (Exception exception)
         {
+            Logger.Error(exception);
             SettingsManager.Save();
         }
 
@@ -151,7 +155,13 @@ public partial class Rhythia : Node
 
         foreach (string file in Directory.GetFiles($"{Constants.USER_FOLDER}/maps"))
         {
-            if (file.GetExtension() == "sspm" || file.GetExtension() == "txt")
+            string ext = file.GetExtension();
+
+            if (!MapParser.IsValidExt(ext))
+            {
+                File.Delete(file);
+            }
+            else if (ext != Constants.DEFAULT_MAP_EXT)
             {
                 import.Add(file);
             }
@@ -163,6 +173,28 @@ public partial class Rhythia : Node
         {
             File.Delete(file);
         }
+
+        GetViewport().Connect("files_dropped", Callable.From((string[] files) => {
+            EmitSignal(SignalName.FilesDropped, files);
+
+            List<string> maps = [];
+
+            foreach (string file in files)
+            {
+                if (MapParser.IsValidExt(file.GetExtension()))
+                {
+                    maps.Add(file);
+                }
+            }
+
+            MapParser.BulkImport([.. maps]);
+            
+            if (SceneManager.Scene is MainMenu)
+            {
+                var menu = SceneManager.Scene as MainMenu;
+                menu.Transition(menu.PlayMenu);
+            }
+        }));
 
         loaded = true;
     }
@@ -191,11 +223,6 @@ public partial class Rhythia : Node
             Stats.Save();
         }
 
-        if (File.Exists($"{Constants.USER_FOLDER}/maps/NA_tempmap.phxm"))
-        {
-            File.Delete($"{Constants.USER_FOLDER}/maps/NA_tempmap.phxm");
-        }
-
         Discord.Client.Dispose();
         DatabaseService.Instance.Dispose();
         
@@ -206,7 +233,7 @@ public partial class Rhythia : Node
     {
         if (what == NotificationWMCloseRequest)
         {
-            if (SceneManager.Scene.Name == "SceneGame")
+            if (SceneManager.Scene != null && SceneManager.Scene.Name == "SceneGame")
             {
                 Stats.RageQuits++;
             }

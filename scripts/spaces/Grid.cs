@@ -1,9 +1,9 @@
 using Godot;
 using System;
 
-namespace Space;
+namespace Spaces;
 
-public partial class Grid : Node3D
+public partial class Grid : BaseSpace
 {
     public Color Color = Color.Color8(255, 255, 255, 255);
 
@@ -12,12 +12,21 @@ public partial class Grid : Node3D
 
     public override void _Ready()
     {
+        base._Ready();
+        
         tileMaterial = (GetNode<MeshInstance3D>("Top").Mesh as PlaneMesh).Material as StandardMaterial3D;
         environment = GetNode<WorldEnvironment>("WorldEnvironment");
     }
 
     public override void _Process(double delta)
     {
+        base._Process(delta);
+
+        if (Playing)
+        {
+            Camera.Transform = LegacyRunner.Camera.Transform;
+        }
+
         Color = Color.Lerp(LegacyRunner.CurrentAttempt.LastHitColour, (float)delta * 8);
 
         tileMaterial.AlbedoColor = Color;

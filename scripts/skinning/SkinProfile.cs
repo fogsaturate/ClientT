@@ -30,6 +30,40 @@ public partial class SkinProfile : GodotObject
 
     public ImageTexture MissFeedbackImage { get; set; } = new();
 
+    public ImageTexture SettingsButtonImage { get; set; } = new();
+
+    public ImageTexture OpenFolderButtonImage { get; set; } = new();
+
+    public ImageTexture ImportButtonImage { get; set; } = new();
+
+    public ImageTexture RandomButtonImage { get; set; } = new();
+
+    public ImageTexture FilterButtonImage { get; set; } = new();
+
+    public ImageTexture SortButtonImage { get; set; } = new();
+
+    public ImageTexture AuthorButtonImage { get; set; } = new();
+
+    public ImageTexture SearchButtonImage { get; set; } = new();
+
+    public ImageTexture PlayButtonImage { get; set; } = new();
+
+    public ImageTexture FavoriteButtonImage { get; set; } = new();
+
+    public ImageTexture CopyButtonImage { get; set; } = new();
+
+    public ImageTexture DeleteButtonImage { get; set; } = new();
+
+    public ImageTexture AddVideoButtonImage { get; set; } = new();
+
+    public ImageTexture RemoveVideoButtonImage { get; set; } = new();
+
+    public ImageTexture GrabberNormalImage { get; set; } = new();
+
+    public ImageTexture GrabberPressedImage { get; set; } = new();
+
+    public ImageTexture GrabberTickImage { get; set; } = new();
+
     public ImageTexture JukeboxPlayImage { get; set; } = new();
 
     public ImageTexture JukeboxPauseImage { get; set; } = new();
@@ -84,7 +118,7 @@ public partial class SkinProfile : GodotObject
 
     public string GameSpaceName = "void";
 
-    public Node3D MenuSpace { get; set; }
+    public BaseSpace MenuSpace { get; set; }
 
-    public Node3D GameSpace { get; set; }
+    public BaseSpace GameSpace { get; set; }
 }

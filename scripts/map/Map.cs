@@ -52,16 +52,15 @@ public partial class Map : RefCounted
         Mappers = mappers ?? ["N/A"];
         PrettyMappers = "";
         Difficulty = difficulty;
-        DifficultyName = difficultyName.StripEscapes() ?? Constants.DIFFICULTIES[Difficulty];
+        DifficultyName = difficultyName?.StripEscapes() ?? Constants.DIFFICULTIES[Difficulty];
         AudioBuffer = audioBuffer;
         CoverBuffer = coverBuffer;
         VideoBuffer = videoBuffer;
-
         Notes = data ?? Array.Empty<Note>();
         Length = length ?? Notes[^1].Millisecond;
-        ID = (id ?? new Regex("[^a-zA-Z0-9_ -]").Replace($"{Mappers.Stringify()}_{PrettyTitle}".Replace(" ", "_"), "")).Replace(".", "_");
+        ID = (id ?? new Regex("[^a-zA-Z0-9_-]").Replace($"{Mappers.Stringify()}_{PrettyTitle}".Replace(" ", "_"), ""));
         AudioExt = (AudioBuffer != null && Encoding.UTF8.GetString(AudioBuffer[0..4]) == "OggS") ? "ogg" : "mp3";
-
+        
         foreach (string mapper in Mappers)
         {
             PrettyMappers += $"{mapper}, ";

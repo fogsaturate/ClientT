@@ -3,11 +3,23 @@ using System.Collections.Generic;
 public class Lobby
 {
     public static Dictionary<string, Player> Players = [];
+    
     public static int PlayerCount = 0;
+
     public static int PlayersReady = 0;
+
+    /// <summary>
+    /// Parsed map reference
+    /// </summary>
     public static Map Map;
+
     public static double Speed = 1;
+
+    /// <summary>
+    /// Millisecond timestamp to start the map from
+    /// </summary>
     public static double StartFrom = 0;
+
     public static Dictionary<string, bool> Mods = new()
     {
         ["NoFail"] = false,
@@ -23,7 +35,7 @@ public class Lobby
 
     public static void Enter()
     {
-        AddPlayer(new Player("You"));
+        AddPlayer(new("You"));
     }
 
     public static void Leave()

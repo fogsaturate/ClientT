@@ -1,10 +1,11 @@
 using Godot;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-public partial class MapList : Panel
+public partial class MapList : Panel, ISkinnable
 {
 	[Export]
     public float ButtonSize = 90;
@@ -28,8 +29,13 @@ public partial class MapList : Panel
     public bool MouseScroll = false;
     public bool DisplaySelectionCursor = false;
 
+    /// <summary>
+    /// Queried and ordered maps to display in the list
+    /// </summary>
+    public List<Map> Maps = [];
+
     [Signal]
-    public delegate void OnMapSelectedEventHandler(Map map);
+    public delegate void MapSelectedEventHandler(Map map);
 
     private TextureRect mask;
     private TextureRect selectionCursor;
@@ -44,7 +50,6 @@ public partial class MapList : Panel
     private TextureRect scrollBarBackgroundBottom;
 
     private readonly PackedScene mapButtonTemplate = ResourceLoader.Load<PackedScene>("res://prefabs/map_button.tscn");
-    private List<Map> maps = [];	// (queried) map IDs, get this from db in the future
     private Dictionary<string, MapButton> mapButtons = [];
     private Stack<MapButton> mapButtonCache = [];
     private MapButton hoveredButton;
@@ -65,15 +70,19 @@ public partial class MapList : Panel
         scrollBarBackgroundBottom = scrollBarBackground.GetNode<TextureRect>("Bottom");
 
         MouseExited += () => { toggleSelectionCursor(false); };
-        SkinManager.Instance.OnLoaded += updateSkin;
+        SkinManager.Instance.Loaded += UpdateSkin;
+        MapParser.Instance.MapsImported += maps => {
+            if (maps.Length == 0)
+            {
+                return;
+            }
 
-        updateSkin();
+            UpdateMaps();
+            Select(maps[0]);
+        };
 
-        // temporary until db is implemented
-        foreach (string path in Directory.GetFiles($"{Constants.USER_FOLDER}/maps"))
-		{
-            maps.Add(MapParser.Decode(path, null, false));
-        }
+        UpdateSkin();
+        UpdateMaps();
     }
 
     public override void _Process(double delta)
@@ -85,7 +94,7 @@ public partial class MapList : Panel
             scrollElasticOffset = (float)(ScrollMomentum * ScrollElasticity);
         }
 
-        ScrollLength = Math.Max(0, maps.Count * (ButtonSize + Spacing) - Spacing - Size.Y) + ButtonHoverSize + ButtonSelectedSize;
+        ScrollLength = Math.Max(0, Maps.Count * (ButtonSize + Spacing) - Spacing - Size.Y) + ButtonHoverSize + ButtonSelectedSize;
         ScrollMomentum = Mathf.Lerp(ScrollMomentum, 0.0, Math.Min(1, ScrollFriction * delta));
 
 		if (MouseScroll)
@@ -98,7 +107,7 @@ public partial class MapList : Panel
             TargetScroll = Math.Clamp(TargetScroll + ScrollMomentum * delta, 0, ScrollLength) + scrollElasticOffset;
         }
 
-        Scroll = Mathf.Lerp(Scroll, TargetScroll, Math.Min(1, 20 * delta));
+        Scroll = Mathf.Lerp(Scroll, TargetScroll, Math.Min(1, 12 * delta));
 
         scrollBarMain.AnchorTop = (float)Math.Max(0, (TargetScroll - scrollElasticOffset) / (ScrollLength + Size.Y));
         scrollBarMain.AnchorBottom = (float)Math.Min(1, scrollBarMain.AnchorTop + Size.Y / (ScrollLength + Size.Y));
@@ -109,7 +118,7 @@ public partial class MapList : Panel
         float downOffset = 0;
         int mapCount = -1;
 
-        foreach (Map map in maps)
+        foreach (Map map in Maps)
 		{
 			mapCount++;
 
@@ -128,7 +137,6 @@ public partial class MapList : Panel
                     mapButtonCache.Push(button);
                     mask.RemoveChild(button);
 
-                    button.StickoutOffset = 0;
                     button.Deselect();
                     button.UpdateOutline(0f, 0f);
 
@@ -189,7 +197,7 @@ public partial class MapList : Panel
             float centerOffset = Math.Abs((top + button.Size.Y / 2) - Size.Y / 2) / (Size.Y / 2 + ButtonSize / 2);
 
             button.CenterOffset = centerOffset;
-            button.ZIndex = button.ListIndex == 0 || button.ListIndex == maps.Count - 1 ? 1 : 0;
+            button.ZIndex = button.ListIndex == 0 || button.ListIndex == Maps.Count - 1 ? 1 : 0;
             button.Position = new(button.Position.X, top);
             button.OutlineShader.SetShaderParameter("cursor_position", GetViewport().GetMousePosition());
             button.OutlineShader.SetShaderParameter("light_position", DisplaySelectionCursor ? selectionCursor.GlobalPosition : Vector2.Left * 10000);
@@ -207,6 +215,57 @@ public partial class MapList : Panel
 				case MouseButton.WheelUp: ScrollMomentum -= ScrollStep; break;
             }
 		}
+    }
+
+    public void Select(Map map)
+    {
+        if (selectedMapID != null && selectedMapID != map.ID && mapButtons.TryGetValue(selectedMapID, out MapButton value))
+        {
+            value.Deselect();
+            value.UpdateOutline(0f);
+        }
+
+        selectedMapID = map.ID;
+        TargetScroll = Maps.FindIndex(otherMap => otherMap.ID == map.ID) * (ButtonSize + Spacing) + ButtonSize - Size.Y / 2;
+
+        EmitSignal(SignalName.MapSelected, map);
+    }
+
+    public void UpdateMaps(string search = "", string author = "")
+    {
+        Maps.Clear();
+
+        List<Map> unfavorited = [];
+
+        // temporary until db is implemented
+        foreach (string path in Directory.GetFiles($"{Constants.USER_FOLDER}/maps"))
+		{
+            try
+            {
+                Map map = MapParser.Decode(path);
+
+                (MapManager.IsFavorited(map) ? Maps : unfavorited).Add(map);
+            } catch {}
+        }
+
+        foreach (Map map in unfavorited)
+        {
+            Maps.Add(map);
+        }
+    }
+    
+    public void UpdateSkin(SkinProfile skin = null)
+    {
+        skin ??= SkinManager.Instance.Skin;
+
+        mask.Texture = skin.MapListMaskImage;
+        selectionCursor.Texture = skin.MapListSelectionCursorImage;
+        scrollBarMainTop.Texture = skin.MapListScrollBarTopImage;
+        scrollBarMainMiddle.Texture = skin.MapListScrollBarMiddleImage;
+        scrollBarMainBottom.Texture = skin.MapListScrollBarBottomImage;
+        scrollBarBackgroundTop.Texture = skin.MapListScrollBarBackgroundTopImage;
+        scrollBarBackgroundMiddle.Texture = skin.MapListScrollBarBackgroundMiddleImage;
+        scrollBarBackgroundBottom.Texture = skin.MapListScrollBarBackgroundBottomImage;
     }
 
 	private MapButton setupButton(MapButton button)
@@ -232,15 +291,8 @@ public partial class MapList : Panel
                 button.UpdateOutline(0f);
             }
         };
-        button.OnPressed += () => {
-			if (selectedMapID != null && selectedMapID != button.Map.ID && mapButtons.TryGetValue(selectedMapID, out MapButton value))
-			{
-                value.Deselect();
-                value.UpdateOutline(0f);
-            }
-
-            selectedMapID = button.Map.ID;
-            EmitSignal(SignalName.OnMapSelected, button.Map);
+        button.Pressed += () => {
+            Select(button.Map);
 
             button.UpdateOutline(1.0f);
         };
@@ -261,17 +313,5 @@ public partial class MapList : Panel
 
         Tween tween = CreateTween().SetTrans(Tween.TransitionType.Quad).SetParallel();
         tween.TweenProperty(selectionCursor, "modulate", Color.Color8(255, 255, 255, (byte)(display ? 255 : 0)), 0.1);
-    }
-
-    private void updateSkin()
-    {
-        mask.Texture = SkinManager.Instance.Skin.MapListMaskImage;
-        selectionCursor.Texture = SkinManager.Instance.Skin.MapListSelectionCursorImage;
-        scrollBarMainTop.Texture = SkinManager.Instance.Skin.MapListScrollBarTopImage;
-        scrollBarMainMiddle.Texture = SkinManager.Instance.Skin.MapListScrollBarMiddleImage;
-        scrollBarMainBottom.Texture = SkinManager.Instance.Skin.MapListScrollBarBottomImage;
-        scrollBarBackgroundTop.Texture = SkinManager.Instance.Skin.MapListScrollBarBackgroundTopImage;
-        scrollBarBackgroundMiddle.Texture = SkinManager.Instance.Skin.MapListScrollBarBackgroundMiddleImage;
-        scrollBarBackgroundBottom.Texture = SkinManager.Instance.Skin.MapListScrollBarBackgroundBottomImage;
     }
 }

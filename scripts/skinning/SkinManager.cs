@@ -10,10 +10,10 @@ public partial class SkinManager : Node
     public static SkinManager Instance { get; private set; }
 
 	[Signal]
-	public delegate void OnSavedEventHandler();
+	public delegate void SavedEventHandler();
 
 	[Signal]
-	public delegate void OnLoadedEventHandler();
+	public delegate void LoadedEventHandler(SkinProfile skin);
 
     public SkinProfile Skin { get; set; } = new SkinProfile();
 
@@ -31,7 +31,7 @@ public partial class SkinManager : Node
 		File.WriteAllText($"{Constants.USER_FOLDER}/skins/{settings.Skin.Value}/space.txt", skin.GameSpaceName);
 		Logger.Log($"Saved skin {settings.Skin.Value}");
 
-		Instance.EmitSignal(SignalName.OnSaved);
+		Instance.EmitSignal(SignalName.Saved);
 	}
 
 	public static void Load()
@@ -69,7 +69,25 @@ public partial class SkinManager : Node
 		skin.MissesImage = loadTexture("game/misses.png");
 		skin.MissFeedbackImage = loadTexture("game/miss_feedback.png");
 
-		skin.JukeboxPlayImage = loadTexture("ui/jukebox_play.png");
+		skin.SettingsButtonImage = loadTexture("ui/buttons/settings.png");
+		skin.OpenFolderButtonImage = loadTexture("ui/buttons/open_folder.png");
+		skin.ImportButtonImage = loadTexture("ui/buttons/import.png");
+		skin.RandomButtonImage = loadTexture("ui/buttons/random.png");
+		skin.FilterButtonImage = loadTexture("ui/buttons/filter.png");
+		skin.SortButtonImage = loadTexture("ui/buttons/sort.png");
+        skin.AuthorButtonImage = loadTexture("ui/buttons/author.png");
+		skin.SearchButtonImage = loadTexture("ui/buttons/search.png");
+        skin.PlayButtonImage = loadTexture("ui/buttons/play.png");
+		skin.FavoriteButtonImage = loadTexture("ui/buttons/favorite.png");
+		skin.CopyButtonImage = loadTexture("ui/buttons/copy.png");
+		skin.DeleteButtonImage = loadTexture("ui/buttons/delete.png");
+		skin.AddVideoButtonImage = loadTexture("ui/buttons/add_video.png");
+		skin.RemoveVideoButtonImage = loadTexture("ui/buttons/remove_video.png");
+        skin.GrabberNormalImage = loadTexture("ui/buttons/grabber_normal.png");
+		skin.GrabberPressedImage = loadTexture("ui/buttons/grabber_pressed.png");
+		skin.GrabberTickImage = loadTexture("ui/buttons/grabber_tick.png");
+
+        skin.JukeboxPlayImage = loadTexture("ui/jukebox_play.png");
 		skin.JukeboxPauseImage = loadTexture("ui/jukebox_pause.png");
 		skin.JukeboxSkipImage = loadTexture("ui/jukebox_skip.png");
         skin.BackgroundTileImage = loadTexture("ui/background_tile.png");
@@ -102,13 +120,14 @@ public partial class SkinManager : Node
 
         skin.NoteMesh = loadMesh("note.obj");
 
-		// Spaces
+        // Spaces
 
-		skin.GameSpaceName = File.ReadAllText($"{Constants.USER_FOLDER}/skins/{settings.Skin.Value}/space.txt");
-        skin.GameSpace = loadSpace(skin.GameSpaceName);
+        // skin.GameSpaceName = File.ReadAllText($"{Constants.USER_FOLDER}/skins/{settings.Skin.Value}/space.txt");
+        skin.GameSpaceName = "grid";
+        skin.GameSpace = loadSpace($"res://prefabs/spaces/{skin.GameSpaceName}.tscn");
 
-        skin.MenuSpaceName = "waves";
-		skin.MenuSpace = loadSpace(skin.MenuSpaceName);
+        skin.MenuSpaceName = "squircles";
+		skin.MenuSpace = loadSpace($"res://prefabs/spaces/{skin.MenuSpaceName}.tscn");
 
 		// Shaders
 
@@ -120,7 +139,7 @@ public partial class SkinManager : Node
         ToastNotification.Notify($"Loaded skin [{settings.Skin.Value}]");
 		Logger.Log($"Loaded skin {settings.Skin.Value}");
 
-		Instance.EmitSignal(SignalName.OnLoaded);
+		Instance.EmitSignal(SignalName.Loaded, skin);
 	}
 
 	private static ImageTexture loadTexture(string skinPath)
@@ -166,11 +185,11 @@ public partial class SkinManager : Node
         return new() { Code = shader };
     }
 
-	private static Node3D loadSpace(string space)
+	private static BaseSpace loadSpace(string path)
 	{
 		var settings = SettingsManager.Instance.Settings;
-		bool exists = Godot.FileAccess.FileExists($"res://prefabs/spaces/{space}.tscn");
+		bool exists = Godot.FileAccess.FileExists(path);
 		
-		return GD.Load<PackedScene>($"res://prefabs/spaces/{(exists ? space : "void")}.tscn").Instantiate<Node3D>();
+        return GD.Load<PackedScene>(exists ? path : "res://prefabs/spaces/void.tscn").Instantiate<Node3D>() as BaseSpace;
 	}
 }

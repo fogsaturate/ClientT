@@ -4,7 +4,6 @@ public partial class Graph : ColorRect
 {
     public override void _Draw()
     {
-        double start = Time.GetTicksUsec();
         Color hitColor = Color.FromHtml("00ff00ff");
         Color missColor = Color.FromHtml("ff000044");
 
@@ -28,7 +27,5 @@ public partial class Graph : ColorRect
             int position = (int)(Size.X * LegacyRunner.CurrentAttempt.DeathTime / LegacyRunner.CurrentAttempt.Map.Length);
             DrawLine(Vector2.Right * position, new(position, Size.Y), Color.Color8(255, 255, 0), 3);
         }
-
-        Logger.Log($"RESULTS GRAPH: {(Time.GetTicksUsec() - start) / 1000}ms");
     }
 }

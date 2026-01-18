@@ -75,9 +75,7 @@ public partial class KeybindsManager : Node
                 lastVolumeChange = Time.GetTicksMsec();
                 lastVolumeChangeScene = SceneManager.Scene;
 
-                SoundManager.UpdateSounds();
                 SoundManager.UpdateVolume();
-
             }
         }
     }

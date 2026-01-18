@@ -1,13 +1,12 @@
-[gd_scene load_steps=76 format=3 uid="uid://do18270a428ma"]
+[gd_scene load_steps=95 format=3 uid="uid://do18270a428ma"]
 
 [ext_resource type="Shader" uid="uid://c7ldko1kfg2ho" path="res://scripts/shaders/noise_waves.gdshader" id="1_3wgol"]
-[ext_resource type="Script" uid="uid://j2paynyu362u" path="res://scripts/ui/menu/MainMenu.cs" id="1_yxnar"]
+[ext_resource type="Script" uid="uid://j2paynyu362u" path="res://scripts/scenes/MainMenu.cs" id="1_yxnar"]
 [ext_resource type="Script" uid="uid://dluebshtuc3vx" path="res://scripts/ui/menu/ImportDialog.cs" id="2_yxnar"]
 [ext_resource type="Shader" uid="uid://cqqs8uux7hqyb" path="res://scripts/shaders/ui_blur.gdshader" id="4_1a85y"]
 [ext_resource type="FontFile" uid="uid://dotb3skhwouha" path="res://fonts/Roboto-Bold.ttf" id="5_hl5e0"]
-[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://theme/theme.tres" id="6_engjn"]
+[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://themes/theme.tres" id="6_engjn"]
 [ext_resource type="FontFile" uid="uid://bopde8iqsld1o" path="res://fonts/Ubuntu-Regular.ttf" id="7_6h3lr"]
-[ext_resource type="StyleBox" uid="uid://bfimbyi3x5h0n" path="res://theme/line_edit_stylebox_normal.tres" id="8_dj67d"]
 [ext_resource type="Script" uid="uid://bnead3awk7yr4" path="res://scripts/ui/menu/SettingsMenuButton.cs" id="8_yxnar"]
 [ext_resource type="Script" uid="uid://byighsqkmf2c4" path="res://scripts/ui/menu/QuitButton.cs" id="9_yxnar"]
 [ext_resource type="Script" uid="uid://cqprxe41p0qov" path="res://scripts/ui/menu/Background.cs" id="10_eku7s"]
@@ -28,15 +27,27 @@
 [ext_resource type="Texture2D" uid="uid://d3buklvnhgqcy" path="res://textures/ui/discord_hovered.png" id="22_01xyg"]
 [ext_resource type="Script" uid="uid://bdxxohkj7wy22" path="res://scripts/ui/menu/MapInfo.cs" id="22_qw82i"]
 [ext_resource type="Texture2D" uid="uid://bw35mprqnilk7" path="res://skin/ui/play/maplist_selection_cursor.png" id="22_u43bj"]
+[ext_resource type="Texture2D" uid="uid://dqg2qk62dxcc6" path="res://skin/ui/buttons/settings.png" id="23_01xyg"]
 [ext_resource type="Texture2D" uid="uid://8du82a5dxjdk" path="res://skin/ui/jukebox_play.png" id="23_764ux"]
+[ext_resource type="Texture2D" uid="uid://1fj6g1xt5b0" path="res://skin/ui/buttons/open_folder.png" id="24_01xyg"]
 [ext_resource type="Texture2D" uid="uid://bpsvcunhigs6c" path="res://skin/ui/jukebox_skip.png" id="24_wadof"]
 [ext_resource type="Texture2D" uid="uid://3e1tjlr4m0wt" path="res://skin/game/cursor.png" id="25_b4jiv"]
+[ext_resource type="Texture2D" uid="uid://bvjkhxgqjmg7y" path="res://skin/ui/buttons/import.png" id="26_wadof"]
 [ext_resource type="Script" uid="uid://c31515lg0ihgs" path="res://scripts/ui/menu/UserFolderButton.cs" id="27_eku7s"]
 [ext_resource type="Script" uid="uid://d36x1ln46itd1" path="res://scripts/ui/menu/RandomPickButton.cs" id="27_u43bj"]
+[ext_resource type="Texture2D" uid="uid://b44v7e2jfwmkn" path="res://skin/ui/buttons/random.png" id="28_b4jiv"]
 [ext_resource type="Script" uid="uid://nob6vs2h1mwj" path="res://scripts/ui/menu/ImportButton.cs" id="28_eku7s"]
+[ext_resource type="Texture2D" uid="uid://bfy3x7rqnts4i" path="res://skin/ui/buttons/filter.png" id="30_68b7m"]
 [ext_resource type="Shader" uid="uid://rngh60dyh10b" path="res://scripts/shaders/outline.gdshader" id="30_q13xq"]
+[ext_resource type="Texture2D" uid="uid://bl6ten82nkjmd" path="res://skin/ui/buttons/sort.png" id="31_vanrq"]
+[ext_resource type="Texture2D" uid="uid://c6k1k4817che2" path="res://skin/ui/buttons/author.png" id="33_wadof"]
 [ext_resource type="Script" uid="uid://b47jydbbjdh3i" path="res://scripts/ui/menu/SoundSpaceButton.cs" id="33_yxnar"]
+[ext_resource type="Texture2D" uid="uid://bg3gjft0mamud" path="res://skin/ui/buttons/search.png" id="34_b4jiv"]
+[ext_resource type="Script" uid="uid://chb17y8gabhta" path="res://scripts/ui/menu/Jukebox.cs" id="35_jvjdd"]
 [ext_resource type="Script" uid="uid://bqidqko521o1v" path="res://scripts/ui/menu/DiscordButton.cs" id="37_c6nra"]
+[ext_resource type="Script" uid="uid://783e032bf2o3" path="res://scripts/ui/menu/extras/StatsPanel.cs" id="37_wadof"]
+[ext_resource type="Script" uid="uid://bss5l0q8yh47u" path="res://scripts/ui/menu/extras/CreditsPanel.cs" id="39_b4jiv"]
+[ext_resource type="PackedScene" uid="uid://rl7w0xl4w77l" path="res://prefabs/fps_counter.tscn" id="39_u43bj"]
 [ext_resource type="Script" uid="uid://carutkgoqpr4e" path="res://scripts/ui/Cursor.cs" id="41_yxnar"]
 
 [sub_resource type="SystemFont" id="SystemFont_lsskb"]
@@ -104,6 +115,45 @@ Button/styles/hover = SubResource("StyleBoxFlat_wc1go")
 Button/styles/normal = SubResource("StyleBoxFlat_5ycqf")
 Button/styles/pressed = SubResource("StyleBoxFlat_keb1d")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_764ux"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0, 0, 0.3137255)
+corner_radius_top_left = 2
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b4jiv"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.2, 0.2, 0.2, 0.078431375)
+border_width_left = 2
+border_color = Color(1, 1, 1, 1)
+border_blend = true
+corner_radius_top_left = 2
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vanrq"]
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.1, 0.1, 0.1, 0.3137255)
+border_width_left = 2
+border_color = Color(0.7882353, 0, 0.27058825, 1)
+border_blend = true
+corner_radius_top_left = 2
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 2
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6pifw"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_q13xq"]
@@ -121,6 +171,35 @@ shader = ExtResource("10_yxnar")
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c6nra"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_18lcc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_68b7m"]
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vanrq"]
+content_margin_left = 2.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rqeco"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.8627451)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ooiyf"]
 
@@ -171,9 +250,22 @@ corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qw82i"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b4jiv"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_l7ueg"]
 shader = ExtResource("4_1a85y")
 shader_parameter/brightness = 0.5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wadof"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [sub_resource type="LabelSettings" id="LabelSettings_1o5ig"]
 
@@ -196,15 +288,9 @@ font_size = 18
 outline_size = 5
 outline_color = Color(0, 0, 0, 0.501961)
 
-[node name="SceneMenu" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="SceneMenu" type="Node"]
 script = ExtResource("1_yxnar")
+UseMenuSpace = true
 
 [node name="ImportDialog" type="FileDialog" parent="."]
 title = "Open File(s)"
@@ -233,7 +319,6 @@ use_native_dialog = true
 visible = false
 z_index = -10
 material = SubResource("ShaderMaterial_2672j")
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -348,7 +433,6 @@ mouse_filter = 2
 color = Color(1, 1, 1, 0)
 
 [node name="Menus" type="Panel" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -357,7 +441,7 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_bl404")
 
-[node name="Main" type="Panel" parent="Menus"]
+[node name="Home" type="Panel" parent="Menus"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -367,7 +451,7 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_tkeab")
 
-[node name="News" type="Panel" parent="Menus/Main"]
+[node name="News" type="Panel" parent="Menus/Home"]
 visible = false
 material = SubResource("ShaderMaterial_dr6yk")
 layout_mode = 1
@@ -381,7 +465,7 @@ offset_right = -96.0
 offset_bottom = -96.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_c87ec")
 
-[node name="Header" type="Label" parent="Menus/Main/News"]
+[node name="Header" type="Label" parent="Menus/Home/News"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -392,7 +476,7 @@ offset_bottom = 32.0
 text = "1.0.2"
 label_settings = SubResource("LabelSettings_0uejd")
 
-[node name="Panel" type="Panel" parent="Menus/Main/News"]
+[node name="Panel" type="Panel" parent="Menus/Home/News"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -405,7 +489,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_5gt56")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Menus/Main/News/Panel"]
+[node name="RichTextLabel" type="RichTextLabel" parent="Menus/Home/News/Panel"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -419,42 +503,54 @@ theme_override_fonts/normal_font = ExtResource("7_6h3lr")
 bbcode_enabled = true
 shortcut_keys_enabled = false
 
-[node name="Buttons" type="VBoxContainer" parent="Menus/Main"]
+[node name="Buttons" type="VBoxContainer" parent="Menus/Home"]
 layout_mode = 1
 anchors_preset = -1
 anchor_bottom = 1.0
 offset_left = 64.0
 offset_top = 80.0
-offset_right = 512.0
+offset_right = 400.0
 offset_bottom = -80.0
 alignment = 1
 
-[node name="Play" type="Button" parent="Menus/Main/Buttons"]
+[node name="Play" type="Button" parent="Menus/Home/Buttons"]
 layout_mode = 2
 focus_mode = 0
 theme = SubResource("Theme_m671i")
+theme_override_styles/normal = SubResource("StyleBoxFlat_764ux")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_b4jiv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_vanrq")
 text = "PLAY"
 alignment = 0
 
-[node name="Settings" type="Button" parent="Menus/Main/Buttons"]
+[node name="Settings" type="Button" parent="Menus/Home/Buttons"]
 layout_mode = 2
 focus_mode = 0
 theme = SubResource("Theme_m671i")
+theme_override_styles/normal = SubResource("StyleBoxFlat_764ux")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_b4jiv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_vanrq")
 text = "SETTINGS"
 alignment = 0
 script = ExtResource("8_yxnar")
 
-[node name="Extras" type="Button" parent="Menus/Main/Buttons"]
+[node name="Extras" type="Button" parent="Menus/Home/Buttons"]
 layout_mode = 2
 focus_mode = 0
 theme = SubResource("Theme_m671i")
+theme_override_styles/normal = SubResource("StyleBoxFlat_764ux")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_b4jiv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_vanrq")
 text = "EXTRAS"
 alignment = 0
 
-[node name="Quit" type="Button" parent="Menus/Main/Buttons"]
+[node name="Quit" type="Button" parent="Menus/Home/Buttons"]
 layout_mode = 2
 focus_mode = 0
 theme = SubResource("Theme_m671i")
+theme_override_styles/normal = SubResource("StyleBoxFlat_764ux")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_b4jiv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_vanrq")
 text = "QUIT"
 alignment = 0
 script = ExtResource("9_yxnar")
@@ -468,7 +564,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_6pifw")
 
 [node name="Background" type="Panel" parent="Menus/Play"]
@@ -479,7 +575,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_u43bj")
 script = ExtResource("10_eku7s")
 
@@ -491,7 +587,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 texture = ExtResource("10_jvjdd")
 expand_mode = 1
 stretch_mode = 1
@@ -672,6 +767,7 @@ focus_mode = 0
 theme = ExtResource("6_engjn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Settings"
+icon = ExtResource("23_01xyg")
 script = ExtResource("8_yxnar")
 
 [node name="UserFolder" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer"]
@@ -681,6 +777,7 @@ focus_mode = 0
 theme = ExtResource("6_engjn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "User Folder"
+icon = ExtResource("24_01xyg")
 script = ExtResource("27_eku7s")
 
 [node name="Import" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer"]
@@ -690,6 +787,7 @@ focus_mode = 0
 theme = ExtResource("6_engjn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Import"
+icon = ExtResource("26_wadof")
 script = ExtResource("28_eku7s")
 
 [node name="Random" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer"]
@@ -699,31 +797,112 @@ focus_mode = 0
 theme = ExtResource("6_engjn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Random"
+icon = ExtResource("28_b4jiv")
 script = ExtResource("27_u43bj")
 
-[node name="SearchAuthor" type="LineEdit" parent="Menus/Play/SubTopBar/HBoxContainer"]
-custom_minimum_size = Vector2(120, 32)
+[node name="Filters" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
+focus_mode = 0
+theme = ExtResource("6_engjn")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+disabled = true
+text = "Filters"
+icon = ExtResource("30_68b7m")
+
+[node name="Sort" type="Button" parent="Menus/Play/SubTopBar/HBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+focus_mode = 0
+theme = ExtResource("6_engjn")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+disabled = true
+text = "Sort"
+icon = ExtResource("31_vanrq")
+
+[node name="SearchAuthor" type="Panel" parent="Menus/Play/SubTopBar/HBoxContainer"]
+custom_minimum_size = Vector2(150, 32)
+layout_mode = 2
+mouse_filter = 2
+theme = ExtResource("6_engjn")
+theme_override_styles/panel = SubResource("StyleBoxFlat_68b7m")
+
+[node name="LineEdit" type="LineEdit" parent="Menus/Play/SubTopBar/HBoxContainer/SearchAuthor"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 32.0
+grow_horizontal = 0
+grow_vertical = 2
 mouse_default_cursor_shape = 0
 theme = ExtResource("6_engjn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = ExtResource("8_dj67d")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_vanrq")
+theme_override_styles/focus = SubResource("StyleBoxFlat_rqeco")
 placeholder_text = "Author"
 caret_blink = true
 
-[node name="Search" type="LineEdit" parent="Menus/Play/SubTopBar/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="Menus/Play/SubTopBar/HBoxContainer/SearchAuthor"]
+self_modulate = Color(1, 1, 1, 0.49803922)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 6.0
+offset_top = -10.0
+offset_bottom = 10.0
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("33_wadof")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Search" type="Panel" parent="Menus/Play/SubTopBar/HBoxContainer"]
 custom_minimum_size = Vector2(220, 32)
 layout_mode = 2
+mouse_filter = 2
+theme = ExtResource("6_engjn")
+theme_override_styles/panel = SubResource("StyleBoxFlat_68b7m")
+
+[node name="LineEdit" type="LineEdit" parent="Menus/Play/SubTopBar/HBoxContainer/Search"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 32.0
+grow_horizontal = 0
+grow_vertical = 2
 mouse_default_cursor_shape = 0
 theme = ExtResource("6_engjn")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = ExtResource("8_dj67d")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_vanrq")
+theme_override_styles/focus = SubResource("StyleBoxFlat_rqeco")
 placeholder_text = "Search"
 caret_blink = true
 
+[node name="TextureRect" type="TextureRect" parent="Menus/Play/SubTopBar/HBoxContainer/Search"]
+self_modulate = Color(1, 1, 1, 0.49803922)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 6.0
+offset_top = -10.0
+offset_bottom = 10.0
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("34_b4jiv")
+expand_mode = 2
+stretch_mode = 4
+
 [node name="Extras" type="Panel" parent="Menus"]
-visible = false
-modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -758,35 +937,39 @@ texture = ExtResource("10_jvjdd")
 expand_mode = 1
 stretch_mode = 1
 
-[node name="Logo" type="TextureRect" parent="Menus/Extras"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -32.0
-offset_top = 72.0
-offset_right = 32.0
-offset_bottom = 172.0
-grow_horizontal = 2
-mouse_filter = 2
-texture = ExtResource("18_eku7s")
-expand_mode = 3
-
 [node name="SoundSpace" type="Button" parent="Menus/Extras"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
+anchor_top = 0.5
 anchor_right = 0.5
-offset_left = -96.0
-offset_top = 64.0
-offset_right = 96.0
-offset_bottom = 204.0
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
 grow_horizontal = 2
+grow_vertical = 2
 focus_mode = 0
 theme_override_colors/font_color = Color(1, 1, 1, 0.25098)
 theme_override_fonts/font = ExtResource("19_c6nra")
 flat = true
 script = ExtResource("33_yxnar")
+
+[node name="Logo" type="TextureRect" parent="Menus/Extras/SoundSpace"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("18_eku7s")
+expand_mode = 3
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Menus/Extras/SoundSpace"]
 layout_mode = 1
@@ -804,15 +987,20 @@ text = "[center][color=ffffff40]Inspired by Sound Space"
 scroll_active = false
 
 [node name="Stats" type="Panel" parent="Menus/Extras"]
+custom_minimum_size = Vector2(400, 400)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.1
-anchor_right = 0.45
+anchor_left = 0.25
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_top = 220.0
-offset_bottom = -80.0
+offset_top = 200.0
+offset_right = -150.0
+offset_bottom = -200.0
+grow_horizontal = 0
+grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_u43bj")
+script = ExtResource("37_wadof")
 
 [node name="Background" type="Panel" parent="Menus/Extras/Stats"]
 layout_mode = 1
@@ -826,8 +1014,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_jvjdd")
 [node name="Header" type="Label" parent="Menus/Extras/Stats"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
-anchor_right = 0.5
+anchor_right = 1.0
 offset_top = 8.0
 grow_horizontal = 2
 text = "STATISTICS"
@@ -839,7 +1026,7 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 54.0
+offset_top = 40.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_engjn")
@@ -849,7 +1036,7 @@ clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 0
+theme_override_constants/separation = 2
 
 [node name="GamePlaytime" type="Panel" parent="Menus/Extras/Stats/ScrollContainer/VBoxContainer"]
 custom_minimum_size = Vector2(380, 32)
@@ -1300,22 +1487,25 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_eku7s")
 
 [node name="Credits" type="Panel" parent="Menus/Extras"]
+custom_minimum_size = Vector2(400, 400)
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.55
-anchor_right = 0.9
+anchor_left = 0.5
+anchor_right = 0.75
 anchor_bottom = 1.0
-offset_top = 220.0
-offset_bottom = -80.0
-grow_horizontal = 0
+offset_left = 150.0
+offset_top = 124.0
+offset_right = 262.0
+offset_bottom = -124.0
+grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_qw82i")
+script = ExtResource("39_b4jiv")
 
 [node name="Background" type="Panel" parent="Menus/Extras/Credits"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 0
+offset_right = 400.0
+offset_bottom = 400.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_jvjdd")
@@ -1323,8 +1513,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_jvjdd")
 [node name="Header" type="Label" parent="Menus/Extras/Credits"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.5
-anchor_right = 0.5
+anchor_right = 1.0
 offset_top = 8.0
 grow_horizontal = 2
 text = "CREDITS"
@@ -1336,32 +1525,58 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 54.0
+offset_top = 40.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_engjn")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_b4jiv")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Menus/Extras/Credits/ScrollContainer"]
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 0
+theme_override_constants/separation = 12
+
+[node name="nyuwaea" type="RichTextLabel" parent="Menus/Extras/Credits/ScrollContainer/VBoxContainer"]
+modulate = Color(0.8156863, 0.7411765, 1, 1)
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=20]nyuwaea
+[color=ffffffbb][font_size=16]Developer"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="lulusuki" type="RichTextLabel" parent="Menus/Extras/Credits/ScrollContainer/VBoxContainer"]
+modulate = Color(1, 0.7411765, 1, 1)
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=20]lulusuki
+[color=ffffffbb][font_size=16]Developer"
+fit_content = true
+horizontal_alignment = 1
+
+[node name="allusionist" type="RichTextLabel" parent="Menus/Extras/Credits/ScrollContainer/VBoxContainer"]
+modulate = Color(0.9814784, 0.7174443, 0.6400969, 1)
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=20]allusionist
+[color=ffffffbb][font_size=16]Button icons"
+fit_content = true
+horizontal_alignment = 1
 
 [node name="Outline" type="Panel" parent="Menus/Extras/Credits"]
 material = SubResource("ShaderMaterial_yxnar")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+layout_mode = 0
+offset_right = 400.0
+offset_bottom = 400.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_eku7s")
 
 [node name="TopBar" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = -1
+anchors_preset = 10
 anchor_right = 1.0
 offset_left = 8.0
 offset_top = 8.0
@@ -1371,7 +1586,7 @@ mouse_filter = 2
 theme = ExtResource("6_engjn")
 theme_override_styles/panel = SubResource("StyleBoxEmpty_18lcc")
 
-[node name="Background" type="ColorRect" parent="TopBar"]
+[node name="Background" type="Panel" parent="TopBar"]
 material = SubResource("ShaderMaterial_l7ueg")
 layout_mode = 1
 anchors_preset = 15
@@ -1379,6 +1594,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wadof")
 
 [node name="Logo" type="TextureRect" parent="TopBar"]
 layout_mode = 1
@@ -1420,8 +1636,7 @@ texture_hover = ExtResource("22_01xyg")
 script = ExtResource("37_c6nra")
 
 [node name="Jukebox" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = -1
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -1432,8 +1647,9 @@ offset_bottom = -8.0
 mouse_filter = 2
 theme = ExtResource("6_engjn")
 theme_override_styles/panel = SubResource("StyleBoxEmpty_18lcc")
+script = ExtResource("35_jvjdd")
 
-[node name="Background" type="ColorRect" parent="Jukebox"]
+[node name="Background" type="Panel" parent="Jukebox"]
 material = SubResource("ShaderMaterial_h3j6r")
 layout_mode = 1
 anchors_preset = 15
@@ -1441,6 +1657,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wadof")
 
 [node name="Spectrum" type="HBoxContainer" parent="Jukebox"]
 layout_mode = 1
@@ -2103,7 +2320,6 @@ mouse_filter = 2
 color = Color(0.9411765, 0.29803923, 0.34509805, 1)
 
 [node name="NotificationHolder" type="VBoxContainer" parent="."]
-layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -2120,7 +2336,6 @@ alignment = 2
 
 [node name="ContextMenu" type="Panel" parent="."]
 visible = false
-layout_mode = 0
 offset_right = 150.0
 offset_bottom = 120.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_t0m3h")
@@ -2194,8 +2409,7 @@ alignment = 0
 
 [node name="Volume" type="Panel" parent="."]
 modulate = Color(1, 1, 1, 0)
-layout_mode = 1
-anchors_preset = -1
+anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -2245,7 +2459,6 @@ mouse_filter = 2
 
 [node name="Cursor" type="TextureRect" parent="."]
 z_index = 2
-layout_mode = 0
 offset_right = 32.0
 offset_bottom = 32.0
 mouse_filter = 2
@@ -2256,7 +2469,6 @@ script = ExtResource("41_yxnar")
 [node name="Transition" type="ColorRect" parent="."]
 self_modulate = Color(1, 1, 1, 0)
 z_index = 2
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -2265,4 +2477,9 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[connection signal="file_selected" from="VideoDialog" to="." method="_on_file_dialog_file_selected"]
+[node name="FPSCounter" parent="." instance=ExtResource("39_u43bj")]
+anchors_preset = 2
+offset_left = 0.0
+offset_top = -23.0
+offset_right = 1.0
+offset_bottom = 0.0

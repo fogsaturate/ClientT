@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Background : Panel
+public partial class Background : Panel, ISkinnable
 {
     private TextureRect tile;
     private ShaderMaterial tileMaterial;
@@ -11,14 +11,16 @@ public partial class Background : Panel
         tile = GetNode<TextureRect>("Tile");
         tileMaterial = tile.Material as ShaderMaterial;
 
-        SkinManager.Instance.OnLoaded += updateSkin;
+        SkinManager.Instance.Loaded += UpdateSkin;
 
-        updateSkin();
+        UpdateSkin();
     }
 
-	private void updateSkin()
-	{
-        tile.Texture = SkinManager.Instance.Skin.BackgroundTileImage;
-        tileMaterial.Shader = SkinManager.Instance.Skin.BackgroundTileShader;
+	public void UpdateSkin(SkinProfile skin = null)
+    {
+        skin ??= SkinManager.Instance.Skin;
+
+        tile.Texture = skin.BackgroundTileImage;
+        tileMaterial.Shader = skin.BackgroundTileShader;
     }
 }

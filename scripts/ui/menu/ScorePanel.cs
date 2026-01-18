@@ -87,7 +87,6 @@ public partial class ScorePanel : Panel
             Replay replay = new(replayPath);
             Map map = MapParser.Decode(replay.MapFilePath);
             
-            SceneManager.Load("res://scenes/game.tscn");
             LegacyRunner.Play(map, replay.Speed, replay.StartFrom, replay.Modifiers, null, [replay]);
         }
     }

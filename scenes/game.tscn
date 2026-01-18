@@ -1,11 +1,11 @@
-[gd_scene load_steps=67 format=3 uid="uid://vp1nmsiqt5yv"]
+[gd_scene load_steps=70 format=3 uid="uid://vp1nmsiqt5yv"]
 
-[ext_resource type="Script" uid="uid://8s0npsnw42ce" path="res://scripts/game/LegacyRunner.cs" id="1_1hgss"]
+[ext_resource type="Script" uid="uid://8s0npsnw42ce" path="res://scripts/scenes/LegacyRunner.cs" id="1_1hgss"]
 [ext_resource type="ArrayMesh" uid="uid://rniojt7yiv8q" path="res://meshes/squircle.obj" id="2_chdyw"]
 [ext_resource type="Texture2D" uid="uid://b3g4aw54n6bow" path="res://skin/game/grid.png" id="2_q78ea"]
 [ext_resource type="Script" uid="uid://okqdw5gj567n" path="res://scripts/game/LegacyRenderer.cs" id="3_ew8wr"]
 [ext_resource type="Texture2D" uid="uid://3e1tjlr4m0wt" path="res://skin/game/cursor.png" id="3_negii"]
-[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://theme/theme.tres" id="4_rvp5o"]
+[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://themes/theme.tres" id="4_rvp5o"]
 [ext_resource type="FontFile" uid="uid://4bnnn01f4dqr" path="res://fonts/Ubuntu-Medium.ttf" id="5_pxgh4"]
 [ext_resource type="Texture2D" uid="uid://cxv6ey5xb6b0f" path="res://skin/game/health_background.png" id="6_bbly8"]
 [ext_resource type="Texture2D" uid="uid://4x2vfpyjkri6" path="res://skin/game/health.png" id="7_wjg6i"]
@@ -24,7 +24,6 @@
 [ext_resource type="Texture2D" uid="uid://lfj8i1bi6kfs" path="res://textures/ui/pause.png" id="23_7silw"]
 [ext_resource type="FontFile" uid="uid://dotb3skhwouha" path="res://fonts/Roboto-Bold.ttf" id="23_wf21h"]
 [ext_resource type="FontFile" uid="uid://rs2mb33nd3b1" path="res://fonts/Roboto-Italic.ttf" id="24_j6p10"]
-[ext_resource type="Theme" uid="uid://c8tb6mtqpycc8" path="res://theme/midgame_menu_buttons.tres" id="25_748ov"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_73q55"]
 transparency = 1
@@ -80,7 +79,7 @@ distance_fade_min_distance = 1076.07
 material = SubResource("StandardMaterial3D_lvhmj")
 size = Vector2(0.263, 0.263)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_q2syx"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_pl11u"]
 viewport_path = NodePath("HealthViewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4p8vu"]
@@ -88,7 +87,7 @@ resource_local_to_scene = true
 transparency = 1
 shading_mode = 0
 disable_fog = true
-albedo_texture = SubResource("ViewportTexture_q2syx")
+albedo_texture = SubResource("ViewportTexture_pl11u")
 texture_repeat = false
 
 [sub_resource type="QuadMesh" id="QuadMesh_b1hbo"]
@@ -96,7 +95,7 @@ resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_4p8vu")
 size = Vector2(10.88, 0.8)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_n4au3"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_bhx41"]
 viewport_path = NodePath("ProgressBarViewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p1h21"]
@@ -104,7 +103,7 @@ resource_local_to_scene = true
 transparency = 1
 shading_mode = 0
 disable_fog = true
-albedo_texture = SubResource("ViewportTexture_n4au3")
+albedo_texture = SubResource("ViewportTexture_bhx41")
 texture_repeat = false
 
 [sub_resource type="QuadMesh" id="QuadMesh_7mook"]
@@ -112,7 +111,7 @@ resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_p1h21")
 size = Vector2(10.88, 0.8)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_5nddi"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_qnb83"]
 viewport_path = NodePath("VideoViewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rj3ky"]
@@ -122,14 +121,14 @@ no_depth_test = true
 shading_mode = 0
 disable_ambient_light = true
 disable_fog = true
-albedo_texture = SubResource("ViewportTexture_5nddi")
+albedo_texture = SubResource("ViewportTexture_qnb83")
 texture_filter = 1
 texture_repeat = false
 
 [sub_resource type="QuadMesh" id="QuadMesh_3p7x2"]
 size = Vector2(258.3, 210)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_b0vun"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_sww3w"]
 viewport_path = NodePath("PanelLeftViewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nody0"]
@@ -137,13 +136,13 @@ resource_local_to_scene = true
 transparency = 1
 shading_mode = 0
 disable_fog = true
-albedo_texture = SubResource("ViewportTexture_b0vun")
+albedo_texture = SubResource("ViewportTexture_sww3w")
 texture_repeat = false
 
 [sub_resource type="QuadMesh" id="QuadMesh_ssyve"]
 size = Vector2(4, 10)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_crm1r"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_suyxu"]
 viewport_path = NodePath("PanelRightViewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ro5ir"]
@@ -151,13 +150,11 @@ resource_local_to_scene = true
 transparency = 1
 shading_mode = 0
 disable_fog = true
-albedo_texture = SubResource("ViewportTexture_crm1r")
+albedo_texture = SubResource("ViewportTexture_suyxu")
 texture_repeat = false
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4qlgx"]
 shader = ExtResource("8_ocxsu")
-
-[sub_resource type="FFmpegVideoStream" id="FFmpegVideoStream_aj2pp"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_usmyc"]
 font = ExtResource("12_axsek")
@@ -216,6 +213,24 @@ font_size = 36
 font = ExtResource("24_j6p10")
 font_size = 12
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kncke"]
+bg_color = Color(0.0352941, 0.0313726, 0.0509804, 0.501961)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6kbgk"]
+bg_color = Color(0.0352941, 0.0313726, 0.0509804, 0.501961)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jlnvv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y08lf"]
+bg_color = Color(0.0745098, 0.0666667, 0.101961, 0.501961)
+
+[sub_resource type="Theme" id="Theme_e1j6l"]
+Button/fonts/font = ExtResource("5_pxgh4")
+Button/styles/focus = SubResource("StyleBoxFlat_kncke")
+Button/styles/hover = SubResource("StyleBoxFlat_6kbgk")
+Button/styles/normal = SubResource("StyleBoxEmpty_jlnvv")
+Button/styles/pressed = SubResource("StyleBoxFlat_y08lf")
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t86sn"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_1hyik"]
@@ -223,58 +238,85 @@ font_size = 18
 outline_size = 5
 outline_color = Color(0, 0, 0, 0.501961)
 
-[node name="SceneGame" type="Node3D"]
+[node name="SceneGame" type="Node"]
 script = ExtResource("1_1hgss")
+UseGameSpace = true
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+z_index = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+mouse_filter = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+screen_space_aa = 1
+size = Vector2i(1152, 648)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.75)
+current = true
 fov = 70.0
 size = 5.0
 
-[node name="Notes" type="MultiMeshInstance3D" parent="."]
+[node name="Notes" type="MultiMeshInstance3D" parent="SubViewportContainer/SubViewport"]
 material_override = SubResource("StandardMaterial3D_73q55")
 cast_shadow = 0
 multimesh = SubResource("MultiMesh_almyi")
 script = ExtResource("3_ew8wr")
 
-[node name="Grid" type="MeshInstance3D" parent="."]
+[node name="Grid" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
 mesh = SubResource("QuadMesh_aih2q")
+skeleton = NodePath("../../..")
 
-[node name="CursorTrail" type="MultiMeshInstance3D" parent="."]
+[node name="CursorTrail" type="MultiMeshInstance3D" parent="SubViewportContainer/SubViewport"]
 material_override = SubResource("StandardMaterial3D_ssr8x")
 multimesh = SubResource("MultiMesh_e28va")
 
-[node name="Cursor" type="MeshInstance3D" parent="."]
+[node name="Cursor" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
 mesh = SubResource("QuadMesh_xij4d")
+skeleton = NodePath("../../..")
 
-[node name="Health" type="MeshInstance3D" parent="."]
+[node name="Health" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, -6.3, -10)
 cast_shadow = 0
 mesh = SubResource("QuadMesh_b1hbo")
+skeleton = NodePath("../../..")
 
-[node name="ProgressBar" type="MeshInstance3D" parent="."]
+[node name="ProgressBar" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 6.3, -10)
 cast_shadow = 0
 mesh = SubResource("QuadMesh_7mook")
+skeleton = NodePath("../../..")
 
-[node name="Video" type="MeshInstance3D" parent="."]
+[node name="Video" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.479675, -0.459572, -99.9929)
 material_override = SubResource("StandardMaterial3D_rj3ky")
 transparency = 1.0
 cast_shadow = 0
 mesh = SubResource("QuadMesh_3p7x2")
+skeleton = NodePath("../../..")
 
-[node name="PanelLeft" type="MeshInstance3D" parent="."]
+[node name="PanelLeft" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(0.984808, 0, 0.173648, 0, 1, 0, -0.173648, 0, 0.984808, -7.5, 0, -9)
 material_override = SubResource("StandardMaterial3D_nody0")
 mesh = SubResource("QuadMesh_ssyve")
+skeleton = NodePath("../../..")
 
-[node name="PanelRight" type="MeshInstance3D" parent="."]
+[node name="PanelRight" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(0.984808, 0, -0.173648, 0, 1, 0, 0.173648, 0, 0.984808, 7.5, 0, -9)
 material_override = SubResource("StandardMaterial3D_ro5ir")
 mesh = SubResource("QuadMesh_ssyve")
+skeleton = NodePath("../../..")
 
-[node name="Progress" type="Label3D" parent="."]
+[node name="Progress" type="Label3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(3.5, 0, 0, 0, 3.38074, -0.905867, 0, 0.905867, 3.38074, 0, 7, -10)
 pixel_size = 0.0025
 modulate = Color(1, 1, 1, 0.376471)
@@ -283,7 +325,7 @@ text = "0:00 / 0:00"
 font = ExtResource("12_axsek")
 font_size = 64
 
-[node name="Title" type="Label3D" parent="."]
+[node name="Title" type="Label3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(2, 0, 0, 0, 1.93185, -0.517638, 0, 0.517638, 1.93185, 0, 8.25, -10)
 outline_modulate = Color(0, 0, 0, 0)
 text = "N/A - N/A"
@@ -292,25 +334,25 @@ font_size = 64
 autowrap_mode = 3
 width = 2500.0
 
-[node name="Combo" type="Label3D" parent="."]
+[node name="Combo" type="Label3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(7, 0, 0, 0, 6.89365, -1.21554, 0, 1.21554, 6.89365, 0, 3.5, -10)
 pixel_size = 0.0025
 modulate = Color(1, 1, 1, 0)
-outline_modulate = Color(1, 1, 1, 0.0941176)
+outline_modulate = Color(1, 1, 1, 0.39215687)
 text = "0"
 font = ExtResource("5_pxgh4")
 font_size = 64
 outline_size = 4
 
-[node name="Speed" type="Label3D" parent="."]
+[node name="Speed" type="Label3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(7, 0, 0, 0, 6.76148, 1.81173, 0, -1.81173, 6.76148, 0, -7.5, -10)
 pixel_size = 0.0025
-modulate = Color(1, 1, 1, 0.12549)
+modulate = Color(1, 1, 1, 0.39215687)
 outline_modulate = Color(0, 0, 0, 0)
 text = "1.00x"
 font = ExtResource("5_pxgh4")
 
-[node name="Skip" type="Label3D" parent="."]
+[node name="Skip" type="Label3D" parent="SubViewportContainer/SubViewport"]
 transform = Transform3D(7, 0, 0, 0, 6.76148, 1.81173, 0, -1.81173, 6.76148, 0, -5, -10)
 pixel_size = 0.0025
 modulate = Color(1, 1, 1, 0)
@@ -330,7 +372,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stream = SubResource("FFmpegVideoStream_aj2pp")
 volume_db = -80.0
 expand = true
 
@@ -517,17 +558,25 @@ horizontal_alignment = 1
 disable_3d = true
 transparent_bg = true
 canvas_item_default_texture_filter = 2
-size = Vector2i(1088, 80)
+size = Vector2i(544, 40)
+size_2d_override = Vector2i(1088, 80)
+size_2d_override_stretch = true
 render_target_update_mode = 4
 
 [node name="Background" type="TextureRect" parent="HealthViewport"]
-offset_right = 1088.0
-offset_bottom = 80.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("6_bbly8")
 
 [node name="Main" type="TextureRect" parent="HealthViewport"]
-offset_right = 1088.0
-offset_bottom = 80.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("7_wjg6i")
 expand_mode = 1
 stretch_mode = 1
@@ -536,17 +585,25 @@ stretch_mode = 1
 disable_3d = true
 transparent_bg = true
 canvas_item_default_texture_filter = 2
-size = Vector2i(1088, 80)
+size = Vector2i(544, 40)
+size_2d_override = Vector2i(1088, 80)
+size_2d_override_stretch = true
 render_target_update_mode = 4
 
 [node name="Background" type="TextureRect" parent="ProgressBarViewport"]
-offset_right = 1088.0
-offset_bottom = 80.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("8_eu3ux")
 
 [node name="Main" type="TextureRect" parent="ProgressBarViewport"]
-offset_right = 1088.0
-offset_bottom = 80.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("9_nde5v")
 expand_mode = 1
 stretch_mode = 1
@@ -630,7 +687,6 @@ alignment = 2
 anchors_preset = 2
 offset_top = -27.0
 offset_right = 72.0
-text = "0 FPS"
 
 [node name="Menu" type="Panel" parent="."]
 visible = false
@@ -707,7 +763,7 @@ anchor_right = 1.0
 anchor_bottom = 0.35
 offset_left = 32.0
 offset_right = -32.0
-theme = ExtResource("25_748ov")
+theme = SubResource("Theme_e1j6l")
 theme_override_font_sizes/font_size = 28
 text = "RESUME"
 
@@ -719,7 +775,7 @@ anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = 32.0
 offset_right = -32.0
-theme = ExtResource("25_748ov")
+theme = SubResource("Theme_e1j6l")
 theme_override_font_sizes/font_size = 28
 text = "RESTART"
 
@@ -731,7 +787,7 @@ anchor_right = 1.0
 anchor_bottom = 0.65
 offset_left = 32.0
 offset_right = -32.0
-theme = ExtResource("25_748ov")
+theme = SubResource("Theme_e1j6l")
 theme_override_font_sizes/font_size = 28
 text = "SETTINGS"
 
@@ -743,7 +799,7 @@ anchor_right = 1.0
 anchor_bottom = 0.8
 offset_left = 32.0
 offset_right = -32.0
-theme = ExtResource("25_748ov")
+theme = SubResource("Theme_e1j6l")
 theme_override_font_sizes/font_size = 28
 text = "GIVE UP"
 

@@ -670,6 +670,6 @@ public partial class SettingsProfile
 
     private void updateApproachTime()
     {
-        ApproachTime.Value = ApproachRate / ApproachDistance;
+        ApproachTime.Value = ApproachDistance / ApproachRate;
     }
 }

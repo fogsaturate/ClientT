@@ -1,14 +1,14 @@
 using Godot;
 using System;
 
-public partial class Cursor : TextureRect
+public partial class Cursor : TextureRect, ISkinnable
 {
     public override void _Ready()
     {
-        SkinManager.Instance.OnLoaded += UpdateTexture;
+        SkinManager.Instance.Loaded += UpdateSkin;
         // SettingsManager.Instance.Settings.FieldUpdated += (field, value) => { if (field == "CursorScale") { UpdateSize(); } };
 
-        UpdateTexture();
+        UpdateSkin();
         UpdateSize();
     }
 
@@ -20,13 +20,15 @@ public partial class Cursor : TextureRect
         }
     }
 
-	public void UpdateTexture()
-	{
-        Texture = SkinManager.Instance.Skin.CursorImage;
-    }
-
 	public void UpdateSize()
 	{
         Size = Vector2.One * 32 * (float)SettingsManager.Instance.Settings.CursorScale;
+    }
+
+	public void UpdateSkin(SkinProfile skin = null)
+    {
+        skin ??= SkinManager.Instance.Skin;
+
+        Texture = skin.CursorImage;
     }
 }

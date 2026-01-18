@@ -7,7 +7,7 @@ namespace Util;
 
 public class Misc
 {
-    public static GodotObject OBJParser = (GodotObject)GD.Load<GDScript>("res://scripts/OBJParser.gd").New();
+    public static GodotObject OBJParser = (GodotObject)GD.Load<GDScript>("res://scripts/util/OBJParser.gd").New();
 
     public static string GetProfile()
     {

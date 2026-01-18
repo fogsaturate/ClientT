@@ -4,7 +4,7 @@
 [ext_resource type="FontFile" uid="uid://4bnnn01f4dqr" path="res://fonts/Ubuntu-Medium.ttf" id="2_ngxw4"]
 [ext_resource type="FontFile" uid="uid://bopde8iqsld1o" path="res://fonts/Ubuntu-Regular.ttf" id="3_314mk"]
 [ext_resource type="Texture2D" uid="uid://3e1tjlr4m0wt" path="res://skin/game/cursor.png" id="4_svuah"]
-[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://theme/theme.tres" id="5_ngxw4"]
+[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://themes/theme.tres" id="5_ngxw4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bfkib"]
 
@@ -54,7 +54,7 @@ shadow_color = Color(0, 0, 0, 1)
 [node name="ScorePanel" type="Panel"]
 clip_contents = true
 custom_minimum_size = Vector2(0, 100)
-anchors_preset = -1
+anchors_preset = 10
 anchor_right = 1.0
 size_flags_horizontal = 3
 mouse_filter = 1

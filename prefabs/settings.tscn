@@ -1,26 +1,68 @@
-[gd_scene load_steps=15 format=3 uid="uid://dkxy83ajqf2kq"]
+[gd_scene load_steps=24 format=3 uid="uid://dkxy83ajqf2kq"]
 
-[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://theme/theme.tres" id="1_8p7x0"]
+[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://themes/theme.tres" id="1_8p7x0"]
 [ext_resource type="Script" uid="uid://b0721m86xe8nx" path="res://scripts/ui/SettingsMenu.cs" id="1_epys8"]
 [ext_resource type="FontFile" uid="uid://bopde8iqsld1o" path="res://fonts/Ubuntu-Regular.ttf" id="2_cmtjb"]
-[ext_resource type="Theme" uid="uid://birpbaoexunde" path="res://theme/settings_categories_theme.tres" id="3_esq7m"]
+[ext_resource type="FontFile" uid="uid://4bnnn01f4dqr" path="res://fonts/Ubuntu-Medium.ttf" id="4_epys8"]
 [ext_resource type="Texture2D" uid="uid://men3chmi3esy" path="res://textures/ui/add.png" id="4_fgxmn"]
+[ext_resource type="Shader" uid="uid://rngh60dyh10b" path="res://scripts/shaders/outline.gdshader" id="6_jhjkh"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8skyv"]
 bg_color = Color(0.0360807, 0.0300716, 0.0527505, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m7m67"]
 bg_color = Color(0.0235294, 0.0196078, 0.0352941, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l24nh"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_epys8"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mgaml"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_glkuk"]
 font = ExtResource("2_cmtjb")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kncke"]
+content_margin_left = 8.0
+bg_color = Color(0.0352941, 0.0313726, 0.0509804, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6kbgk"]
+content_margin_left = 8.0
+bg_color = Color(0.0360807, 0.0300716, 0.0527505, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8pig8"]
+content_margin_left = 8.0
+draw_center = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y08lf"]
+content_margin_left = 8.0
+bg_color = Color(0.076273, 0.0667037, 0.100363, 1)
+
+[sub_resource type="Theme" id="Theme_jhjkh"]
+Button/fonts/font = ExtResource("4_epys8")
+Button/styles/focus = SubResource("StyleBoxFlat_kncke")
+Button/styles/hover = SubResource("StyleBoxFlat_6kbgk")
+Button/styles/normal = SubResource("StyleBoxFlat_8pig8")
+Button/styles/pressed = SubResource("StyleBoxFlat_y08lf")
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yp26f"]
 bg_color = Color(0.0235294, 0.0196078, 0.0352941, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="LabelSettings" id="LabelSettings_osuri"]
 font_size = 26
@@ -32,6 +74,30 @@ border_color = Color(1, 1, 1, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6q5ho"]
 bg_color = Color(0.117647, 0.117647, 0.117647, 1)
 border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3poq1"]
+shader = ExtResource("6_jhjkh")
+shader_parameter/outline_color = Color(0.05, 0.05, 0.05, 1)
+shader_parameter/outline_opacity = 1.0
+shader_parameter/light_color = Color(0.79, 0, 0.27, 1)
+shader_parameter/cursor_light_color = Color(0.15, 0.15, 0.15, 1)
+shader_parameter/fill = 0.0
+shader_parameter/glow_radius = 350.0
+shader_parameter/glow_exponent = 2.0
+shader_parameter/light_position = Vector2(-10000, 0)
+shader_parameter/cursor_position = Vector2(0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_popqt"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="Settings" type="ColorRect"]
 z_index = 1
@@ -95,6 +161,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_epys8")
 
 [node name="Container" type="VBoxContainer" parent="Holder/Categories/CategoryTemplate"]
 layout_mode = 2
@@ -230,7 +297,7 @@ anchors_preset = -1
 anchor_right = 1.0
 offset_bottom = 50.0
 focus_mode = 0
-theme = ExtResource("3_esq7m")
+theme = SubResource("Theme_jhjkh")
 text = "CATEGORY"
 alignment = 0
 
@@ -311,3 +378,14 @@ mouse_default_cursor_shape = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_pwsiv")
 placeholder_text = "profile name"
 caret_blink = true
+
+[node name="Outline" type="Panel" parent="Holder"]
+material = SubResource("ShaderMaterial_3poq1")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_popqt")

@@ -4,20 +4,19 @@ using System;
 public partial class MapInfo : AspectRatioContainer
 {
     public Map SelectedMap;
+    public MapInfoContainer InfoContainer;
 
     private MapList mapList;
     private Panel holder;
 
     private readonly PackedScene infoContainerTemplate = ResourceLoader.Load<PackedScene>("res://prefabs/map_info_container.tscn");
-    private MapInfoContainer infoContainer;
 
     public override void _Ready()
     {
         mapList = GetParent().GetNode<MapList>("MapList");
-		
-        mapList.OnMapSelected += Select;
-
         holder = GetNode<Panel>("Holder");
+
+        mapList.MapSelected += Select;
     }
 	
     public override void _Draw()
@@ -33,13 +32,13 @@ public partial class MapInfo : AspectRatioContainer
 
         SelectedMap = map;
 		
-        var oldContainer = infoContainer;
-        infoContainer?.Transition(false).TweenCallback(Callable.From(() => { holder.RemoveChild(oldContainer); oldContainer.QueueFree(); }));
+        var oldContainer = InfoContainer;
+        InfoContainer?.Transition(false).TweenCallback(Callable.From(() => { holder.RemoveChild(oldContainer); oldContainer.QueueFree(); }));
 
-        infoContainer = infoContainerTemplate.Instantiate<MapInfoContainer>();
+        InfoContainer = infoContainerTemplate.Instantiate<MapInfoContainer>();
 
-        holder.AddChild(infoContainer);
-		infoContainer.Setup(map);
-        infoContainer.Transition(true);
+        holder.AddChild(InfoContainer);
+		InfoContainer.Setup(map);
+        InfoContainer.Transition(true);
     }
 }

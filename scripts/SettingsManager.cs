@@ -17,7 +17,13 @@ public partial class SettingsManager : Node
     public SettingsProfile Settings = new SettingsProfile();
 
     [Signal]
-    public delegate void OnShownEventHandler(bool shown);
+    public delegate void MenuToggledEventHandler(bool shown);
+
+    [Signal]
+    public delegate void SavedEventHandler();
+
+    [Signal]
+    public delegate void LoadedEventHandler();
 
     public override void _Ready()
     {
@@ -32,7 +38,7 @@ public partial class SettingsManager : Node
     {
         Shown = show;
 
-        Instance.EmitSignal(SignalName.OnShown, Shown);
+        Instance.EmitSignal(SignalName.MenuToggled, Shown);
     }
 
     public static void HideMenu()
@@ -144,14 +150,14 @@ public partial class SettingsManager : Node
 
         Logger.Log($"Saved settings {profile}");
 
+        Instance.EmitSignal(SignalName.Saved);
+
         SkinManager.Save();
     }
 
     public static void Load(string profile = null)
     {
         profile ??= Util.Misc.GetProfile();
-
-        Exception err = null;
 
         try
         {
@@ -161,7 +167,8 @@ public partial class SettingsManager : Node
         }
         catch (Exception exception)
         {
-            err = exception;
+            ToastNotification.Notify("Settings file corrupted", 2);
+            Logger.Error(exception);
         }
 
         if (!Directory.Exists($"{Constants.USER_FOLDER}/skins/{Instance.Settings.Skin.Value}"))
@@ -170,13 +177,9 @@ public partial class SettingsManager : Node
             ToastNotification.Notify($"Could not find skin {Instance.Settings.Skin.Value}", 1);
         }
 
-        if (err != null)
-        {
-            ToastNotification.Notify("Settings file corrupted", 2);
-            throw Logger.Error($"Settings file corrupted; {err}");
-        }
-
         Logger.Log($"Loaded settings {profile}");
+
+        Instance.EmitSignal(SignalName.Loaded);
 
         SkinManager.Load();
     }

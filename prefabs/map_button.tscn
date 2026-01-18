@@ -1,7 +1,7 @@
 [gd_scene load_steps=13 format=3 uid="uid://vgvjvbvu0qsc"]
 
 [ext_resource type="Script" uid="uid://cwdd0qg7m3tnk" path="res://scripts/ui/menu/MapButton.cs" id="1_gpm1h"]
-[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://theme/theme.tres" id="1_rhnis"]
+[ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://themes/theme.tres" id="1_rhnis"]
 [ext_resource type="Texture2D" uid="uid://cacq7g5ijo7sy" path="res://skin/ui/play/favorite.png" id="2_c1lr1"]
 [ext_resource type="Shader" uid="uid://rngh60dyh10b" path="res://scripts/shaders/outline.gdshader" id="3_b5pxb"]
 [ext_resource type="Shader" uid="uid://b38n4irr1f443" path="res://skin/ui/play/map_button_cover.gdshader" id="3_boybo"]
@@ -16,7 +16,7 @@ corner_radius_bottom_left = 4
 shader = ExtResource("3_b5pxb")
 shader_parameter/outline_color = Color(0.05, 0.05, 0.05, 1)
 shader_parameter/outline_opacity = 1.0
-shader_parameter/light_color = Color(0.79, 0, 0.27, 1)
+shader_parameter/light_color = Color(0.7882353, 0, 0.27058825, 1)
 shader_parameter/cursor_light_color = Color(0.15, 0.15, 0.15, 1)
 shader_parameter/fill = 0.0
 shader_parameter/glow_radius = 350.0
@@ -51,10 +51,11 @@ shader = ExtResource("7_gpm1h")
 self_modulate = Color(0, 0, 0, 0.8784314)
 clip_contents = true
 custom_minimum_size = Vector2(0, 100)
-anchors_preset = -1
+anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 80.0
+offset_bottom = 100.0
 grow_horizontal = 0
+grow_vertical = 2
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_gpm1h")
 script = ExtResource("1_gpm1h")
@@ -70,7 +71,6 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_b5pxb")
 
 [node name="Cover" type="TextureRect" parent="."]
-modulate = Color(1, 1, 1, 0.5019608)
 material = SubResource("ShaderMaterial_gpm1h")
 layout_mode = 1
 anchors_preset = -1
@@ -106,7 +106,7 @@ anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = 16.0
 offset_top = 8.0
-offset_right = -8.0
+offset_right = -40.0
 theme = ExtResource("1_rhnis")
 text = "Long Artist Name - Kind Of Really Long Song Title Compared To Most Songs I Think"
 label_settings = SubResource("LabelSettings_gpm1h")

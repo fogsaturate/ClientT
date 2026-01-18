@@ -30,7 +30,7 @@ public partial class SettingsMenu : ColorRect
 
         Modulate = Color.Color8(255, 255, 255, 0);
 
-        SettingsManager.Instance.OnShown += ShowMenu;
+        SettingsManager.Instance.MenuToggled += ShowMenu;
 
         double start = Time.GetTicksUsec();
 
