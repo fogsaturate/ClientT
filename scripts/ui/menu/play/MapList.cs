@@ -54,6 +54,7 @@ public partial class MapList : Panel, ISkinnable
     public double ScrollMomentum = 0;
     public double TargetScroll = 0;
     public double Scroll = 0;
+    public bool DragScroll = false;
     public bool MouseScroll = false;
     public bool DisplaySelectionCursor = false;
 
@@ -61,9 +62,6 @@ public partial class MapList : Panel, ISkinnable
     /// Queried and ordered maps to display in the list
     /// </summary>
     public List<Map> Maps = [];
-
-    [Signal]
-    public delegate void MapSelectedEventHandler(Map map);
 
     private TextureRect mask;
     private TextureRect selectionCursor;
@@ -91,6 +89,8 @@ public partial class MapList : Panel, ISkinnable
     private float buttonHoverSize = 0;
     private float buttonSelectSize = 0;
     private int buttonsPerContainer = 1;
+    private Vector2 lastMousePos = Vector2.Zero;
+    private float dragDistance = 0;
 
     public override void _Ready()
     {
@@ -140,7 +140,19 @@ public partial class MapList : Panel, ISkinnable
             ScrollLength += buttonMinSize + buttonHoverSize + buttonSelectSize;
         }
 
-		if (MouseScroll)
+        Vector2 mousePos = DisplayServer.MouseGetPosition();
+
+        if (DragScroll)
+        {
+            float dragDelta = (lastMousePos.Y - mousePos.Y) * 30;
+
+            ScrollMomentum += dragDelta;
+            dragDistance += Math.Abs(dragDelta);
+        }
+
+        lastMousePos = mousePos;
+
+        if (MouseScroll)
 		{
             float t = Mathf.InverseLerp(Position.Y + scrollBarMain.Size.Y / 2, Position.Y + Size.Y - scrollBarMain.Size.Y / 2, GetViewport().GetMousePosition().Y);
             TargetScroll = Mathf.Lerp(TargetScroll, ScrollLength * Math.Clamp(t, 0, 1), Math.Min(1, 24 * delta));
@@ -283,7 +295,8 @@ public partial class MapList : Panel, ISkinnable
 		{
 			switch (mouseButton.ButtonIndex)
 			{
-				case MouseButton.Right: MouseScroll = mouseButton.Pressed; break;
+                case MouseButton.Left: DragScroll = mouseButton.Pressed; if (DragScroll) { dragDistance = 0; }; break;
+                case MouseButton.Right: MouseScroll = mouseButton.Pressed; break;
 				case MouseButton.WheelDown: ScrollMomentum += ScrollStep; break;
 				case MouseButton.WheelUp: ScrollMomentum -= ScrollStep; break;
             }
@@ -298,6 +311,18 @@ public partial class MapList : Panel, ISkinnable
             value.UpdateOutline(0f);
         }
 
+        if (SoundManager.Map == null || SoundManager.Map.ID != map.ID)
+        {
+            SoundManager.PlayJukebox(map);
+        }
+
+        Lobby.SetMap(map);
+
+        if (selectedMapID == map.ID)
+        {
+            LegacyRunner.Play(Lobby.Map, Lobby.Speed, Lobby.StartFrom, Lobby.Modifiers);
+        }
+
         selectedMapID = map.ID;
         
         if (Layout == ListLayout.List)
@@ -305,7 +330,7 @@ public partial class MapList : Panel, ISkinnable
             TargetScroll = Maps.FindIndex(otherMap => otherMap.ID == map.ID) * (buttonMinSize + Spacing) + buttonMinSize - Size.Y / 2;
         }
 
-        EmitSignal(SignalName.MapSelected, map);
+        MapInfo.Instance.Select(map);
     }
 
     public void UpdateMaps(string search = "", string author = "")
@@ -330,9 +355,12 @@ public partial class MapList : Panel, ISkinnable
 
     public void UpdateLayout(ListLayout layout)
     {
-        Layout = layout;
-        Scroll = 0;
-        TargetScroll = 0;
+        if (Layout != layout)
+        {
+            Layout = layout;
+            Scroll = 0;
+            TargetScroll = 0;
+        }
 
         buttonMinSize = layout == ListLayout.List ? WideButtonMinimumSize : SquareButtonMinimumSize;
         buttonHoverSize = layout == ListLayout.List ? WideButtonHoveredSize : SquareButtonHoveredSize;
@@ -373,7 +401,7 @@ public partial class MapList : Panel, ISkinnable
         button.HoveredSizeOffset = buttonHoverSize;
         button.SelectedSizeOffset = buttonSelectSize;
         
-        button.MouseHovered += (bool hovered) => {
+        button.MouseHovered += (hovered) => {
             if (hovered)
             {
                 hoveredButton = button;
@@ -386,9 +414,13 @@ public partial class MapList : Panel, ISkinnable
             }
         };
         button.Pressed += () => {
-            Select(button.Map);
+            if (dragDistance < 500)
+            {
+                Select(button.Map);
 
-            button.UpdateOutline(1.0f);
+                button.Select();
+                button.UpdateOutline(1.0f);
+            }
         };
 
         return button;

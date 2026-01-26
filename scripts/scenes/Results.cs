@@ -17,21 +17,19 @@ public partial class Results : BaseScene
 
 	public override void _Ready()
 	{
-        base._Ready();
+		base._Ready();
 		
-        settings = SettingsManager.Instance.Settings;
+		settings = SettingsManager.Instance.Settings;
 
 		cursor = GetNode<TextureRect>("Cursor");
 		footer = GetNode<Panel>("Footer");
 		holder = GetNode<Panel>("Holder");
 		cover = GetNode<TextureRect>("Cover");
 
-		Input.MouseMode = Input.MouseModeEnum.Hidden;
+		Input.MouseMode = settings.UseCursorInMenus ? Input.MouseModeEnum.Hidden : Input.MouseModeEnum.Visible;
+        cursor.Visible = settings.UseCursorInMenus;
 
-		cursor.Texture = SkinManager.Instance.Skin.CursorImage;
-		cursor.Size = new Vector2(32 * (float)settings.CursorScale.Value, 32 * (float)settings.CursorScale.Value);
-
-		holder.GetNode<Label>("Title").Text = (LegacyRunner.CurrentAttempt.IsReplay ? "[REPLAY] " : "") + LegacyRunner.CurrentAttempt.Map.PrettyTitle;
+        holder.GetNode<Label>("Title").Text = (LegacyRunner.CurrentAttempt.IsReplay ? "[REPLAY] " : "") + LegacyRunner.CurrentAttempt.Map.PrettyTitle;
 		holder.GetNode<Label>("Difficulty").Text = LegacyRunner.CurrentAttempt.Map.DifficultyName;
 		holder.GetNode<Label>("Mappers").Text = $"by {LegacyRunner.CurrentAttempt.Map.PrettyMappers}";
 		holder.GetNode<Label>("Accuracy").Text = $"{LegacyRunner.CurrentAttempt.Accuracy.ToString().PadDecimals(2)}%";
@@ -115,9 +113,8 @@ public partial class Results : BaseScene
 		delta = (now - LastFrame) / 1000000;
 		LastFrame = now;
 
-        Vector2 size = GetViewport().GetVisibleRect().Size;
+		Vector2 size = GetViewport().GetVisibleRect().Size;
 
-        cursor.Position = MousePosition - new Vector2(cursor.Size.X / 2, cursor.Size.Y / 2);
 		holder.Position = holder.Position.Lerp((size / 2 - MousePosition) * (8 / size.Y), Math.Min(1, (float)delta * 16));
 	}
 
@@ -150,12 +147,12 @@ public partial class Results : BaseScene
 		}
 	}
 
-    public override void Load()
-    {
-        base.Load();
+	public override void Load()
+	{
+		base.Load();
 
 		DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Adaptive);
-    }
+	}
 
 	public void UpdateVolume()
 	{

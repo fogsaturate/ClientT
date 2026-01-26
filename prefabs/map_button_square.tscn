@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bsojvf0n7l6v8"]
+[gd_scene format=3 uid="uid://bsojvf0n7l6v8"]
 
 [ext_resource type="Shader" uid="uid://rngh60dyh10b" path="res://scripts/shaders/outline.gdshader" id="1_si20u"]
 [ext_resource type="Script" uid="uid://kgkmh8egck6r" path="res://scripts/ui/menu/play/MapButtonSquare.cs" id="1_ywqiq"]
@@ -52,7 +52,7 @@ outline_color = Color(0, 0, 0, 1)
 shadow_size = 4
 shadow_color = Color(0, 0, 0, 0.5882353)
 
-[node name="MapButtonSquare" type="Control"]
+[node name="MapButtonSquare" type="Control" unique_id=417107232]
 custom_minimum_size = Vector2(120, 120)
 layout_mode = 3
 anchors_preset = 0
@@ -63,7 +63,7 @@ size_flags_vertical = 4
 mouse_filter = 1
 script = ExtResource("1_ywqiq")
 
-[node name="Holder" type="Panel" parent="."]
+[node name="Holder" type="Panel" parent="." unique_id=575332851]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -73,7 +73,7 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ywqiq")
 
-[node name="Outline" type="Panel" parent="Holder"]
+[node name="Outline" type="Panel" parent="Holder" unique_id=1645540429]
 material = SubResource("ShaderMaterial_ii2dr")
 layout_mode = 1
 anchors_preset = 15
@@ -83,7 +83,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_oqmn1")
 
-[node name="CoverBackground" type="TextureRect" parent="Holder"]
+[node name="CoverBackground" type="TextureRect" parent="Holder" unique_id=2122755475]
 modulate = Color(1, 1, 1, 0.5019608)
 layout_mode = 1
 anchors_preset = -1
@@ -98,7 +98,7 @@ grow_vertical = 2
 texture = ExtResource("3_ii2dr")
 expand_mode = 1
 
-[node name="Cover" type="TextureRect" parent="Holder"]
+[node name="Cover" type="TextureRect" parent="Holder" unique_id=102016594]
 modulate = Color(1, 1, 1, 0.5019608)
 layout_mode = 1
 anchors_preset = -1
@@ -112,7 +112,7 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 1
 
-[node name="Favorited" type="TextureRect" parent="Holder"]
+[node name="Favorited" type="TextureRect" parent="Holder" unique_id=2076074980]
 visible = false
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
@@ -128,7 +128,7 @@ pivot_offset = Vector2(8, 8)
 texture = ExtResource("2_ywqiq")
 expand_mode = 1
 
-[node name="Title" type="Label" parent="Holder"]
+[node name="Title" type="Label" parent="Holder" unique_id=803816264]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.1
@@ -148,7 +148,7 @@ autowrap_mode = 3
 clip_text = true
 text_overrun_behavior = 3
 
-[node name="Difficulty" type="Label" parent="Holder"]
+[node name="Difficulty" type="Label" parent="Holder" unique_id=1445974459]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.8
@@ -166,7 +166,7 @@ vertical_alignment = 1
 autowrap_mode = 3
 clip_text = true
 
-[node name="Button" type="Button" parent="Holder"]
+[node name="Button" type="Button" parent="Holder" unique_id=1371691573]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -175,5 +175,5 @@ grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
 mouse_filter = 1
-action_mode = 0
+mouse_default_cursor_shape = 2
 flat = true

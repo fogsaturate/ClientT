@@ -31,7 +31,7 @@ public partial class MainMenu : BaseScene
 		
         CurrentMenu = HomeMenu;
 
-        Input.MouseMode = Input.MouseModeEnum.Hidden;
+        Input.MouseMode = SettingsManager.Instance.Settings.UseCursorInMenus ? Input.MouseModeEnum.Hidden : Input.MouseModeEnum.Visible;
 
         foreach (Button button in CurrentMenu.GetNode("Buttons").GetChildren())
 		{
@@ -84,6 +84,7 @@ public partial class MainMenu : BaseScene
         base.Load();
 		
         Cursor.Position = GetViewport().GetMousePosition();
+        Cursor.Visible = SettingsManager.Instance.Settings.UseCursorInMenus;
 
         DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Adaptive);
 

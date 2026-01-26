@@ -72,13 +72,7 @@ public partial class MapButton : Control, ISkinnable
 		Button.MouseEntered += () => { Hover(true); };
 		Button.MouseExited += () => { Hover(false); };
 		Button.Pressed += () => {
-			Select();
             EmitSignal(SignalName.Pressed);
-
-            if (SoundManager.Map == null || SoundManager.Map.ID != Map.ID)
-            {
-                SoundManager.PlayJukebox(Map);
-            }
         };
         
         SkinManager.Instance.Loaded += UpdateSkin;
@@ -102,23 +96,13 @@ public partial class MapButton : Control, ISkinnable
         Hovered = hover;
         SizeOffset = computeSizeOffset();
 
-        EmitSignal(SignalName.MouseHovered, hover);
+        // EmitSignal(SignalName.MouseHovered, hover);
 
-        CreateTween().SetTrans(Tween.TransitionType.Quad).TweenProperty(this, "self_modulate", Hovered ? Color.Color8(26, 6, 13, 224) : Color.Color8(0, 0, 0, 224), 0.15);
+        // CreateTween().SetTrans(Tween.TransitionType.Quad).TweenProperty(this, "self_modulate", Hovered ? Color.Color8(26, 6, 13, 224) : Color.Color8(0, 0, 0, 224), 0.15);
     }
 
 	public virtual void Select(bool select = true)
 	{
-        if (select)
-        {
-            Lobby.SetMap(Map);
-
-            if (Selected)
-            {
-                LegacyRunner.Play(Lobby.Map, Lobby.Speed, Lobby.StartFrom, Lobby.Modifiers);
-            }
-        }
-
         Selected = select;
         SizeOffset = computeSizeOffset();
 

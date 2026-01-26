@@ -129,6 +129,12 @@ public partial class SettingsProfile
     public SettingsItem<float> TrailDetail { get; private set; }
 
     /// <summary>
+    /// Uses the skin's cursor instead of the native cursor
+    /// </summary>
+    [Order]
+    public SettingsItem<bool> UseCursorInMenus { get; private set; }
+
+    /// <summary>
     /// Adjusts the video background dim
     /// </summary>
     [Order]
@@ -431,7 +437,7 @@ public partial class SettingsProfile
             Id = "CursorTrail",
             Title = "Cursor Trail",
             Description = "Toggles a trail for your cursor",
-            Section = SettingsSection.Visual,
+            Section = SettingsSection.Visual
         };
 
         TrailTime = new(0.05f)
@@ -460,6 +466,14 @@ public partial class SettingsProfile
                 MinValue = 0,
                 MaxValue = 5
             }
+        };
+
+        UseCursorInMenus = new(false)
+        {
+            Id = "UseCursorInMenus",
+            Title = "Use Cursor in Menus",
+            Description = "Uses the skin's cursor instead of the native cursor",
+            Section = SettingsSection.Visual
         };
 
         VideoDim = new(80)

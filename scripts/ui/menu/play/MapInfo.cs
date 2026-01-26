@@ -19,8 +19,6 @@ public partial class MapInfo : AspectRatioContainer
         
         mapList = GetParent().GetNode<MapList>("MapList");
         holder = GetNode<Panel>("Holder");
-
-        mapList.MapSelected += Select;
     }
 	
     public override void _Draw()
