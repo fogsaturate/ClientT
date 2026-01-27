@@ -1041,6 +1041,18 @@ bbcode_enabled = true
 text = "[center][color=ffffff40]Inspired by Sound Space"
 scroll_active = false
 
+[node name="Button" type="Button" parent="Menus/Extras/SoundSpace" unique_id=446236980]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+flat = true
+script = ExtResource("44_ybca7")
+Link = "https://www.roblox.com/games/2677609345/Sound-Space"
+
 [node name="Stats" type="Panel" parent="Menus/Extras" unique_id=1641203527]
 custom_minimum_size = Vector2(400, 400)
 layout_mode = 1
@@ -1081,7 +1093,7 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 40.0
+offset_top = 44.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_engjn")
@@ -1580,7 +1592,7 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 40.0
+offset_top = 44.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_engjn")

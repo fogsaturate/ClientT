@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://t8stmueifd3q"]
+[gd_scene format=3 uid="uid://t8stmueifd3q"]
 
 [ext_resource type="Script" uid="uid://1dhyo8iq7fy2" path="res://scripts/spaces/Waves.cs" id="1_018g8"]
 [ext_resource type="Shader" uid="uid://c0caw7os4jvr4" path="res://scripts/shaders/sky_noise_waves.gdshader" id="2_m5heb"]
@@ -58,22 +58,22 @@ offsets = PackedFloat32Array(0, 0.2, 1)
 colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0)
 metadata/_snap_enabled = true
 
-[node name="Waves" type="Node3D"]
+[node name="Waves" type="Node3D" unique_id=728676692]
 script = ExtResource("1_018g8")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2086350008]
 environment = SubResource("Environment_su0lf")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1115967308]
 transform = Transform3D(1, 0, 0, 0, 0.9659258, -0.25881904, 0, 0.25881904, 0.9659258, 0, 2, 0)
 fov = 70.0
 
-[node name="Water" type="MeshInstance3D" parent="."]
+[node name="Water" type="MeshInstance3D" parent="." unique_id=1454706985]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.01, 0)
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_and4y")
 
-[node name="CPUParticles3D" type="CPUParticles3D" parent="."]
+[node name="CPUParticles3D" type="CPUParticles3D" parent="." unique_id=1809462337]
 visible = false
 material_override = SubResource("StandardMaterial3D_jaxqn")
 amount = 384

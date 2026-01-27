@@ -172,7 +172,7 @@ public partial class LegacyRunner : BaseScene
 				ReplayFile.StoreDouble(settings.FadeIn);
 				ReplayFile.Store8((byte)(settings.FadeOut ? 1 : 0));
 				ReplayFile.Store8((byte)(settings.Pushback ? 1 : 0));
-				ReplayFile.StoreDouble(settings.Parallax);
+				ReplayFile.StoreDouble(settings.CameraParallax);
 				ReplayFile.StoreDouble(settings.FoV.Value);
 				ReplayFile.StoreDouble(settings.NoteSize);
 				ReplayFile.StoreDouble(settings.Sensitivity);
@@ -1334,7 +1334,7 @@ public partial class LegacyRunner : BaseScene
 			}
 			
 			cursor.Position = new Vector3(CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0);
-			Camera.Position = new Vector3(0, 0, 3.75f) + new Vector3(CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0) * (float)(CurrentAttempt.IsReplay ? CurrentAttempt.Replays[0].Parallax : settings.Parallax);
+			Camera.Position = new Vector3(0, 0, 3.75f) + new Vector3(CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0) * (float)(CurrentAttempt.IsReplay ? CurrentAttempt.Replays[0].Parallax : settings.CameraParallax);
 			Camera.Rotation = Vector3.Zero;
 			
 			videoQuad.Position = new Vector3(Camera.Position.X, Camera.Position.Y, -100);

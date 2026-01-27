@@ -67,8 +67,13 @@ public partial class SettingsProfile
     /// Adjusts the camera parallax
     /// </summary>
     [Order]
-    public SettingsItem<float> Parallax { get; private set; }
+    public SettingsItem<float> CameraParallax { get; private set; }
 
+    /// <summary>
+    /// Adjusts the HUD parallax
+    /// </summary>
+    [Order]
+    public SettingsItem<float> HUDParallax { get; private set; }
 
     /// <summary>
     /// Adjusts the Field of View
@@ -87,16 +92,22 @@ public partial class SettingsProfile
     public SettingsItem<string> Skin { get; private set; }
 
     /// <summary>
-    /// Overrides the skin colorset
-    /// </summary>
-    [Order]
-    public SettingsItem<string> Colors { get; private set; }
-
-    /// <summary>
     /// World space for the game
     /// </summary>
     [Order]
     public SettingsItem<string> Space { get; private set; }
+
+    /// <summary>
+    /// Overrides the skin colorset
+    /// </summary>
+    [Order]
+    public SettingsItem<string> NoteColors { get; private set; }
+
+    /// <summary>
+    /// Sets the maximum opacity of the notes
+    /// </summary>
+    [Order]
+    public SettingsItem<float> NoteOpacity { get; private set; }
 
     /// <summary>
     /// Sets the size of the notes
@@ -340,15 +351,28 @@ public partial class SettingsProfile
             Section = SettingsSection.Gameplay,
         };
 
-        Parallax = new(0.1f)
+        CameraParallax = new(0.1f)
         {
-            Id = "Parallax",
-            Title = "Parallax",
+            Id = "CameraParallax",
+            Title = "Camera Parallax",
             Description = "Adjusts the camera parallax",
             Section = SettingsSection.Gameplay,
             Slider = new()
             {
+                Step = 0.25f,
+                MinValue = 0,
+                MaxValue = 100
+            }
+        };
 
+        HUDParallax = new(0)
+        {
+            Id = "HUDParallax",
+            Title = "HUD Parallax",
+            Description = "(Not implemented) Adjusts the HUD parallax",
+            Section = SettingsSection.Gameplay,
+            Slider = new()
+            {
                 Step = 0.25f,
                 MinValue = 0,
                 MaxValue = 100
@@ -382,15 +406,6 @@ public partial class SettingsProfile
             List = new("default")
         };
 
-        Colors = new("ff0059,ffd8e6")
-        {
-            Id = "Colors",
-            Title = "Colors",
-            Description = "Overrides the skin colorset",
-            Section = SettingsSection.Visual,
-            UpdateAction = value => { SkinManager.Instance.Skin.RawColors = value; SkinManager.Reload(); },
-        };
-
         Space = new("skin")
         {
             Id = "Space",
@@ -402,6 +417,29 @@ public partial class SettingsProfile
                 Values = [ "grid", "void" ]
             },
             Editable = false
+        };
+
+        NoteColors = new("ff0059,ffd8e6")
+        {
+            Id = "Colors",
+            Title = "Colors",
+            Description = "Overrides the skin colorset",
+            Section = SettingsSection.Visual,
+            UpdateAction = value => { SkinManager.Instance.Skin.RawColors = value; SkinManager.Reload(); },
+        };
+
+        NoteOpacity = new(1)
+        {
+            Id = "NoteOpacity",
+            Title = "Note Opacity",
+            Description = "Sets the maximum opacity for the notes",
+            Section = SettingsSection.Visual,
+            Slider = new()
+            {
+                Step = 0.05f,
+                MinValue = 0,
+                MaxValue = 1
+            }
         };
 
         NoteSize = new(0.875f)
@@ -458,7 +496,7 @@ public partial class SettingsProfile
         {
             Id = "TrailDetail",
             Title = "Trail Detail",
-            Description = "Adjusts the detail for the trail",
+            Description = "(Not implemented) Adjusts the detail for the trail",
             Section = SettingsSection.Visual,
             Slider = new()
             {

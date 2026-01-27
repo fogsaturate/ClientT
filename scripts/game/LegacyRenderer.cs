@@ -55,7 +55,7 @@ public partial class LegacyRenderer : MultiMeshInstance3D
 
 
             transform.Origin = new Vector3(note.X, note.Y, -depth);
-            color.A = alpha;
+            color.A = alpha * settings.NoteOpacity;
             Multimesh.SetInstanceTransform(j, transform);
             Multimesh.SetInstanceColor(j, color);
         }
