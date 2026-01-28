@@ -303,7 +303,7 @@ public partial class MapInfoContainer : Panel, ISkinnable
 		{
 			Leaderboard = new(map.ID, $"{Constants.USER_FOLDER}/pbs/{map.ID}");
 		}
-
+        
 		if (!Leaderboard.Valid || Leaderboard.ScoreCount == 0)
 		{
             leaderboard.Visible = false;

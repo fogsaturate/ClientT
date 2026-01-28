@@ -7,7 +7,7 @@
 [ext_resource type="Theme" uid="uid://dhuhu3mmaew1a" path="res://themes/theme.tres" id="3_xysv8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ywqiq"]
-bg_color = Color(0, 0, 0, 0.8784314)
+bg_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
@@ -64,6 +64,7 @@ mouse_filter = 1
 script = ExtResource("1_ywqiq")
 
 [node name="Holder" type="Panel" parent="." unique_id=575332851]
+self_modulate = Color(0, 0, 0, 0.8784314)
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0

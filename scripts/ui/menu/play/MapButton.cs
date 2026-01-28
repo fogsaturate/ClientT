@@ -96,7 +96,7 @@ public partial class MapButton : Control, ISkinnable
 
         EmitSignal(SignalName.MouseHovered, hover);
 
-        CreateTween().SetTrans(Tween.TransitionType.Quad).TweenProperty(this, "self_modulate", Hovered ? Color.Color8(26, 6, 13, 224) : Color.Color8(0, 0, 0, 224), 0.15);
+        CreateTween().SetTrans(Tween.TransitionType.Quad).TweenProperty(Holder, "self_modulate", Hovered ? Color.Color8(26, 6, 13, 224) : Color.Color8(0, 0, 0, 224), 0.15);
     }
 
 	public virtual void Select(bool select = true)

@@ -661,8 +661,8 @@ public partial class SettingsProfile
         VolumeMaster = new(50)
         {
             Id = "VolumeMaster",
-            Title = "Volume Master",
-            Description = "Master volume control for the audio",
+            Title = "Master Volume",
+            Description = "Master volume control for all audio",
             Section = SettingsSection.Audio,
             Slider = new()
             {
@@ -675,7 +675,7 @@ public partial class SettingsProfile
         VolumeMusic = new(50)
         {
             Id = "VolumeMusic",
-            Title = "Volume Music",
+            Title = "Music Volume",
             Description = "Audio control for the music",
             Section = SettingsSection.Audio,
             Slider = new()
@@ -689,7 +689,7 @@ public partial class SettingsProfile
         VolumeSFX = new(50)
         {
             Id = "VolumeSFX",
-            Title = "Volume Sound Effects",
+            Title = "SFX Volume",
             Description = "Audio control for sound effects",
             Section = SettingsSection.Audio,
             Slider = new()
