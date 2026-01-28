@@ -1147,6 +1147,11 @@ public partial class LegacyRunner : BaseScene
 	{
         map = MapParser.Decode(map.FilePath);
 
+		if (Playing)
+		{
+			Stop();
+		}
+
         CurrentAttempt = new(map, speed, startFrom, mods ?? [], players, replays);
 		Playing = true;
 		stopQueued = false;

@@ -142,21 +142,58 @@ public partial class Rhythia : Node
             EmitSignal(SignalName.FilesDropped, files);
 
             List<string> maps = [];
+            List<Replay> replays = [];
 
             foreach (string file in files)
             {
-                if (MapParser.IsValidExt(file.GetExtension()))
+                string ext = file.GetExtension();
+
+                if (MapParser.IsValidExt(ext))
                 {
                     maps.Add(file);
                 }
+                else
+                {
+                    switch (ext)
+                    {
+                        case "phxr":
+                            Replay replay = new(file);
+
+                            if (!replay.Valid)
+                            {
+                                continue;
+                            }
+
+                            replays.Add(replay);
+                            break;
+                    }
+                }
             }
             
-            MapParser.BulkImport([.. maps]);
-            
-            if (SceneManager.Scene is MainMenu)
+            if (maps.Count > 0)
             {
-                var menu = SceneManager.Scene as MainMenu;
-                menu.Transition(menu.PlayMenu);
+                MapParser.BulkImport([.. maps]);
+            
+                if (SceneManager.Scene is MainMenu)
+                {
+                    var menu = SceneManager.Scene as MainMenu;
+                    menu.Transition(menu.PlayMenu);
+                }
+            }
+
+            if (replays.Count > 0)
+            {
+                List<Replay> matching = [];
+
+                foreach (Replay replay in replays)
+                {
+                    if (replay == replays[0])
+                    {
+                        matching.Add(replay);
+                    }
+                }
+
+                LegacyRunner.Play(MapParser.Decode(matching[0].MapFilePath), matching[0].Speed, matching[0].StartFrom, matching[0].Modifiers, null, [.. matching]);
             }
         }));
 
@@ -197,7 +234,7 @@ public partial class Rhythia : Node
     {
         if (what == NotificationWMCloseRequest)
         {
-            if (SceneManager.Scene != null && SceneManager.Scene.Name == "SceneGame")
+            if (SceneManager.Scene != null && SceneManager.Scene is LegacyRunner)
             {
                 Stats.RageQuits++;
             }
