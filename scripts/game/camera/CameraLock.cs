@@ -26,7 +26,7 @@ public class CameraLock : CameraMode
 
         attempt.CursorPosition = new Vector2(attempt.CursorPosition.X, attempt.CursorPosition.Y);
 
-        camera.Position = new Vector3(0, 0, 3.75f) + new Vector3(attempt.CursorPosition.X, attempt.CursorPosition.Y, 0) * settings.Parallax.Value;
+        camera.Position = new Vector3(0, 0, 3.75f) + new Vector3(attempt.CursorPosition.X, attempt.CursorPosition.Y, 0) * settings.CameraParallax.Value;
         camera.Rotation = Vector3.Zero;
 
         attempt.CameraPosition = camera.Position;

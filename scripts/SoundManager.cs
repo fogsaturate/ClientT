@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Godot;
-using Menu;
 
 public partial class SoundManager : Node, ISkinnable
 {
@@ -129,6 +128,28 @@ public partial class SoundManager : Node, ISkinnable
         FailSound.Stream = Util.Audio.LoadStream(skin.FailSoundBuffer);
     }
 
+    public static void PlayJukebox(Map map, bool setRichPresence = true)
+    {
+        Map = map;
+
+        if (map.AudioBuffer == null)
+        {
+            JukeboxIndex++;
+            PlayJukebox(JukeboxIndex);
+            return;
+        }
+
+        Song.Stream = Util.Audio.LoadStream(map.AudioBuffer);
+        Song.Play();
+
+        Instance.EmitSignal(SignalName.JukeboxPlayed, map);
+
+        if (setRichPresence)
+        {
+            Discord.Client.UpdateState($"Listening to {map.PrettyTitle}");
+        }
+    }
+
     public static void PlayJukebox(int index = -1, bool setRichPresence = true)
     {
         if (JukeboxQueue.Length == 0)
@@ -147,32 +168,7 @@ public partial class SoundManager : Node, ISkinnable
             index = JukeboxQueue.Length - 1;
         }
 
-        Map = MapParser.Decode(JukeboxQueue[index]);
-
-        if (Map.AudioBuffer == null)
-        {
-            JukeboxIndex++;
-            PlayJukebox(JukeboxIndex);
-            return;
-        }
-
-        Instance.EmitSignal(SignalName.JukeboxPlayed, Map);
-
-        Song.Stream = Util.Audio.LoadStream(Map.AudioBuffer);
-        Song.Play();
-
-        if (setRichPresence)
-        {
-            Discord.Client.UpdateState($"Listening to {Map.PrettyTitle}");
-        }
-    }
-
-    public static void PlayJukebox(Map map, bool setRichPresence = true)
-    {
-        if (JukeboxQueueInverse.TryGetValue(map.FilePath.GetFile().GetBaseName(), out int index))
-        {
-            PlayJukebox(index, setRichPresence);
-        }
+        PlayJukebox(MapParser.Decode(JukeboxQueue[index]), setRichPresence);
     }
 
     public static void UpdateVolume()

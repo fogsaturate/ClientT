@@ -18,8 +18,11 @@ public partial class MapInfoContainer : Panel, ISkinnable
     private TextureRect cover;
     private Panel infoSubholder;
     private RichTextLabel mainLabel;
+    private string mainLabelFormat;
     private RichTextLabel extraLabel;
+    private string extraLabelFormat;
     private LinkPopupButton artistLink;
+    private string artistLinkFormat;
 
     private Panel actions;
     private Panel previewHolder;
@@ -35,7 +38,7 @@ public partial class MapInfoContainer : Panel, ISkinnable
     private VBoxContainer lbContainer;
     private Button lbExpand;
     private Button lbHide;
-    
+
     private ColorRect dim;
     private ShaderMaterial outlineMaterial;
 
@@ -47,10 +50,13 @@ public partial class MapInfoContainer : Panel, ISkinnable
 
         coverBackground = infoHolder.GetNode("CoverContainer").GetNode<TextureRect>("Background");
         cover = coverBackground.GetNode<TextureRect>("Cover");
-        artistLink = coverBackground.GetNode<LinkPopupButton>("ArtistLink");
         infoSubholder = infoHolder.GetNode<Panel>("Subholder");
         mainLabel = infoSubholder.GetNode<RichTextLabel>("MainLabel");
+        mainLabelFormat = mainLabel.Text;
         extraLabel = infoSubholder.GetNode<RichTextLabel>("Extra");
+        extraLabelFormat = extraLabel.Text;
+        artistLink = coverBackground.GetNode<LinkPopupButton>("ArtistLink");
+        artistLinkFormat = artistLink.Text;
 
         void updateOffset() { infoSubholder.OffsetLeft = coverBackground.Size.X + 8; }
 
@@ -77,25 +83,6 @@ public partial class MapInfoContainer : Panel, ISkinnable
         dim = GetNode<ColorRect>("Dim");
         outlineMaterial = info.GetNode<Panel>("Outline").Material as ShaderMaterial;
 
-        // Transition
-
-        info.OffsetLeft -= 64;
-		info.OffsetRight -= 64;
-		actions.OffsetLeft -= 80;
-		actions.OffsetRight -= 80;
-		leaderboard.OffsetLeft -= 96;
-		leaderboard.OffsetRight -= 96;
-
-        Tween inTween = CreateTween().SetEase(Tween.EaseType.Out).SetParallel();
-        inTween.SetTrans(Tween.TransitionType.Quint).TweenProperty(info, "offset_left", 0, 0.5);
-		inTween.TweenProperty(info, "offset_right", 0, 0.5);
-		inTween.SetTrans(Tween.TransitionType.Quart).TweenProperty(actions, "offset_left", 0, 0.6);
-		inTween.TweenProperty(actions, "offset_right", 0, 0.6);
-		inTween.SetTrans(Tween.TransitionType.Cubic).TweenProperty(leaderboard, "offset_left", 0, 0.7);
-		inTween.TweenProperty(leaderboard, "offset_right", 0, 0.7);
-
-        OffsetRight = 0;
-        Position += Vector2.Left * 64;
         Modulate = Color.Color8(255, 255, 255, 0);
 
         // Speed setup
@@ -110,7 +97,7 @@ public partial class MapInfoContainer : Panel, ISkinnable
             speed *= 100;
 
             double rounded = Math.Round(speed * 10) / 10;
-            
+
             if (Math.Abs(rounded - speed) <= Mathf.Epsilon)
             {
                 speed = rounded;
@@ -131,7 +118,7 @@ public partial class MapInfoContainer : Panel, ISkinnable
             value = Math.Clamp(value, 25, 1000) / 100;
 
             Lobby.SetSpeed(value);
-            
+
             if (SoundManager.Map.Name != Map.Name)
             {
                 SoundManager.PlayJukebox(Map);
@@ -161,7 +148,6 @@ public partial class MapInfoContainer : Panel, ISkinnable
             startButton.Text = $"START{(startFrom > 0 ? $" ({startFromEdit.Text})" : "")}";
         }
 
-        Lobby.SetStartFrom(0);
         Lobby.Instance.StartFromChanged += displayStartFrom;
 
         void applyStartFrom(string input = null, bool seek = true)
@@ -180,7 +166,7 @@ public partial class MapInfoContainer : Panel, ISkinnable
             if (split[0].IsValidFloat())
             {
                 float inputValue = split[0].ToFloat();
-                
+
                 if (inputValue < 1)
                 {
                     inputValue *= Map.Length / 1000;
@@ -192,15 +178,15 @@ public partial class MapInfoContainer : Panel, ISkinnable
             value = Math.Clamp(value * 1000, 0, Map.Length);
 
             Lobby.SetStartFrom(value);
-            
+
             if (SoundManager.Map.Name != Map.Name)
             {
                 SoundManager.PlayJukebox(Map);
             }
-            
+
             if (seek)
             {
-                SoundManager.Song.Seek((float)Lobby.StartFrom / 1000);
+                SoundManager.Song.Play((float)Lobby.StartFrom / 1000);
             }
         }
 
@@ -272,20 +258,44 @@ public partial class MapInfoContainer : Panel, ISkinnable
         Map = map;
         Name = map.Name;
 
-        SceneManager.Space.UpdateMap(map);
+        // Transition
+
+        Position = Vector2.Zero;
+        Scale = Vector2.One;
+
+        info.OffsetLeft -= 64;
+		info.OffsetRight -= 64;
+		actions.OffsetLeft -= 80;
+		actions.OffsetRight -= 80;
+		leaderboard.OffsetLeft -= 96;
+		leaderboard.OffsetRight -= 96;
+
+        Tween inTween = CreateTween().SetEase(Tween.EaseType.Out).SetParallel();
+        inTween.SetTrans(Tween.TransitionType.Quint).TweenProperty(info, "offset_left", 0, 0.5);
+		inTween.TweenProperty(info, "offset_right", 0, 0.5);
+		inTween.SetTrans(Tween.TransitionType.Quart).TweenProperty(actions, "offset_left", 0, 0.6);
+		inTween.TweenProperty(actions, "offset_right", 0, 0.6);
+		inTween.SetTrans(Tween.TransitionType.Cubic).TweenProperty(leaderboard, "offset_left", 0, 0.7);
+		inTween.TweenProperty(leaderboard, "offset_right", 0, 0.7);
+
+        OffsetRight = 0;
+        Position += Vector2.Left * 64;
 
         // Info
 
-        mainLabel.Text = string.Format(mainLabel.Text, map.PrettyTitle, Constants.DIFFICULTY_COLORS[map.Difficulty].ToHtml(), map.DifficultyName, map.PrettyMappers);
-        extraLabel.Text = string.Format(extraLabel.Text, Util.String.FormatTime(map.Length / 1000), map.Notes.Length, map.Name);
+        mainLabel.Text = string.Format(mainLabelFormat, map.PrettyTitle, Constants.DIFFICULTY_COLORS[map.Difficulty].ToHtml(), map.DifficultyName, map.PrettyMappers);
+        extraLabel.Text = string.Format(extraLabelFormat, Util.String.FormatTime(map.Length / 1000), map.Notes.Length, map.Name);
         coverBackground.SelfModulate = Constants.DIFFICULTY_COLORS[map.Difficulty];
         artistLink.Visible = map.ArtistLink != "";
-        artistLink.Text = string.Format(artistLink.Text, map.ArtistPlatform);
+        artistLink.Text = string.Format(artistLinkFormat, map.ArtistPlatform);
 
         artistLink.UpdateLink(map.ArtistLink);
 
         // Actions
 
+        Lobby.SetStartFrom(0);
+
+        previewHolder.GetNode("AspectRatioContainer").GetNode<FlatPreview>("FlatPreview").Setup(map, true);
 
         // Leaderboard
 
@@ -308,7 +318,7 @@ public partial class MapInfoContainer : Panel, ISkinnable
             for (int i = 0; i < Math.Min(8, Leaderboard.ScoreCount); i++)
             {
                 ScorePanel panel = leaderboardScoreTemplate.Instantiate<ScorePanel>();
-				
+
                 lbContainer.AddChild(panel);
                 panel.Setup(Leaderboard.Scores[i]);
                 panel.GetNode<ColorRect>("Background").Color = Color.Color8(255, 255, 255, (byte)(i % 2 == 0 ? 0 : 8));
@@ -334,10 +344,10 @@ public partial class MapInfoContainer : Panel, ISkinnable
         tween.TweenProperty(this, "position", show ? Vector2.Zero : Vector2.Down * 24, time);
         tween.TweenProperty(this, "scale", Vector2.One * (show ? 1f : 0.9f), time);
         tween.Chain();
-		
+
         return tween;
     }
-    
+
 	public void UpdateSkin(SkinProfile skin = null)
     {
         skin ??= SkinManager.Instance.Skin;

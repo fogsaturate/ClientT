@@ -45,9 +45,9 @@ public partial class AudioSpectrum : Panel
 
     private int barCount = 0;
 
-    private float ceiling = 1;
+    private float ceiling = 0.01f;
 
-    private float targetCeiling = 1;
+    private float targetCeiling = 0.01f;
 
     private float[] magnitudes = [];
 
@@ -82,7 +82,7 @@ public partial class AudioSpectrum : Panel
             }
         }
 
-        targetCeiling = NormalizeMagnitude ? (maxMagnitude > 0.002 ? maxMagnitude : targetCeiling) : MagnitudeCeiling;
+        targetCeiling = NormalizeMagnitude ? (maxMagnitude > 0.0015 ? maxMagnitude : targetCeiling) : MagnitudeCeiling;
         ceiling = Mathf.Lerp(ceiling, targetCeiling, (float)Math.Min(1, delta * 6));
 
         QueueRedraw();

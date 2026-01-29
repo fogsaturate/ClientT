@@ -6,7 +6,6 @@ using System.Linq;
 
 public partial class SettingsProfile
 {
-
     #region Gameplay
 
     /// <summary>
@@ -67,8 +66,13 @@ public partial class SettingsProfile
     /// Adjusts the camera parallax
     /// </summary>
     [Order]
-    public SettingsItem<float> Parallax { get; private set; }
+    public SettingsItem<float> CameraParallax { get; private set; }
 
+    /// <summary>
+    /// Adjusts the HUD parallax
+    /// </summary>
+    [Order]
+    public SettingsItem<float> HUDParallax { get; private set; }
 
     /// <summary>
     /// Adjusts the Field of View
@@ -87,16 +91,34 @@ public partial class SettingsProfile
     public SettingsItem<string> Skin { get; private set; }
 
     /// <summary>
-    /// Overrides the skin colorset
+    /// Overrides the skin's background space for the game
     /// </summary>
     [Order]
-    public SettingsItem<string> Colors { get; private set; }
+    public SettingsItem<string> GameSpace { get; private set; }
 
     /// <summary>
-    /// World space for the game
+    /// Overrides the skin's background space for the menu
     /// </summary>
     [Order]
-    public SettingsItem<string> Space { get; private set; }
+    public SettingsItem<string> MenuSpace { get; private set; }
+
+    /// <summary>
+    /// Overrides the skin's colorset
+    /// </summary>
+    [Order]
+    public SettingsItem<string> NoteColors { get; private set; }
+
+    /// <summary>
+    /// Sets the maximum opacity of the notes
+    /// </summary>
+    [Order]
+    public SettingsItem<float> NoteOpacity { get; private set; }
+
+    /// <summary>
+    /// Overrides the skin's note mesh
+    /// </summary>
+    [Order]
+    public SettingsItem<string> NoteMesh { get; private set; }
 
     /// <summary>
     /// Sets the size of the notes
@@ -340,15 +362,28 @@ public partial class SettingsProfile
             Section = SettingsSection.Gameplay,
         };
 
-        Parallax = new(0.1f)
+        CameraParallax = new(0.1f)
         {
-            Id = "Parallax",
-            Title = "Parallax",
+            Id = "CameraParallax",
+            Title = "Camera Parallax",
             Description = "Adjusts the camera parallax",
             Section = SettingsSection.Gameplay,
             Slider = new()
             {
+                Step = 0.25f,
+                MinValue = 0,
+                MaxValue = 100
+            }
+        };
 
+        HUDParallax = new(0)
+        {
+            Id = "HUDParallax",
+            Title = "HUD Parallax",
+            Description = "(Not implemented) Adjusts the HUD parallax",
+            Section = SettingsSection.Gameplay,
+            Slider = new()
+            {
                 Step = 0.25f,
                 MinValue = 0,
                 MaxValue = 100
@@ -377,31 +412,74 @@ public partial class SettingsProfile
             Section = SettingsSection.Visual,
             Buttons =
             [
-                new() { Title = "Skin Folder", Description = "Open the skin folder", OnPressed = () => { } }
+                new() { Title = "Skin Folder", Description = "Open the skin folder", OnPressed = () => { OS.ShellOpen($"{Constants.USER_FOLDER}/skins/{SettingsManager.Instance.Settings.Skin}"); } }
             ],
             List = new("default")
+            {
+                Values = [ "default" ]
+            }
         };
 
-        Colors = new("ff0059,ffd8e6")
+        GameSpace = new("skin")
         {
-            Id = "Colors",
-            Title = "Colors",
-            Description = "Overrides the skin colorset",
-            Section = SettingsSection.Visual,
-            UpdateAction = value => { SkinManager.Instance.Skin.RawColors = value; SkinManager.Reload(); },
-        };
-
-        Space = new("skin")
-        {
-            Id = "Space",
-            Title = "Space",
-            Description = "World space for the game",
+            Id = "GameSpace",
+            Title = "Game Space",
+            Description = "Overrides the skin's background space for gameplay",
             Section = SettingsSection.Visual,
             List = new("skin")
             {
-                Values = [ "grid", "void" ]
-            },
-            Editable = false
+                Values = [ "skin", "void", "grid", "squircles", "waves" ]
+            }
+        };
+
+        MenuSpace = new("skin")
+        {
+            Id = "MenuSpace",
+            Title = "Menu Space",
+            Description = "Overrides the skin's background space for the menu",
+            Section = SettingsSection.Visual,
+            List = new("skin")
+            {
+                Values = [ "skin", "void", "grid", "squircles", "waves" ]
+            }
+        };
+
+        NoteColors = new("skin")
+        {
+            Id = "Colors",
+            Title = "Colors",
+            Description = "Overrides the skin's colorset",
+            Section = SettingsSection.Visual,
+            List = new("skin")
+            {
+                Values = [ "skin", "default" ]
+            }
+        };
+
+        NoteOpacity = new(1)
+        {
+            Id = "NoteOpacity",
+            Title = "Note Opacity",
+            Description = "Sets the maximum opacity for the notes",
+            Section = SettingsSection.Visual,
+            Slider = new()
+            {
+                Step = 0.05f,
+                MinValue = 0,
+                MaxValue = 1
+            }
+        };
+
+        NoteMesh = new("skin")
+        {
+            Id = "NoteMesh",
+            Title = "Note Mesh",
+            Description = "Overrides the skin's note mesh",
+            Section = SettingsSection.Visual,
+            List = new("skin")
+            {
+                Values = [ "skin", "squircle", "square" ]
+            }
         };
 
         NoteSize = new(0.875f)
@@ -458,7 +536,7 @@ public partial class SettingsProfile
         {
             Id = "TrailDetail",
             Title = "Trail Detail",
-            Description = "Adjusts the detail for the trail",
+            Description = "(Not implemented) Adjusts the detail for the trail",
             Section = SettingsSection.Visual,
             Slider = new()
             {
@@ -583,8 +661,8 @@ public partial class SettingsProfile
         VolumeMaster = new(50)
         {
             Id = "VolumeMaster",
-            Title = "Volume Master",
-            Description = "Master volume control for the audio",
+            Title = "Master Volume",
+            Description = "Master volume control for all audio",
             Section = SettingsSection.Audio,
             Slider = new()
             {
@@ -597,7 +675,7 @@ public partial class SettingsProfile
         VolumeMusic = new(50)
         {
             Id = "VolumeMusic",
-            Title = "Volume Music",
+            Title = "Music Volume",
             Description = "Audio control for the music",
             Section = SettingsSection.Audio,
             Slider = new()
@@ -611,7 +689,7 @@ public partial class SettingsProfile
         VolumeSFX = new(50)
         {
             Id = "VolumeSFX",
-            Title = "Volume Sound Effects",
+            Title = "SFX Volume",
             Description = "Audio control for sound effects",
             Section = SettingsSection.Audio,
             Slider = new()

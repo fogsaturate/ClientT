@@ -105,7 +105,7 @@ public partial class LegacyRunner : BaseScene
 		public bool Qualifies = true;
 		public uint Hits = 0;
 		public float[] HitsInfo = [];
-		public Color LastHitColour = SkinManager.Instance.Skin.Colors[^1];
+		public Color LastHitColour = SkinManager.Instance.Skin.NoteColors[^1];
 		public uint Misses = 0;
 		public double DeathTime = -1;
 		public uint Sum = 0;
@@ -172,7 +172,7 @@ public partial class LegacyRunner : BaseScene
 				ReplayFile.StoreDouble(settings.FadeIn);
 				ReplayFile.Store8((byte)(settings.FadeOut ? 1 : 0));
 				ReplayFile.Store8((byte)(settings.Pushback ? 1 : 0));
-				ReplayFile.StoreDouble(settings.Parallax);
+				ReplayFile.StoreDouble(settings.CameraParallax);
 				ReplayFile.StoreDouble(settings.FoV.Value);
 				ReplayFile.StoreDouble(settings.NoteSize);
 				ReplayFile.StoreDouble(settings.Sensitivity);
@@ -235,7 +235,7 @@ public partial class LegacyRunner : BaseScene
 			Combo++;
 			ComboMultiplierProgress++;
 
-			LastHitColour = SkinManager.Instance.Skin.Colors[index % SkinManager.Instance.Skin.Colors.Length];
+			LastHitColour = SkinManager.Instance.Skin.NoteColors[index % SkinManager.Instance.Skin.NoteColors.Length];
 
 			float lateness = IsReplay ? HitsInfo[index] : (float)(((int)Progress - Map.Notes[index].Millisecond) / Speed);
 			float factor = 1 - Math.Max(0, lateness - 25) / 150f;
@@ -651,7 +651,7 @@ public partial class LegacyRunner : BaseScene
 
 		Discord.Client.UpdateDetails("Playing a Map");
 		Discord.Client.UpdateState(CurrentAttempt.Map.PrettyTitle);
-		Discord.Client.UpdateEndTime(DateTime.UtcNow.AddSeconds((Time.GetUnixTimeFromSystem() + CurrentAttempt.Map.Length / 1000 / CurrentAttempt.Speed)));
+		// Discord.Client.UpdateEndTime(DateTime.UtcNow.AddSeconds((Time.GetUnixTimeFromSystem() + CurrentAttempt.Map.Length / 1000 / CurrentAttempt.Speed)));
 
 		Input.MouseMode = settings.AbsoluteInput.Value || CurrentAttempt.IsReplay ? Input.MouseModeEnum.ConfinedHidden : Input.MouseModeEnum.Captured;
 		Input.UseAccumulatedInput = false;
@@ -1147,6 +1147,11 @@ public partial class LegacyRunner : BaseScene
 	{
         map = MapParser.Decode(map.FilePath);
 
+		if (Playing)
+		{
+			Stop();
+		}
+
         CurrentAttempt = new(map, speed, startFrom, mods ?? [], players, replays);
 		Playing = true;
 		stopQueued = false;
@@ -1194,7 +1199,7 @@ public partial class LegacyRunner : BaseScene
 			{
 				CurrentAttempt.Progress = CurrentAttempt.Map.Notes[CurrentAttempt.PassedNotes].Millisecond - settings.ApproachTime * 1500 * CurrentAttempt.Speed; // turn AT to ms and multiply by 1.5x
 				
-				Discord.Client.UpdateEndTime(DateTime.UtcNow.AddSeconds((Time.GetUnixTimeFromSystem() + (CurrentAttempt.Map.Length - CurrentAttempt.Progress) / 1000 / CurrentAttempt.Speed)));
+				// Discord.Client.UpdateEndTime(DateTime.UtcNow.AddSeconds((Time.GetUnixTimeFromSystem() + (CurrentAttempt.Map.Length - CurrentAttempt.Progress) / 1000 / CurrentAttempt.Speed)));
 				
 				if (CurrentAttempt.Map.AudioBuffer != null)
 				{
@@ -1334,7 +1339,7 @@ public partial class LegacyRunner : BaseScene
 			}
 			
 			cursor.Position = new Vector3(CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0);
-			Camera.Position = new Vector3(0, 0, 3.75f) + new Vector3(CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0) * (float)(CurrentAttempt.IsReplay ? CurrentAttempt.Replays[0].Parallax : settings.Parallax);
+			Camera.Position = new Vector3(0, 0, 3.75f) + new Vector3(CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0) * (float)(CurrentAttempt.IsReplay ? CurrentAttempt.Replays[0].Parallax : settings.CameraParallax);
 			Camera.Rotation = Vector3.Zero;
 			
 			videoQuad.Position = new Vector3(Camera.Position.X, Camera.Position.Y, -100);

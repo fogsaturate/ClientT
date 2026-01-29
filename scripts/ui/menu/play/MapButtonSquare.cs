@@ -39,7 +39,7 @@ public partial class MapButtonSquare : MapButton
     {
         base.Hover(hover);
 
-        // updateFocus();
+        updateFocus();
     }
 
     public override void Select(bool select = true)

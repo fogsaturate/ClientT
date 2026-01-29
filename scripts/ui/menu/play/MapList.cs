@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 public partial class MapList : Panel, ISkinnable
 {
@@ -109,14 +110,15 @@ public partial class MapList : Panel, ISkinnable
         scrollBarBackgroundBottom = scrollBarBackground.GetNode<TextureRect>("Bottom");
 
         MouseExited += () => { toggleSelectionCursor(false); };
-        Resized += () => { UpdateLayout(Layout); };
+        Resized += clear;
         SkinManager.Instance.Loaded += UpdateSkin;
         MapParser.Instance.MapsImported += maps => {
             UpdateMaps();
             Select(maps[0]);
         };
 
-        UpdateMaps();
+        Task.Run(() => UpdateMaps());
+
         UpdateLayout(Layout);
         UpdateSkin();
     }
@@ -141,7 +143,7 @@ public partial class MapList : Panel, ISkinnable
         }
 
         Vector2 mousePos = DisplayServer.MouseGetPosition();
-        
+
         if (DragScroll && IsVisibleInTree())
         {
             float dragDelta = (lastMousePos.Y - mousePos.Y) * 30;
@@ -206,7 +208,7 @@ public partial class MapList : Panel, ISkinnable
                         buttonSibling.Deselect();
                         buttonSibling.UpdateOutline(0f, 0f);
                     }
-                    
+
                     mask.RemoveChild(parentContainer);
                     containers.Remove(containerIndex);
                     containerCache.Push(parentContainer);
@@ -225,7 +227,7 @@ public partial class MapList : Panel, ISkinnable
                 containers[containerIndex] = container;
                 mask.AddChild(container);
             }
-            
+
             if (button == null)
             {
                 button = mapButtonCache.Count > 0 ? mapButtonCache.Pop() : setupButton(Layout == ListLayout.List ? mapButtonWideTemplate.Instantiate<MapButtonWide>() : mapButtonSquareTemplate.Instantiate<MapButtonSquare>());
@@ -259,7 +261,7 @@ public partial class MapList : Panel, ISkinnable
             hoveredButton != null && hoveredButton.IsInsideTree() && DisplaySelectionCursor ? hoveredButton.Holder.Position.X - 60 : -80,
             Math.Clamp(hoveredButton != null && hoveredButton.IsInsideTree() ? hoveredButton.Container.Position.Y + hoveredButton.Size.Y / 2 - selectionCursor.Size.Y / 2 : selectionCursor.Position.Y, 0, Size.Y)
         );
-        
+
         selectionCursor.Position = selectionCursor.Position.Lerp(selectionCursorPos, (float)Math.Min(1, 8 * delta));
         selectionCursor.Rotation = -selectionCursor.Position.Y / 60;
 
@@ -267,7 +269,7 @@ public partial class MapList : Panel, ISkinnable
         {
             int index = i + firstIndex;
             var container = drawnContainers[i];
-            
+
             float sizeOffset = containerSizeOffsets[i];
             float indexOffset = index * (buttonMinSize + Spacing);
             float top = indexOffset - (float)Scroll + (buttonMinSize + buttonHoverSize + buttonSelectSize) / 2;
@@ -308,8 +310,8 @@ public partial class MapList : Panel, ISkinnable
 		{
 			switch (mouseButton.ButtonIndex)
 			{
-                case MouseButton.Left: DragScroll = mouseButton.Pressed; if (DragScroll) { dragDistance = 0; }; break;
-                case MouseButton.Right: MouseScroll = mouseButton.Pressed; break;
+                case MouseButton.Left: DragScroll = mouseButton.Pressed; if (DragScroll) { dragDistance = 0; } break;
+                case MouseButton.Right: MouseScroll = mouseButton.Pressed; if (MouseScroll) { dragDistance = 0; } break;
 				case MouseButton.WheelDown: ScrollMomentum += ScrollStep; break;
 				case MouseButton.WheelUp: ScrollMomentum -= ScrollStep; break;
             }
@@ -344,11 +346,17 @@ public partial class MapList : Panel, ISkinnable
         Focus(map);
 
         MapInfo.Instance.Select(map);
+        SceneManager.Space.UpdateMap(map);
     }
 
     public void Focus(Map map)
     {
-        TargetScroll = Maps.FindIndex(otherMap => otherMap.Name == map.Name) * (buttonMinSize + Spacing) / buttonsPerContainer + buttonMinSize - Size.Y / 2;
+        TargetScroll = Maps.FindIndex(otherMap => otherMap.Name == map.Name) / buttonsPerContainer * (buttonMinSize + Spacing) + buttonMinSize / 2 - Size.Y / 2;
+
+        if (SceneManager.Scene is MainMenu mainMenu)
+        {
+            mainMenu.Transition(mainMenu.PlayMenu);
+        }
     }
 
     public void UpdateMaps(string search = "", string author = "")
@@ -384,21 +392,9 @@ public partial class MapList : Panel, ISkinnable
         buttonHoverSize = layout == ListLayout.List ? WideButtonHoveredSize : SquareButtonHoveredSize;
         buttonSelectSize = layout == ListLayout.List ? WideButtonSelectedSize : SquareButtonSelectedSize;
 
-        hoveredButton = null;
-
-        foreach (KeyValuePair<string, MapButton> entry in mapButtons)
-        {
-            entry.Value.QueueFree();
-        }
-        foreach (MapButton button in mapButtonCache)
-        {
-            button.QueueFree();
-        }
-
-        mapButtons.Clear();
-        mapButtonCache.Clear();
+        clear();
     }
-    
+
     public void UpdateSkin(SkinProfile skin = null)
     {
         skin ??= SkinManager.Instance.Skin;
@@ -418,7 +414,7 @@ public partial class MapList : Panel, ISkinnable
         button.MinimumSize = buttonMinSize;
         button.HoveredSizeOffset = buttonHoverSize;
         button.SelectedSizeOffset = buttonSelectSize;
-        
+
         button.MouseHovered += (hovered) => {
             if (hovered)
             {
@@ -447,7 +443,7 @@ public partial class MapList : Panel, ISkinnable
 	private void toggleSelectionCursor(bool display)
 	{
         if (DisplaySelectionCursor == display) { return; }
-        
+
         DisplaySelectionCursor = display;
 
 		if (display && hoveredButton != null)
@@ -459,12 +455,39 @@ public partial class MapList : Panel, ISkinnable
         tween.TweenProperty(selectionCursor, "modulate", Color.Color8(255, 255, 255, (byte)(display ? 255 : 0)), 0.1);
     }
 
+    private void clear()
+    {
+        hoveredButton = null;
+
+        foreach (KeyValuePair<string, MapButton> entry in mapButtons)
+        {
+            entry.Value.QueueFree();
+        }
+        foreach (MapButton button in mapButtonCache)
+        {
+            button.QueueFree();
+        }
+        foreach (KeyValuePair<int, HBoxContainer> entry in containers)
+        {
+            entry.Value.QueueFree();
+        }
+        foreach (HBoxContainer container in containerCache)
+        {
+            container.QueueFree();
+        }
+
+        mapButtons.Clear();
+        mapButtonCache.Clear();
+        containers.Clear();
+        containerCache.Clear();
+    }
+
     private void shuffle()
     {
         List<Map> shuffled = [];
         shuffled.AddRange(Maps.Shuffle());
         Maps = shuffled;
 
-        UpdateLayout(Layout);
+        clear();
     }
 }
