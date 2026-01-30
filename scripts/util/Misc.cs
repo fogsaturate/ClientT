@@ -9,11 +9,6 @@ public class Misc
 {
     public static GodotObject OBJParser = (GodotObject)GD.Load<GDScript>("res://scripts/util/OBJParser.gd").New();
 
-    public static string GetProfile()
-    {
-        return File.ReadAllText($"{Constants.USER_FOLDER}/current_profile.txt");
-    }
-
     public static ImageTexture GetModIcon(string mod)
     {
         ImageTexture tex;
