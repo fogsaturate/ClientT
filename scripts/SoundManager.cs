@@ -16,8 +16,7 @@ public partial class SoundManager : Node, ISkinnable
     [Signal]
     public delegate void JukeboxPlayedEventHandler(Map map);
 
-    public static string[] JukeboxQueue = [];
-    public static Dictionary<string, int> JukeboxQueueInverse = [];
+    public static int[] JukeboxQueue = [];
     public static int JukeboxIndex = 0;
     public static bool JukeboxPaused = false;
     public static ulong LastRewind = 0;
@@ -43,10 +42,11 @@ public partial class SoundManager : Node, ISkinnable
         AddChild(Song);
 
         SkinManager.Instance.Loaded += UpdateSkin;
-        
+
         UpdateSkin(SkinManager.Instance.Skin);
 
-        Song.Finished += () => {
+        Song.Finished += () =>
+        {
             switch (SceneManager.Scene.Name)
             {
                 case "SceneMenu":
@@ -67,13 +67,29 @@ public partial class SoundManager : Node, ISkinnable
         SettingsManager.Instance.Loaded += UpdateVolume;
         Lobby.Instance.SpeedChanged += (speed) => { SoundManager.Song.PitchScale = (float)speed; };
 
-        UpdateVolume();
-        UpdateJukeboxQueue();
-
-        if (SettingsManager.Instance.Settings.AutoplayJukebox)
+        if (MapManager.Initialized)
         {
-            PlayJukebox();
+            UpdateVolume();
+            UpdateJukeboxQueue();
+
+            if (SettingsManager.Instance.Settings.AutoplayJukebox)
+            {
+                PlayJukebox();
+            }
+
+            return;
         }
+
+        MapManager.MapsInitialized += (_) =>
+        {
+            UpdateVolume();
+            UpdateJukeboxQueue();
+
+            if (SettingsManager.Instance.Settings.AutoplayJukebox)
+            {
+                PlayJukebox();
+            }
+        };
     }
 
     public override void _Process(double delta)
@@ -139,7 +155,7 @@ public partial class SoundManager : Node, ISkinnable
             return;
         }
 
-        Song.Stream = Util.Audio.LoadStream(map.AudioBuffer);
+        Song.Stream = Util.Audio.LoadFromFile($"{MapUtil.MapsCacheFolder}/{map.Name}/audio.{map.AudioExt}");
         Song.Play();
 
         Instance.EmitSignal(SignalName.JukeboxPlayed, map);
@@ -168,7 +184,9 @@ public partial class SoundManager : Node, ISkinnable
             index = JukeboxQueue.Length - 1;
         }
 
-        PlayJukebox(MapParser.Decode(JukeboxQueue[index]), setRichPresence);
+        var map = MapManager.GetMapById(JukeboxQueue[index]);
+
+        PlayJukebox(map, setRichPresence);
     }
 
     public static void UpdateVolume()
@@ -182,11 +200,6 @@ public partial class SoundManager : Node, ISkinnable
 
     public static void UpdateJukeboxQueue()
     {
-        JukeboxQueue = [.. Directory.GetFiles($"{Constants.USER_FOLDER}/maps", $"*.{Constants.DEFAULT_MAP_EXT}", SearchOption.AllDirectories).Shuffle()];
-
-        for (int i = 0; i < JukeboxQueue.Length; i++)
-        {
-            JukeboxQueueInverse[JukeboxQueue[i].GetFile().GetBaseName()] = i;
-        }
+        JukeboxQueue = [.. MapManager.Maps.Select(x => x.Id)];
     }
 }

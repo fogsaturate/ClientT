@@ -4,7 +4,7 @@ using System.IO;
 
 public partial class MapInfoContainer : Panel, ISkinnable
 {
-	/// <summary>
+    /// <summary>
     /// Parsed map reference
     /// </summary>
     public Map Map;
@@ -23,6 +23,13 @@ public partial class MapInfoContainer : Panel, ISkinnable
     private string extraLabelFormat;
     private LinkPopupButton artistLink;
     private string artistLinkFormat;
+    private HBoxContainer mapButtonsContainer;
+    private Button favoriteButton;
+    private Button videoButton;
+    private FileDialog videoDialog;
+    private Button copyButton;
+    private FileDialog copyDialog;
+    private Button deleteButton;
 
     private Panel actions;
     private Panel previewHolder;
@@ -43,7 +50,7 @@ public partial class MapInfoContainer : Panel, ISkinnable
     private ShaderMaterial outlineMaterial;
 
     public override void _Ready()
-	{
+    {
         info = GetNode<Panel>("Info");
 
         Panel infoHolder = info.GetNode("ScrollContainer").GetNode<Panel>("Holder");
@@ -57,6 +64,14 @@ public partial class MapInfoContainer : Panel, ISkinnable
         extraLabelFormat = extraLabel.Text;
         artistLink = coverBackground.GetNode<LinkPopupButton>("ArtistLink");
         artistLinkFormat = artistLink.Text;
+        mapButtonsContainer = infoSubholder.GetNode<HBoxContainer>("Buttons");
+        favoriteButton = mapButtonsContainer.GetNode<Button>("Favorite");
+        videoButton = mapButtonsContainer.GetNode<Button>("Video");
+        videoDialog = videoButton.GetNode<FileDialog>("VideoDialog");
+        copyButton = mapButtonsContainer.GetNode<Button>("Copy");
+        copyDialog = copyButton.GetNode<FileDialog>("CopyDialog");
+        deleteButton = mapButtonsContainer.GetNode<Button>("Delete");
+
 
         void updateOffset() { infoSubholder.OffsetLeft = coverBackground.Size.X + 8; }
 
@@ -127,7 +142,8 @@ public partial class MapInfoContainer : Panel, ISkinnable
 
         speedEdit.FocusExited += applySpeed;
         speedEdit.TextSubmitted += (_) => { applySpeed(); };
-        speedSlider.ValueChanged += (value) => {
+        speedSlider.ValueChanged += (value) =>
+        {
             speedEdit.Text = value.ToString();
             applySpeed();
         };
@@ -192,16 +208,19 @@ public partial class MapInfoContainer : Panel, ISkinnable
 
         startFromEdit.FocusExited += () => { applyStartFrom(); };
         startFromEdit.TextSubmitted += (_) => { applyStartFrom(); };
-        startFromSlider.ValueChanged += value => {
+        startFromSlider.ValueChanged += value =>
+        {
             applyStartFrom((Math.Round(startFromSlider.Value * Map.Length) / 1000).ToString(), false);
         };
-        startFromSlider.DragEnded += changed => {
+        startFromSlider.DragEnded += changed =>
+        {
             if (changed) { applyStartFrom(); }
         };
 
         //
 
-        startButton.Pressed += () => {
+        startButton.Pressed += () =>
+        {
             LegacyRunner.Play(Map, Lobby.Speed, Lobby.StartFrom, Lobby.Modifiers);
         };
 
@@ -210,12 +229,12 @@ public partial class MapInfoContainer : Panel, ISkinnable
         Panel lbExpandHover = lbExpand.GetNode<Panel>("Hover");
 
         void tweenExpandHover(bool show)
-		{
+        {
             CreateTween().SetEase(Tween.EaseType.Out).SetTrans(Tween.TransitionType.Quart).TweenProperty(lbExpandHover, "modulate", Color.Color8(255, 255, 255, (byte)(show ? 255 : 0)), 0.25);
         }
 
         lbExpand.MouseEntered += () => { tweenExpandHover(true); };
-		lbExpand.MouseExited += () => { tweenExpandHover(false); };
+        lbExpand.MouseExited += () => { tweenExpandHover(false); };
         lbExpand.Pressed += () => { toggleLeaderboard(true); };
         lbHide.Pressed += () => { toggleLeaderboard(false); };
 
@@ -226,35 +245,35 @@ public partial class MapInfoContainer : Panel, ISkinnable
         UpdateSkin();
     }
 
-	public override void _Process(double delta)
+    public override void _Process(double delta)
     {
         outlineMaterial.SetShaderParameter("cursor_position", GetViewport().GetMousePosition());
     }
 
-	public override void _Input(InputEvent @event)
+    public override void _Input(InputEvent @event)
     {
         if (@event is InputEventMouseButton mouseButton && mouseButton.Pressed)
-		{
-			switch (mouseButton.ButtonIndex)
-			{
-				case MouseButton.Right: toggleLeaderboard(false); break;
+        {
+            switch (mouseButton.ButtonIndex)
+            {
+                case MouseButton.Right: toggleLeaderboard(false); break;
             }
-		}
+        }
     }
 
     public override void _UnhandledInput(InputEvent @event)
     {
         if (@event is InputEventMouseButton mouseButton && mouseButton.Pressed)
-		{
-			switch (mouseButton.ButtonIndex)
-			{
-				case MouseButton.Left: toggleLeaderboard(false); break;
+        {
+            switch (mouseButton.ButtonIndex)
+            {
+                case MouseButton.Left: toggleLeaderboard(false); break;
             }
-		}
+        }
     }
 
-	public void Setup(Map map)
-	{
+    public void Setup(Map map)
+    {
         Map = map;
         Name = map.Name;
 
@@ -264,19 +283,19 @@ public partial class MapInfoContainer : Panel, ISkinnable
         Scale = Vector2.One;
 
         info.OffsetLeft -= 64;
-		info.OffsetRight -= 64;
-		actions.OffsetLeft -= 80;
-		actions.OffsetRight -= 80;
-		leaderboard.OffsetLeft -= 96;
-		leaderboard.OffsetRight -= 96;
+        info.OffsetRight -= 64;
+        actions.OffsetLeft -= 80;
+        actions.OffsetRight -= 80;
+        leaderboard.OffsetLeft -= 96;
+        leaderboard.OffsetRight -= 96;
 
         Tween inTween = CreateTween().SetEase(Tween.EaseType.Out).SetParallel();
         inTween.SetTrans(Tween.TransitionType.Quint).TweenProperty(info, "offset_left", 0, 0.5);
-		inTween.TweenProperty(info, "offset_right", 0, 0.5);
-		inTween.SetTrans(Tween.TransitionType.Quart).TweenProperty(actions, "offset_left", 0, 0.6);
-		inTween.TweenProperty(actions, "offset_right", 0, 0.6);
-		inTween.SetTrans(Tween.TransitionType.Cubic).TweenProperty(leaderboard, "offset_left", 0, 0.7);
-		inTween.TweenProperty(leaderboard, "offset_right", 0, 0.7);
+        inTween.TweenProperty(info, "offset_right", 0, 0.5);
+        inTween.SetTrans(Tween.TransitionType.Quart).TweenProperty(actions, "offset_left", 0, 0.6);
+        inTween.TweenProperty(actions, "offset_right", 0, 0.6);
+        inTween.SetTrans(Tween.TransitionType.Cubic).TweenProperty(leaderboard, "offset_left", 0, 0.7);
+        inTween.TweenProperty(leaderboard, "offset_right", 0, 0.7);
 
         OffsetRight = 0;
         Position += Vector2.Left * 64;
@@ -286,6 +305,41 @@ public partial class MapInfoContainer : Panel, ISkinnable
         mainLabel.Text = string.Format(mainLabelFormat, map.PrettyTitle, Constants.DIFFICULTY_COLORS[map.Difficulty].ToHtml(), map.DifficultyName, map.PrettyMappers);
         extraLabel.Text = string.Format(extraLabelFormat, Util.String.FormatTime(map.Length / 1000), map.Notes.Length, map.Name);
         coverBackground.SelfModulate = Constants.DIFFICULTY_COLORS[map.Difficulty];
+        cover.Texture = map.Cover;
+
+        favoriteButton.Pressed += () =>
+        {
+            map.Favorite = !map.Favorite;
+            MapManager.Update(map);
+        };
+
+        //videoButton.Pressed += () =>
+        //{
+        //    videoDialog.Popup();
+        //};
+
+        //videoDialog.FileSelected += (file) =>
+        //{
+        //    MapManager.InsertVideo(map, file);
+        //};
+
+        copyButton.Pressed += () =>
+        {
+            copyDialog.Popup();
+            
+        };
+
+        copyDialog.FileSelected += (path) =>
+        {
+            File.Copy(map.FilePath, path);
+            _ = ToastNotification.Notify($"Copied to {path}");
+        };
+
+        deleteButton.Pressed += () =>
+        {
+            MapManager.Delete(map);
+        };
+
         artistLink.Visible = map.ArtistLink != "";
         artistLink.Text = string.Format(artistLinkFormat, map.ArtistPlatform);
 
@@ -329,8 +383,8 @@ public partial class MapInfoContainer : Panel, ISkinnable
         Setup(Map);
     }
 
-	public Tween Transition(bool show)
-	{
+    public Tween Transition(bool show)
+    {
         Tween tween = CreateTween().SetEase(Tween.EaseType.Out).SetTrans(Tween.TransitionType.Cubic).SetParallel();
         float time = show ? 0.4f : 0.3f;
 
@@ -344,7 +398,7 @@ public partial class MapInfoContainer : Panel, ISkinnable
         return tween;
     }
 
-	public void UpdateSkin(SkinProfile skin = null)
+    public void UpdateSkin(SkinProfile skin = null)
     {
         skin ??= SkinManager.Instance.Skin;
 
@@ -356,14 +410,14 @@ public partial class MapInfoContainer : Panel, ISkinnable
         speedPresets.GetNode("PlusPlus").GetNode<SpeedPresetButton>("SpeedPresetButton").Icon = skin.SpeedPresetPlusPlusButtonImage;
     }
 
-	private void toggleLeaderboard(bool show)
-	{
+    private void toggleLeaderboard(bool show)
+    {
         lbExpand.Visible = !show;
         lbHide.Visible = show;
         lbScrollContainer.VerticalScrollMode = show ? ScrollContainer.ScrollMode.Auto : ScrollContainer.ScrollMode.ShowNever;
 
         foreach (ScorePanel panel in lbContainer.GetChildren())
-		{
+        {
             panel.Button.Visible = show;
         }
 

@@ -112,12 +112,23 @@ public partial class MapList : Panel, ISkinnable
         MouseExited += () => { toggleSelectionCursor(false); };
         Resized += clear;
         SkinManager.Instance.Loaded += UpdateSkin;
+        
         MapParser.Instance.MapsImported += maps => {
-            UpdateMaps();
+            MapCache.Load(false);
             Select(maps[0]);
         };
 
-        Task.Run(() => UpdateMaps());
+        if (MapManager.Initialized)
+        {
+            Task.Run(() => UpdateMaps());
+        }
+        else
+        {
+            MapManager.MapsInitialized += (_) =>
+            {
+                Task.Run(() => UpdateMaps());
+            };
+        }
 
         UpdateLayout(Layout);
         UpdateSkin();
@@ -351,7 +362,7 @@ public partial class MapList : Panel, ISkinnable
 
     public void Focus(Map map)
     {
-        TargetScroll = Maps.FindIndex(otherMap => otherMap.Name == map.Name) / buttonsPerContainer * (buttonMinSize + Spacing) + buttonMinSize / 2 - Size.Y / 2;
+        TargetScroll = Maps.FindIndex(otherMap => otherMap.Id == map.Id) / buttonsPerContainer * (buttonMinSize + Spacing) + buttonMinSize / 2 - Size.Y / 2;
 
         if (SceneManager.Scene is MainMenu mainMenu)
         {
@@ -361,22 +372,9 @@ public partial class MapList : Panel, ISkinnable
 
     public void UpdateMaps(string search = "", string author = "")
     {
-        Maps.Clear();
-
-        List<Map> unfavorited = [];
-
-        // temporary until db is implemented
-        foreach (string path in Directory.GetFiles($"{Constants.USER_FOLDER}/maps", $"*.{Constants.DEFAULT_MAP_EXT}", SearchOption.AllDirectories))
-		{
-            Map map = MapParser.Decode(path);
-
-            (map.Favorite ? Maps : unfavorited).Add(map);
-        }
-
-        foreach (Map map in unfavorited)
-        {
-            Maps.Add(map);
-        }
+        Maps = MapManager.Maps.Where(x => x.Title.Contains(search) || search == "")
+            .Where(x => x.PrettyMappers.Contains(author) || author == "")
+            .ToList();
     }
 
     public void UpdateLayout(ListLayout layout)
@@ -430,6 +428,7 @@ public partial class MapList : Panel, ISkinnable
         button.Pressed += () => {
             if (dragDistance < 500)
             {
+                MapManager.Selected.Value = button.Map;
                 Select(button.Map);
 
                 button.Select();

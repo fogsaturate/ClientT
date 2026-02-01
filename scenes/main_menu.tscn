@@ -836,9 +836,10 @@ icon = ExtResource("24_tcyl8")
 script = ExtResource("28_eku7s")
 
 [node name="ImportDialog" type="FileDialog" parent="Menus/Play/SubTopBar/HBoxContainer/Import" unique_id=186983568]
+oversampling_override = 1.0
 title = "Open File(s)"
 initial_position = 2
-size = Vector2i(454, 175)
+size = Vector2i(571, 211)
 theme = SubResource("Theme_nlclj")
 ok_button_text = "Open"
 file_mode = 1
@@ -1675,7 +1676,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_eku7s")
 
 [node name="TopBar" type="Panel" parent="." unique_id=560351556]
-anchors_preset = -1
+anchors_preset = 10
 anchor_right = 1.0
 offset_left = 8.0
 offset_top = 8.0
@@ -1815,7 +1816,7 @@ Link = "https://discord.gg/kaFPWkfZeS"
 
 [node name="JukeboxPanel" type="Panel" parent="." unique_id=1253575]
 clip_contents = true
-anchors_preset = -1
+anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0

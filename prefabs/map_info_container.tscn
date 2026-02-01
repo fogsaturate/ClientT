@@ -344,8 +344,18 @@ mouse_default_cursor_shape = 2
 theme = ExtResource("4_4d08m")
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_constants/icon_max_width = 24
+disabled = true
 icon = ExtResource("6_g02bu")
 icon_alignment = 1
+
+[node name="VideoDialog" type="FileDialog" parent="Info/ScrollContainer/Holder/Subholder/Buttons/Video" unique_id=72805866]
+oversampling_override = 1.0
+title = "Open a File"
+position = Vector2i(0, 36)
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.mp4")
+use_native_dialog = true
 
 [node name="Copy" type="Button" parent="Info/ScrollContainer/Holder/Subholder/Buttons" unique_id=2053076461]
 layout_mode = 2
@@ -357,6 +367,11 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_constants/icon_max_width = 24
 icon = ExtResource("7_oibm8")
 icon_alignment = 1
+
+[node name="CopyDialog" type="FileDialog" parent="Info/ScrollContainer/Holder/Subholder/Buttons/Copy" unique_id=1634895255]
+access = 2
+filters = PackedStringArray("*.phxm")
+use_native_dialog = true
 
 [node name="Delete" type="Button" parent="Info/ScrollContainer/Holder/Subholder/Buttons" unique_id=2015809903]
 layout_mode = 2

@@ -6,6 +6,9 @@ using SQLite;
 
 public partial class Map : RefCounted
 {
+
+    public static Texture2D DefaultCover = GD.Load<Texture2D>("res://textures/empty.png");
+
     [PrimaryKey]
     [AutoIncrement]
     public int Id { get; set; }
@@ -38,6 +41,8 @@ public partial class Map : RefCounted
 
     public float Rating { get; set; } = 0;
 
+    public string CachedMappers { get; set; } = string.Empty;
+
     [Ignore]
     public string[] Mappers { get; set; } = [];
 
@@ -55,13 +60,34 @@ public partial class Map : RefCounted
     public string AudioExt { get; set; } = string.Empty;
 
     [Ignore]
+    public Texture2D Cover { get; set; } = DefaultCover;
+
+    [Ignore]
+    public AudioStream Audio { get; set; } = null;
+
+    [Ignore]
     public byte[] CoverBuffer { get; set; } = [];
 
     [Ignore]
     public byte[] VideoBuffer { get; set; } = [];
 
+    private Note[] notes;
+
     [Ignore]
-    public Note[] Notes { get; set; } = [];
+    public Note[] Notes { get => notes ?? TryParseNotes(); set => notes = value; }
+
+    public Note[] TryParseNotes()
+    {
+        try
+        {
+            notes = MapParser.DecodePHXMO($"{MapUtil.MapsCacheFolder}/{Name}/objects.phxmo");
+            return notes;
+        }
+        catch
+        {
+            return [];
+        }
+    }
 
     public Map() { }
 
@@ -76,6 +102,7 @@ public partial class Map : RefCounted
         PrettyTitle = Artist != "" ? $"{Artist} - {Title}" : Title;
         Rating = rating;
         Mappers = mappers ?? ["N/A"];
+        CachedMappers = mappers.Join("_");
         PrettyMappers = "";
         Difficulty = difficulty;
         DifficultyName = difficultyName?.StripEscapes() ?? Constants.DIFFICULTIES[Difficulty];
