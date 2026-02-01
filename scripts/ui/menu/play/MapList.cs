@@ -120,7 +120,10 @@ public partial class MapList : Panel, ISkinnable
             Select(maps[0]);
         };
         MapManager.MapsInitialized += _ => UpdateMaps();
-        MapManager.MapUpdated += _ => UpdateMaps();
+        MapManager.MapUpdated += map => {
+            clear();
+            UpdateMaps();
+        };
 
         Task.Run(() => UpdateMaps());
 
@@ -331,7 +334,7 @@ public partial class MapList : Panel, ISkinnable
             value.UpdateOutline(0f);
         }
 
-        MapManager.Selected.Value = MapParser.Decode(map.FilePath);
+        MapManager.Selected.Value = MapManager.GetMapById(map.Id);
 
         if (selectedMapID == map.Name && playIfPreSelected)
         {

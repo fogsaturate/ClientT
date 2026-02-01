@@ -25,7 +25,7 @@ public partial class SearchPanel : Panel
     {
         if (@event is InputEventKey eventKey && eventKey.Pressed && !eventKey.CtrlPressed && !eventKey.AltPressed)
         {
-            if (!SearchAuthor && GetViewport().GuiGetFocusOwner() == null)
+            if (GetViewport().GuiGetFocusOwner() == null)
             {
                 lineEdit.GrabFocus();
             }
