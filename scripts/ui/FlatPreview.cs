@@ -102,7 +102,7 @@ public partial class FlatPreview : Panel
 	public void Setup(Map map, bool useSoundManagerStreamPlayer = false)
 	{
         if (Map != null && Map.Name == map.Name) { return; }
-
+        
         Map = map;
         UseSoundManagerStreamPlayer = useSoundManagerStreamPlayer;
         lastPassedNote = 0;

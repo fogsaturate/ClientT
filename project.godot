@@ -15,6 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Rhythia"
+config/version="0.1.0-alpha"
 run/main_scene="uid://cyrs54b4ot1p8"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="Rhythia"
@@ -32,9 +33,9 @@ buses/default_bus_layout="uid://byxtiup0hs2og"
 
 Constants="*res://scripts/Constants.cs"
 DatabaseService="*uid://c4t8bmpg1wmnv"
-MapManager="*uid://4by8r55q4bwn"
 SettingsManager="*res://scripts/SettingsManager.cs"
 SkinManager="*res://scripts/skinning/SkinManager.cs"
+MapManager="*uid://4by8r55q4bwn"
 KeybindsManager="*res://scripts/KeybindsManager.cs"
 Rhythia="*res://scripts/Rhythia.cs"
 Lobby="*res://scripts/multiplayer/Lobby.cs"

@@ -22,7 +22,7 @@ public partial class Rhythia : Node
         GetTree().AutoAcceptQuit = false;
 
         // Set up user folder
-        
+
         static void deepCopy(string resDir = "")
         {
             string userDir = $"{Constants.USER_FOLDER}{resDir}";
@@ -166,11 +166,11 @@ public partial class Rhythia : Node
                     }
                 }
             }
-            
+
             if (maps.Count > 0)
             {
                 MapParser.BulkImport([.. maps]);
-            
+
                 if (SceneManager.Scene is MainMenu)
                 {
                     var menu = SceneManager.Scene as MainMenu;

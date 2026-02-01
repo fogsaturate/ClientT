@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using Godot;
@@ -14,7 +15,7 @@ public static class MapCache
 
     public static void Load(bool fullSync)
     {
-        string[] files = Directory.GetFiles(MapsFolder, $"*.{Constants.DEFAULT_MAP_EXT}", SearchOption.AllDirectories);
+        string[] files = Directory.GetFiles(MapUtil.MapsFolder, $"*.{Constants.DEFAULT_MAP_EXT}", SearchOption.AllDirectories);
 
         if (fullSync)
         {
@@ -22,7 +23,7 @@ public static class MapCache
             addNonCachedFiles(files);
         }
 
-        OrderAndSetMapSets();
+        OrderAndSetMaps();
     }
 
     private static void syncFiles(string[] files)
@@ -35,7 +36,6 @@ public static class MapCache
         }
 
         var filesHashSet = files.ToHashSet();
-
         foreach (var map in maps)
         {
             string filePath = BackSlashToForwardSlash(map.FilePath);
@@ -46,9 +46,12 @@ public static class MapCache
 
                 if (map.Hash == checksum)
                 {
+                    if (!Directory.Exists($"{MapUtil.MapsCacheFolder}/{map.Name}"))
+                    {
+                        InsertIntoMapCacheFolder(map);
+                    }
                     continue;
                 }
-                Logger.Log("Map hash error");
 
                 Map newMap;
 
@@ -56,9 +59,9 @@ public static class MapCache
                 {
                     newMap = MapParser.Decode(filePath, null, false, true);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Logger.Error($"Map corrupted: {map.Name}");
+                    Logger.Error(ex);
                     File.Delete(filePath);
                     DatabaseService.Connection.Delete(map);
                     continue;
@@ -67,16 +70,43 @@ public static class MapCache
                 newMap.Id = map.Id;
 
                 DatabaseService.Connection.Update(newMap);
-
+                InsertIntoMapCacheFolder(map);
                 Logger.Log($"Updated cached map: {newMap.Name}");
 
                 continue;
             }
             else
             {
+                removeCacheFolder(map);
                 DatabaseService.Connection.Delete(map);
                 Logger.Log($"Removed {filePath} from the cache, as it no longer exists.");
             }
+        }
+    }
+
+    public static void InsertIntoMapCacheFolder(Map map)
+    {
+        string path = $"{MapUtil.MapsCacheFolder}/{map.Name}";
+        using var stream =  File.OpenRead(map.FilePath);
+        var archive = new ZipArchive(stream);
+
+        if (Directory.Exists(path))
+        {
+            Directory.Delete(path, true);
+        }
+
+        archive.ExtractToDirectory(path, true);
+    }
+
+    private static void removeCacheFolder(Map map)
+    {
+        try
+        {
+            Directory.Delete($"{MapUtil.MapsCacheFolder}/{map.Name}", true);
+        }
+        catch
+        {
+            return;
         }
     }
 
@@ -116,6 +146,7 @@ public static class MapCache
         try
         {
             DatabaseService.Connection.Insert(map);
+            InsertIntoMapCacheFolder(map);
 
             return DatabaseService.Connection.Get<Map>(x => x.Hash == map.Hash).Id;
         }
@@ -128,8 +159,8 @@ public static class MapCache
                 return -1;
             }
 
-            string newPath = Path.Combine(MapsFolder, map.Collection, map.Name);
-            string existingPath = Path.Combine(MapsFolder, map.Collection, map.Name);
+            string newPath = Path.Combine(MapUtil.MapsFolder, map.Collection, map.Name);
+            string existingPath = Path.Combine(MapUtil.MapsFolder, map.Collection, map.Name);
 
             if (existingPath != newPath)
             {
@@ -146,6 +177,7 @@ public static class MapCache
         try
         {
             DatabaseService.Connection.Update(map);
+            InsertIntoMapCacheFolder(map);
         }
         catch (Exception e)
         {
@@ -165,13 +197,25 @@ public static class MapCache
         }
     }
 
-    public static void OrderAndSetMapSets()
+    public static void OrderAndSetMaps()
     {
         var maps = FetchAll();
 
-        maps = maps.OrderByDescending(x => x.Favorite).ToList();
+        foreach (var map in maps)
+        {
+            string path = $"{MapUtil.MapsCacheFolder}/{map.Name}";
 
-        MapManager.Maps = maps;
+            if (map.Cover == Map.DefaultCover && File.Exists($"{path}/cover.png"))
+            {
+                map.Cover = ImageTexture.CreateFromImage(Image.LoadFromFile($"{path}/cover.png"));
+            }
+        }
+
+        var sortedMaps = maps.Where(x => x.Favorite).OrderBy(x => x.PrettyTitle).ToList();
+
+        sortedMaps.AddRange(maps.Where(x => !x.Favorite).OrderBy (x => x.PrettyTitle));
+
+        MapManager.Maps = sortedMaps;
     }
 
     public static List<MapSet> ConvertToMapSets(IEnumerable<Map> maps)
@@ -208,8 +252,6 @@ public static class MapCache
             }
         }
     }
-
-    public static string MapsFolder => $"{Constants.USER_FOLDER}/maps";
 
     public static List<Map> FetchAll() => DatabaseService.Connection.Table<Map>().ToList();
 

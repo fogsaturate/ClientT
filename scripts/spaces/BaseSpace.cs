@@ -19,7 +19,7 @@ public partial class BaseSpace : Node3D
 
     public virtual void UpdateMap(Map map)
     {
-        Cover = null;
+        Cover = ImageTexture.CreateFromImage(map.Cover.GetImage());
     }
 
     public virtual void UpdateState(bool playing)

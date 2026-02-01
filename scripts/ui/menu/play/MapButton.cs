@@ -116,9 +116,10 @@ public partial class MapButton : Control, ISkinnable
 	{
         Map = map;
         Name = map.Name;
-
+        
         Title.Text = map.PrettyTitle;
         Favorited.Visible = map.Favorite;
+        Cover.Texture = (Texture2D)map.Cover;
         Favorited.SelfModulate = Constants.DIFFICULTY_COLORS[map.Difficulty];
 
         if (selected)

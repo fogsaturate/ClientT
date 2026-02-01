@@ -497,9 +497,9 @@ public partial class LegacyRunner : BaseScene
 		multiplierLabel = panelLeft.GetNode<Label>("Multiplier");
 		multiplierProgressPanel = panelLeft.GetNode<Panel>("MultiplierProgress");
 		multiplierProgressMaterial = multiplierProgressPanel.Material as ShaderMaterial;
-		video = GetNode("VideoViewport").GetNode<VideoStreamPlayer>("VideoStreamPlayer");
+        video = GetNode("VideoViewport").GetNode<VideoStreamPlayer>("VideoStreamPlayer");
 
-		List<string> activeMods = [];
+        List<string> activeMods = [];
 
 		foreach (KeyValuePair<string, bool> mod in CurrentAttempt.Mods)
 		{
@@ -698,19 +698,21 @@ public partial class LegacyRunner : BaseScene
 		}
 
 		MapLength += Constants.HIT_WINDOW;
-		
-		if (settings.VideoDim < 100 && CurrentAttempt.Map.VideoBuffer != null)
-		{
-			if (CurrentAttempt.Speed != 1)
-			{
-				ToastNotification.Notify("Videos currently only sync on 1x", 1);
-			}
-			else
-			{
-				File.WriteAllBytes($"{Constants.USER_FOLDER}/cache/video.mp4", CurrentAttempt.Map.VideoBuffer);
-				video.Stream.File = $"{Constants.USER_FOLDER}/cache/video.mp4";
-			}
-		}
+
+        // TODO: Fix videos
+
+		//if (settings.VideoDim < 100 && CurrentAttempt.Map.VideoBuffer != null)
+		//{
+		//	if (CurrentAttempt.Speed != 1)
+		//	{
+		//		ToastNotification.Notify("Videos currently only sync on 1x", 1);
+		//	}
+  //          else
+  //          {
+  //              //File.WriteAllBytes($"{Constants.USER_FOLDER}/cache/video.mp4", CurrentAttempt.Map.VideoBuffer);
+  //              video.Stream.File = $"{MapUtil.MapsCacheFolder}/{CurrentAttempt.Map.Name}/video.mp4";
+		//	}
+		//}
 		if (CurrentAttempt.Replays != null)
 		{
 			if (CurrentAttempt.Replays.Length > 1)

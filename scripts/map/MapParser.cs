@@ -90,10 +90,10 @@ public partial class MapParser : Node
 			1 byte OR int32; x
 			1 byte OR int32; y
 		*/
-        
+
         objects.Store32(12);    // type count
         objects.Store32((uint)map.Notes.Length);    // note count
-        
+
         foreach (Note note in map.Notes)
         {
             bool quantum = (int)note.X != note.X || (int)note.Y != note.Y || note.X < -1 || note.X > 1 || note.Y < -1 || note.Y > 1;
@@ -153,7 +153,7 @@ public partial class MapParser : Node
             File.Delete(mapFilePath);
         }
 
-        ZipFile.CreateFromDirectory(encodePath, mapFilePath, CompressionLevel.Fastest, false);
+        ZipFile.CreateFromDirectory(encodePath, mapFilePath, CompressionLevel.NoCompression, false);
         map.Hash = MapCache.GetMd5Checksum(mapFilePath);
         map.FilePath = mapFilePath;
         MapCache.InsertMap(map);
@@ -187,7 +187,7 @@ public partial class MapParser : Node
             ToastNotification.Notify("Unsupported file format", 1);
             throw Logger.Error($"Unsupported file format ({ext})");
         }
-        
+
         switch (ext)
         {
             case "phxm":
@@ -208,7 +208,7 @@ public partial class MapParser : Node
         {
             Logger.Log($"DECODING {ext.ToUpper()}: {(Time.GetTicksUsec() - start) / 1000}ms");
         }
-        
+
         if (save)
         {
             Encode(map, logBenchmark);
@@ -272,7 +272,7 @@ public partial class MapParser : Node
             }
 
             ushort version = file.GetUInt16(); // SSPM version
-            
+
             if (version == 1)
             {
                 map = sspmV1(file, path);
@@ -533,7 +533,7 @@ public partial class MapParser : Node
             }
 
             file.Seek((int)markerByteOffset);
-            
+
             Note[] notes = new Note[noteCount];
 
             for (int i = 0; i < noteCount; i++)
@@ -559,14 +559,14 @@ public partial class MapParser : Node
 
                 notes[i] = new Note(0, millisecond, x - 1, -y + 1);
             }
-            
+
             Array.Sort(notes);
-            
+
             for (int i = 0; i < notes.Length; i++)
             {
                 notes[i].Index = i;
             }
-            
+
             map = new(path, notes, id, artist, song, 0, mappers, difficulty, difficultyName, (int)mapLength, audioBuffer, coverBuffer);
         }
         catch (Exception exception)
@@ -597,7 +597,7 @@ public partial class MapParser : Node
 
         try
         {
-            ZipArchive file = ZipFile.OpenRead(path);
+            using var file = ZipFile.OpenRead(path);
 
             byte[] getEntryBuffer(string entryName)
             {
@@ -607,7 +607,7 @@ public partial class MapParser : Node
 
                 stream.CopyTo(memoryStream);
                 stream.Dispose();
-                
+
                 byte[] buffer = memoryStream.GetBuffer();
                 memoryStream.Dispose();
 
@@ -619,10 +619,10 @@ public partial class MapParser : Node
             byte[] audioBuffer = null;
             byte[] coverBuffer = null;
             byte[] videoBuffer = null;
-            
+
             Godot.Collections.Dictionary metadata = (Godot.Collections.Dictionary)Json.ParseString(Encoding.UTF8.GetString(metaBuffer));
             FileParser objects = new(objectsBuffer);
-            
+
             if ((bool)metadata["HasAudio"])
             {
                 audioBuffer = getEntryBuffer($"audio.{metadata["AudioExt"]}");
@@ -697,5 +697,71 @@ public partial class MapParser : Node
         }
 
         return map;
+    }
+
+    public static Note[] DecodePHXMO(string path)
+    {
+        FileParser objects = new(path);
+
+        uint typeCount = objects.GetUInt32();
+        uint noteCount = objects.GetUInt32();
+
+        Note[] notes = new Note[noteCount];
+
+        for (int i = 0; i < noteCount; i++)
+        {
+            int ms = (int)objects.GetUInt32();
+            bool quantum = objects.GetBool();
+            float x;
+            float y;
+
+            if (quantum)
+            {
+                x = objects.GetFloat();
+                y = objects.GetFloat();
+            }
+            else
+            {
+                x = objects.Get(1)[0] - 1;
+                y = objects.Get(1)[0] - 1;
+            }
+
+            notes[i] = new(i, ms, x, y);
+        }
+
+        return notes;
+    }
+
+    public static Note[] DecodePHXMO(byte[] buffer)
+    {
+        FileParser objects = new(buffer);
+
+        uint typeCount = objects.GetUInt32();
+        uint noteCount = objects.GetUInt32();
+
+        Note[] notes = new Note[noteCount];
+
+        for (int i = 0; i < noteCount; i++)
+        {
+            int ms = (int)objects.GetUInt32();
+            bool quantum = objects.GetBool();
+            float x;
+            float y;
+
+            if (quantum)
+            {
+                x = objects.GetFloat();
+                y = objects.GetFloat();
+            }
+            else
+            {
+                x = objects.Get(1)[0] - 1;
+                y = objects.Get(1)[0] - 1;
+            }
+
+            notes[i] = new(i, ms, x, y);
+        }
+
+        return notes;
     }
 }
