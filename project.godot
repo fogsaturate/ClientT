@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Rhythia"
-config/version="0.1.0-alpha"
+config/version="0.1.0"
 run/main_scene="uid://cyrs54b4ot1p8"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="Rhythia"
@@ -31,7 +31,9 @@ buses/default_bus_layout="uid://byxtiup0hs2og"
 
 [autoload]
 
+ObjExporter="*uid://dwc7rp27qdstt"
 Constants="*res://scripts/Constants.cs"
+FileInitializer="*uid://dp48xgqpesoue"
 DatabaseService="*uid://c4t8bmpg1wmnv"
 SettingsManager="*res://scripts/SettingsManager.cs"
 SkinManager="*res://scripts/skinning/SkinManager.cs"
@@ -60,6 +62,12 @@ project/assembly_name="Rhythia"
 [editor_plugins]
 
 enabled=PackedStringArray()
+
+[file_customization]
+
+folder_colors={
+"res://user/": "pink"
+}
 
 [input_devices]
 

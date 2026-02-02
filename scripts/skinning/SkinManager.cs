@@ -27,7 +27,7 @@ public partial class SkinManager : Node
 	{
 		var settings = SettingsManager.Instance.Settings;
         var skin = Instance.Skin;
-		
+
 		if (Toml.TryFromModel(skin.Config, out string toml, out _))
 		{
 			File.WriteAllText($"{Constants.USER_FOLDER}/skins/{settings.Skin.Value}/config.toml", toml);
@@ -57,7 +57,7 @@ public partial class SkinManager : Node
 		{
 			File.WriteAllText($"{Constants.USER_FOLDER}/skins/{settings.Skin.Value}/config.toml", toml);
 		}
-        
+
         // Textures
 
         skin.CursorImage = loadTexture("game/cursor.png");
@@ -126,18 +126,18 @@ public partial class SkinManager : Node
 
 		skin.BackgroundTileShader = loadShader("ui/background_tile.gdshader");
         skin.MapButtonCoverShader = loadShader("ui/play/map_button_cover.gdshader");
-		
+
         // Sounds
 
         skin.HitSoundBuffer = loadSound("hit.mp3");
         skin.FailSoundBuffer = loadSound("fail.mp3");
 
         // Meshes
-		
+
         skin.NoteMesh = loadMesh($"{Constants.USER_FOLDER}/meshes/{(settings.NoteMesh.Value == "skin" ? skin.Config.NoteMesh : settings.NoteMesh.Value)}.obj");
 
 		// Colors
-		
+
         string colorsetPath = $"{Constants.USER_FOLDER}/colorsets/{(settings.NoteColors.Value == "skin" ? skin.Config.NoteColors : settings.NoteColors.Value)}.txt";
 
         if (File.Exists(colorsetPath))
@@ -156,7 +156,7 @@ public partial class SkinManager : Node
 		}
 
         // Spaces
-		
+
         skin.GameSpace = loadSpace($"res://prefabs/spaces/{(settings.GameSpace.Value == "skin" ? skin.Config.GameSpace : settings.GameSpace.Value)}.tscn");
 		skin.MenuSpace = loadSpace($"res://prefabs/spaces/{(settings.MenuSpace.Value == "skin" ? skin.Config.MenuSpace : settings.MenuSpace.Value)}.tscn");
 
@@ -206,15 +206,15 @@ public partial class SkinManager : Node
 
 	private static ArrayMesh loadMesh(string path)
 	{
-        bool exists = File.Exists(path);
+        bool exists = ResourceLoader.Exists(path) || Godot.FileAccess.FileExists(path);
 
 		return exists ? (ArrayMesh)Util.Misc.OBJParser.Call("load_obj", path) : GD.Load<ArrayMesh>($"res://user/meshes/squircle.obj");
 	}
 
 	private static BaseSpace loadSpace(string path)
 	{
-		bool exists = Godot.FileAccess.FileExists(path);
-		
+        bool exists = ResourceLoader.Exists(path) || Godot.FileAccess.FileExists(path);
+
         return GD.Load<PackedScene>(exists ? path : "res://prefabs/spaces/void.tscn").Instantiate<Node3D>() as BaseSpace;
 	}
 }

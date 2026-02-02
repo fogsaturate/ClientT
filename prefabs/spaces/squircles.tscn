@@ -1,21 +1,20 @@
-[gd_scene load_steps=8 format=3 uid="uid://d14pa5ftu1j2g"]
+[gd_scene format=3 uid="uid://d14pa5ftu1j2g"]
 
 [ext_resource type="Script" uid="uid://cvda2a88hhc57" path="res://scripts/spaces/Squircles.cs" id="1_cmhau"]
-[ext_resource type="Texture2D" uid="uid://c5df01qkhxros" path="res://textures/squircle_blank.png" id="2_2iqmx"]
+[ext_resource type="Texture2D" uid="uid://cafgf44rluox6" path="res://textures/squircle_bloom.png" id="2_cmhau"]
 
 [sub_resource type="Environment" id="Environment_n6lso"]
 background_mode = 1
 background_color = Color(0.011764706, 0, 0.09019608, 1)
-glow_enabled = true
+background_energy_multiplier = 1.2
 glow_intensity = 1.5
 glow_bloom = 0.15
-glow_blend_mode = 1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v8td3"]
 transparency = 1
 shading_mode = 0
 vertex_color_use_as_albedo = true
-albedo_texture = ExtResource("2_2iqmx")
+albedo_texture = ExtResource("2_cmhau")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_v8td3"]
 material = SubResource("StandardMaterial3D_v8td3")
@@ -30,18 +29,18 @@ _limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[node name="Squircles" type="Node3D"]
+[node name="Squircles" type="Node3D" unique_id=1958332010]
 script = ExtResource("1_cmhau")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=495103429]
 environment = SubResource("Environment_n6lso")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1770879942]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 1, 0)
 fov = 50.0
 size = 1.25
 
-[node name="ParticlesNear" type="CPUParticles3D" parent="."]
+[node name="ParticlesNear" type="CPUParticles3D" parent="." unique_id=677235271]
 transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 0.8, 0, 0, 0)
 amount = 12
 lifetime = 20.0
@@ -68,7 +67,7 @@ hue_variation_min = -0.04
 hue_variation_max = 0.04
 hue_variation_curve = SubResource("Curve_3wxpm")
 
-[node name="ParticlesFar" type="CPUParticles3D" parent="."]
+[node name="ParticlesFar" type="CPUParticles3D" parent="." unique_id=1136469725]
 transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 0.8, 0, -1, 0)
 amount = 10
 lifetime = 20.0
