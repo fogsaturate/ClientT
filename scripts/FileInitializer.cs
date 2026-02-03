@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Godot;
 
 public partial class FileInitializer : Node
 {
-    Node OBJExporter;
+    Node objExporter;
 
     public override void _Ready()
     {
-        OBJExporter = GetNode("/root/ObjExporter");
+        var script = GD.Load<Script>("res://scripts/ObjExporter.gd");
+
+        objExporter = new Node();
+        AddChild(objExporter);
+        objExporter.SetScript(script);
 
         deepCopy();
     }
@@ -72,7 +72,7 @@ public partial class FileInitializer : Node
                     buffer = (resource as AudioStreamMP3).Data;
                     break;
                 case "ArrayMesh":
-                    OBJExporter.Call("save_mesh_to_files", resource, userDir, resFile.Replace(".obj", ""));
+                    objExporter.Call("save_mesh_to_files", resource, userDir, resFile.Replace(".obj", ""));
                         continue;
                 default:
                     Logger.Error($"[{resFile}] {resource.GetType().Name} is not supported for the user folder.");
