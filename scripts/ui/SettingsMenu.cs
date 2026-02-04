@@ -72,6 +72,8 @@ public partial class SettingsMenu : ColorRect
         OptionButton optionButtonTemplate = settingTemplate.GetNode<OptionButton>("OptionButton");
         Button buttonTemplate = settingTemplate.GetNode<Button>("Button");
 
+        settingTemplate.Visible = false;
+
         foreach (Node child in settingTemplate.GetChildren())
         {
             if (child.Name == "Title") { continue; };
@@ -113,6 +115,7 @@ public partial class SettingsMenu : ColorRect
             {
                 Panel panel = settingTemplate.Duplicate() as Panel;
                 panel.Name = setting.Id;
+                panel.Visible = true;
 
                 Label title = panel.GetNode<Label>("Title");
                 title.Text = setting.Title;
