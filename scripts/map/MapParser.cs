@@ -26,11 +26,11 @@ public partial class MapParser : Node
 
     public static bool IsValidExt(string ext) => ext == "phxm" || ext == "sspm" || ext == "txt";
 
-    public static async Task BulkImport(string[] files)
+    public static async Task BulkImport(string[] files, bool notify = false)
     {
         if (files.Length == 0 || files == null) return;
 
-        ToastNotification.Notify($"Importing {files.Length} maps");
+        if (notify) ToastNotification.Notify($"Importing {files.Length} map(s)");
 
         await Task.Run(() =>
         {
@@ -65,7 +65,7 @@ public partial class MapParser : Node
         });
 
         SoundManager.UpdateJukeboxQueue();
-        ToastNotification.Notify($"Finished importing {files.Length} maps");
+        if (notify) ToastNotification.Notify($"Finished importing {files.Length} map(s)");
     }
 
     public static void Encode(Map map, bool logBenchmark = false)
