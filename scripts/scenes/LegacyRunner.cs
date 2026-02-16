@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Godot;
+using GodotPlugins.Game;
 
 public partial class LegacyRunner : BaseScene
 {
@@ -1363,14 +1364,28 @@ public partial class LegacyRunner : BaseScene
 		else
 		{
 			Camera.Rotation += new Vector3(-mouseDelta.Y / 120 * sensitivity / (float)Math.PI, -mouseDelta.X / 120 * sensitivity / (float)Math.PI, 0);
-			Camera.Rotation = new Vector3((float)Math.Clamp(Camera.Rotation.X, Mathf.DegToRad(-90), Mathf.DegToRad(90)), Camera.Rotation.Y, Camera.Rotation.Z);
-			Camera.Position = new Vector3(CurrentAttempt.CursorPosition.X * 0.25f, CurrentAttempt.CursorPosition.Y * 0.25f, 3.5f) + Camera.Basis.Z / 4;
+			Camera.Rotation = new Vector3((float)Math.Clamp(
+				Camera.Rotation.X, Mathf.DegToRad(-90), Mathf.DegToRad(90)), Camera.Rotation.Y, Camera.Rotation.Z);
 
-			float wtf = 0.95f;
-			float hypotenuse = (wtf + Camera.Position.Z) / Camera.Basis.Z.Z;
-			float distance = (float)Math.Sqrt(Math.Pow(hypotenuse, 2) - Math.Pow(wtf + Camera.Position.Z, 2));
+			Camera.Position = new Vector3(0,0,3.5f) + new Vector3(
+				CurrentAttempt.CursorPosition.X * 0.25f, CurrentAttempt.CursorPosition.Y * 0.25f, 0
+			) * settings.CameraParallax + (Camera.Basis.Z / 4f);
 
-			CurrentAttempt.RawCursorPosition = new Vector2(Camera.Basis.Z.X, Camera.Basis.Z.Y).Normalized() * -distance;
+			Vector3 LookVector = Camera.Basis.Z;
+			if (LookVector.Z == 0) return;
+
+			Vector2 RawCursorPos;
+
+			RawCursorPos = new Vector2(
+				Camera.Position.X, Camera.Position.Y
+			) - new Vector2(
+				LookVector.X, LookVector.Y
+			) * Mathf.Abs(Camera.Position.Z / LookVector.Z);
+
+			GD.Print(LookVector);
+
+			CurrentAttempt.RawCursorPosition = RawCursorPos;
+			// CurrentAttempt.RawCursorPosition = new Vector2(LookVector.X, LookVector.Y).Normalized() * -distance;
 			CurrentAttempt.CursorPosition = CurrentAttempt.RawCursorPosition.Clamp(-Constants.BOUNDS, Constants.BOUNDS);
 			cursor.Position = new Vector3(CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0);
 
