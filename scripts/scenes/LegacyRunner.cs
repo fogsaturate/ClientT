@@ -1353,7 +1353,8 @@ public partial class LegacyRunner : BaseScene
 		float sensitivity = (float)(CurrentAttempt.IsReplay ? CurrentAttempt.Replays[0].Sensitivity : settings.Sensitivity);
 		sensitivity *= (float)settings.FoV.Value / 70f;
 
-		if (settings.AbsoluteInput) {
+		if (settings.AbsoluteInput)
+		{
 			// Reset everything to zero so it doesn't spin endlessly, or have infinite sensitivity
 			Camera.Rotation = Vector3.Zero;
 			CurrentAttempt.RawCursorPosition = Vector2.Zero;
