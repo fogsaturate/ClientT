@@ -1351,7 +1351,7 @@ public partial class LegacyRunner : BaseScene
 	public static void UpdateCursor(Vector2 mouseDelta)
 	{
 		float sensitivity = (float)(CurrentAttempt.IsReplay ? CurrentAttempt.Replays[0].Sensitivity : settings.Sensitivity);
-		// sensitivity *= (float)settings.FoV.Value / 70f;
+		sensitivity *= (float)settings.FoV.Value / 70f;
 
 		if (settings.AbsoluteInput) {
 			// Reset everything to zero so it doesn't spin endlessly, or have infinite sensitivity
