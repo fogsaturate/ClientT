@@ -1368,7 +1368,7 @@ public partial class LegacyRunner : BaseScene
 				Camera.Rotation.X, Mathf.DegToRad(-90), Mathf.DegToRad(90)), Camera.Rotation.Y, Camera.Rotation.Z);
 
 			Camera.Position = new Vector3(0,0,3.5f) + new Vector3(
-				CurrentAttempt.CursorPosition.X * 0.25f, CurrentAttempt.CursorPosition.Y * 0.25f, 0
+				CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0
 			) * settings.CameraParallax + (Camera.Basis.Z / 4f);
 
 			Vector3 LookVector = Camera.Basis.Z;
@@ -1382,10 +1382,7 @@ public partial class LegacyRunner : BaseScene
 				LookVector.X, LookVector.Y
 			) * Mathf.Abs(Camera.Position.Z / LookVector.Z);
 
-			GD.Print(LookVector);
-
 			CurrentAttempt.RawCursorPosition = RawCursorPos;
-			// CurrentAttempt.RawCursorPosition = new Vector2(LookVector.X, LookVector.Y).Normalized() * -distance;
 			CurrentAttempt.CursorPosition = CurrentAttempt.RawCursorPosition.Clamp(-Constants.BOUNDS, Constants.BOUNDS);
 			cursor.Position = new Vector3(CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0);
 
