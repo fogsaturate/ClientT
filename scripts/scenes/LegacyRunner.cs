@@ -1081,11 +1081,12 @@ public partial class LegacyRunner : BaseScene
 			}
 			else
 			{
+				// Take mouse position difference between center of the current window size
+				// This is to make the mouse position the same as relative if it was locked, or confined
+				Vector2 AbsolutePosition = eventMouseMotion.Position - (GetViewport().GetWindow().Size / 2);
 
-				Vector2 absolute = eventMouseMotion.Position - (GetViewport().GetWindow().Size / 2);
-
-				// * 0.582f to make it like absolute scale 1 (so 1 sensitivity is 1 absolute scale in nightly)
-				UpdateCursor(absolute * 0.582f);
+				// Multiply by 0.582f to make it 1:1 to absolute scale on nightly
+				UpdateCursor(AbsolutePosition * 0.582f);
 			}
 
 			CurrentAttempt.DistanceMM += eventMouseMotion.Relative.Length() / settings.Sensitivity / 57.5;
@@ -1137,26 +1138,6 @@ public partial class LegacyRunner : BaseScene
 				case Key.P:
 					settings.Pushback.Value = !settings.Pushback;
 					break;
-
-				// debug keybind for absolute mode
-				case Key.L:
-					if (Input.MouseMode == Input.MouseModeEnum.Captured || Input.MouseMode == Input.MouseModeEnum.ConfinedHidden)
-					{
-						Input.MouseMode = Input.MouseModeEnum.Visible;
-					}
-					else
-					{
-						if (settings.AbsoluteInput)
-						{
-							Input.MouseMode = Input.MouseModeEnum.ConfinedHidden;
-						} 
-						else
-						{
-							Input.MouseMode = Input.MouseModeEnum.Captured;
-						}
-					}
-					break;
-
 			}
 		}
 		else if (@event is InputEventMouseButton eventMouseButton)
@@ -1373,6 +1354,7 @@ public partial class LegacyRunner : BaseScene
 		// sensitivity *= (float)settings.FoV.Value / 70f;
 
 		if (settings.AbsoluteInput) {
+			// Reset everything to zero so it doesn't spin endlessly, or have infinite sensitivity
 			Camera.Rotation = Vector3.Zero;
 			CurrentAttempt.RawCursorPosition = Vector2.Zero;
 			CurrentAttempt.CursorPosition = Vector2.Zero;
@@ -1386,9 +1368,6 @@ public partial class LegacyRunner : BaseScene
 			}
 			else
 			{
-				// CurrentAttempt.RawCursorPosition += new Vector2(1, -1) * mouseDelta / 120 * sensitivity;
-
-				// this is more readable imo!
 				CurrentAttempt.RawCursorPosition += new Vector2(1, -1) * (mouseDelta * sensitivity / 120f);
 				CurrentAttempt.CursorPosition = CurrentAttempt.RawCursorPosition.Clamp(-Constants.BOUNDS, Constants.BOUNDS);
 			}
@@ -1402,25 +1381,22 @@ public partial class LegacyRunner : BaseScene
 		else
 		{
 			Camera.Rotation += new Vector3(-mouseDelta.Y / 120 * sensitivity / (float)Math.PI, -mouseDelta.X / 120 * sensitivity / (float)Math.PI, 0);
-			Camera.Rotation = new Vector3((float)Math.Clamp(
-				Camera.Rotation.X, Mathf.DegToRad(-90), Mathf.DegToRad(90)), Camera.Rotation.Y, Camera.Rotation.Z);
 
-			Camera.Position = new Vector3(0,0,3.5f) + new Vector3(
-				CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0
-			) * settings.CameraParallax + (Camera.Basis.Z / 4f);
+			Camera.Rotation = new Vector3((float)Math.Clamp(Camera.Rotation.X, Mathf.DegToRad(-90), Mathf.DegToRad(90)), Camera.Rotation.Y, Camera.Rotation.Z);
+
+			Vector3 Origin = new Vector3(0,0,3.5f);
+			Vector3 CursorLock = new Vector3(CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0);
+			// The pivot is to mimic ROBLOX's orbital camera
+			Vector3 Pivot = Camera.Basis.Z / 4f;
+
+			Camera.Position = Origin + CursorLock * settings.CameraParallax + Pivot;
 
 			Vector3 LookVector = Camera.Basis.Z;
-			if (LookVector.Z == 0) return;
+			Vector2 CameraVec2 = new Vector2(Camera.Position.X, Camera.Position.Y);
+			Vector2 LookVec2 = new Vector2(LookVector.X, LookVector.Y);
 
-			Vector2 RawCursorPos;
+			CurrentAttempt.RawCursorPosition = CameraVec2 - LookVec2 * Mathf.Abs(Camera.Position.Z / LookVector.Z);
 
-			RawCursorPos = new Vector2(
-				Camera.Position.X, Camera.Position.Y
-			) - new Vector2(
-				LookVector.X, LookVector.Y
-			) * Mathf.Abs(Camera.Position.Z / LookVector.Z);
-
-			CurrentAttempt.RawCursorPosition = RawCursorPos;
 			CurrentAttempt.CursorPosition = CurrentAttempt.RawCursorPosition.Clamp(-Constants.BOUNDS, Constants.BOUNDS);
 			cursor.Position = new Vector3(CurrentAttempt.CursorPosition.X, CurrentAttempt.CursorPosition.Y, 0);
 
