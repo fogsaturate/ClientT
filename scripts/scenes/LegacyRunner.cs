@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Godot;
-using GodotPlugins.Game;
 
 public partial class LegacyRunner : BaseScene
 {
@@ -1077,7 +1075,18 @@ public partial class LegacyRunner : BaseScene
 	{
 		if (@event is InputEventMouseMotion eventMouseMotion && Playing && !CurrentAttempt.IsReplay)
 		{
-			UpdateCursor(eventMouseMotion.Relative);
+			if (!settings.AbsoluteInput)
+			{
+				UpdateCursor(eventMouseMotion.Relative);
+			}
+			else
+			{
+
+				Vector2 absolute = eventMouseMotion.Position - (GetViewport().GetWindow().Size / 2);
+
+				// * 0.582f to make it like absolute scale 1 (so 1 sensitivity is 1 absolute scale in nightly)
+				UpdateCursor(absolute * 0.582f);
+			}
 
 			CurrentAttempt.DistanceMM += eventMouseMotion.Relative.Length() / settings.Sensitivity / 57.5;
 		}
@@ -1128,6 +1137,26 @@ public partial class LegacyRunner : BaseScene
 				case Key.P:
 					settings.Pushback.Value = !settings.Pushback;
 					break;
+
+				// debug keybind for absolute mode
+				case Key.L:
+					if (Input.MouseMode == Input.MouseModeEnum.Captured || Input.MouseMode == Input.MouseModeEnum.ConfinedHidden)
+					{
+						Input.MouseMode = Input.MouseModeEnum.Visible;
+					}
+					else
+					{
+						if (settings.AbsoluteInput)
+						{
+							Input.MouseMode = Input.MouseModeEnum.ConfinedHidden;
+						} 
+						else
+						{
+							Input.MouseMode = Input.MouseModeEnum.Captured;
+						}
+					}
+					break;
+
 			}
 		}
 		else if (@event is InputEventMouseButton eventMouseButton)
@@ -1341,7 +1370,13 @@ public partial class LegacyRunner : BaseScene
 	public static void UpdateCursor(Vector2 mouseDelta)
 	{
 		float sensitivity = (float)(CurrentAttempt.IsReplay ? CurrentAttempt.Replays[0].Sensitivity : settings.Sensitivity);
-		sensitivity *= (float)settings.FoV.Value / 70f;
+		// sensitivity *= (float)settings.FoV.Value / 70f;
+
+		if (settings.AbsoluteInput) {
+			Camera.Rotation = Vector3.Zero;
+			CurrentAttempt.RawCursorPosition = Vector2.Zero;
+			CurrentAttempt.CursorPosition = Vector2.Zero;
+		}
 
 		if (!CurrentAttempt.Mods["Spin"])
 		{
@@ -1351,7 +1386,10 @@ public partial class LegacyRunner : BaseScene
 			}
 			else
 			{
-				CurrentAttempt.RawCursorPosition += new Vector2(1, -1) * mouseDelta / 120 * sensitivity;
+				// CurrentAttempt.RawCursorPosition += new Vector2(1, -1) * mouseDelta / 120 * sensitivity;
+
+				// this is more readable imo!
+				CurrentAttempt.RawCursorPosition += new Vector2(1, -1) * (mouseDelta * sensitivity / 120f);
 				CurrentAttempt.CursorPosition = CurrentAttempt.RawCursorPosition.Clamp(-Constants.BOUNDS, Constants.BOUNDS);
 			}
 
